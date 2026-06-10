@@ -82,14 +82,14 @@ async function expectNoForbiddenPromises(page) {
 }
 
 async function seedCompleteAnswers(page) {
-  await page.addInitScript(({ key, answers }) => {
+  await page.addInitScript(({ key, profileKey, answers }) => {
     window.localStorage.setItem(key, JSON.stringify(answers));
     window.localStorage.setItem(profileKey, JSON.stringify({ name: 'Avery Founder', email: 'avery@example.com', companyName: 'ExampleCo', website: 'https://example.com' }));
   }, { key: STORAGE_ANSWERS_KEY, profileKey: STORAGE_PROFILE_KEY, answers: founderAnswers });
 }
 
 async function seedAiCard(page) {
-  await page.addInitScript(({ answersKey, aiKey, answers, aiCard }) => {
+  await page.addInitScript(({ answersKey, aiKey, profileKey, deckKey, answers, aiCard }) => {
     window.localStorage.setItem(answersKey, JSON.stringify(answers));
     window.localStorage.setItem(aiKey, JSON.stringify(aiCard));
     window.localStorage.setItem(profileKey, JSON.stringify({ name: 'Avery Founder', email: 'avery@example.com', companyName: 'ExampleCo', website: 'https://example.com' }));
@@ -147,8 +147,8 @@ test.describe('West Peek Pitch Lab Master Gauntlet — hostile max-depth', () =>
   test('practice flow blocks thin answers, advances through all seven prompts, and persists founder answers locally', async ({ page }) => {
     await page.goto('/practice');
     await expect(page.locator('body')).toContainText('AI Scooter coaching conversation');
-    await page.getByLabel('Name').fill('Avery Founder');
-    await page.getByLabel('Email').fill('avery@example.com');
+    await page.getByRole('textbox', { name: 'Name', exact: true }).fill('Avery Founder');
+    await page.getByRole('textbox', { name: 'Email', exact: true }).fill('avery@example.com');
     await page.getByLabel('Company name').fill('ExampleCo');
     await page.getByRole('button', { name: /Start AI Scooter practice/i }).click();
 
@@ -222,8 +222,8 @@ test.describe('West Peek Pitch Lab Master Gauntlet — hostile max-depth', () =>
 
   test('share page blocks placeholder submission when no AI Pitch Story Card exists', async ({ page }) => {
     await page.goto('/share');
-    await expect(page.locator('body')).toContainText('Generate your AI Pitch Story Card first');
-    await expect(page.locator('body')).toContainText('No placeholder submission is allowed');
+    await expect(page.locator('body')).toContainText('Start with your founder profile');
+    await expect(page.locator('body')).toContainText('Your pitch answers and Founder Story Packet stay private unless you choose to share them');
     const shareStatus = await page.evaluate((key) => localStorage.getItem(key), STORAGE_SHARE_STATUS_KEY);
     expect(shareStatus).toBeNull();
     await expectNoForbiddenPromises(page);
@@ -321,7 +321,7 @@ test.describe('West Peek Pitch Lab Master Gauntlet — hostile max-depth', () =>
     await expect(page.locator('body')).toContainText('Scooter media identity');
     await expect(page.locator('body')).toContainText('Talking AI Scooter is core');
     await expect(page.locator('body')).toContainText('static/text-only mode is an honest degraded fallback');
-    await expect(page.locator('body')).toContainText('backend-managed and core at key moments');
+    await expect(page.locator('body')).toContainText('Text carries the detailed artifact');
 
     for (const endpoint of ['/api/avatar/status', '/api/voice/status']) {
       const response = await request.get(endpoint);
