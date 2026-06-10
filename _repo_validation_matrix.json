@@ -1,0 +1,378 @@
+{
+  "schemaVersion": "west-peek-validation-matrix-v1",
+  "repo": "west-peek-pitch-lab",
+  "currentImplementedPhase": "phase9d",
+  "targetComplexity": "Level 5",
+  "policy": {
+    "matrixIsAdmissionAuthority": true,
+    "hardFailOnlyForRealProductionRisk": true,
+    "warningsDoNotBlockRoutineIteration": true,
+    "visualSmokeIsStrongWarningUntilBrowserRuntimeCanRun": true,
+    "playwrightDeepJourneyRequiredBeforeProductCompleteAfterPhase7": true,
+    "futureValidatorsMustBeAddedHereBeforePackageScripts": true
+  },
+  "validateAllHardFailCommands": [
+    "validate:matrix",
+    "validate:phase1",
+    "validate:env",
+    "validate:no-secrets",
+    "validate:no-theater",
+    "validate:locked-copy",
+    "validate:canonical-runtime",
+    "build",
+    "test:domain",
+    "validate:phase2",
+    "validate:phase3",
+    "validate:phase4",
+    "validate:phase5",
+    "validate:phase6",
+    "validate:phase7",
+    "validate:phase9a",
+    "validate:phase9b",
+    "validate:phase9b1",
+    "validate:master-gauntlet",
+    "smoke:routes"
+  ],
+  "warningOnlyCommands": [
+    "smoke:visual",
+    "env:create-local",
+    "env:local:from-vault",
+    "env:cloudflare:plan"
+  ],
+  "entries": [
+    {
+      "script": "validate:matrix",
+      "command": "node scripts/validate-validation-matrix.mjs",
+      "category": "validation governance",
+      "severity": "HARD_FAIL_CURRENT",
+      "productionRisk": "Unclassified validators can bypass severity policy and create theatre or petty hard-fails.",
+      "proves": "Every validation/build/smoke/env proof command is admitted to the matrix with severity and proof boundaries.",
+      "doesNotProve": "Product behavior, browser rendering, providers, or deployment.",
+      "failureHandling": "Update matrix first or remove unadmitted script from package.json.",
+      "ownerDecisionNeeded": false
+    },
+    {
+      "script": "validate:phase1",
+      "command": "node scripts/validate-phase1.mjs",
+      "category": "contracts/docs",
+      "severity": "HARD_FAIL_CURRENT",
+      "productionRisk": "Missing source contracts cause implementation drift and false completion claims.",
+      "proves": "Required repo contracts and product guardrail concepts exist.",
+      "doesNotProve": "Runtime behavior or provider integrations.",
+      "failureHandling": "Restore missing contract or guarded concept.",
+      "ownerDecisionNeeded": false
+    },
+    {
+      "script": "validate:env",
+      "command": "node scripts/validate-env-contract.mjs",
+      "category": "env/secrets",
+      "severity": "HARD_FAIL_CURRENT",
+      "productionRisk": "Env drift, client secret exposure, or missing deploy keys can break runtime/provider/deploy paths.",
+      "proves": "Registry/examples/vault envelope/gitignore safety and current Cloudflare scope are coherent.",
+      "doesNotProve": "Real credentials, provider validity, or Cloudflare dashboard state.",
+      "failureHandling": "Fix registry/examples/vault/gitignore. Do not hardcode keys.",
+      "ownerDecisionNeeded": false
+    },
+    {
+      "script": "validate:no-secrets",
+      "command": "node scripts/check-no-plaintext-secrets.mjs",
+      "category": "security",
+      "severity": "HARD_FAIL_CURRENT",
+      "productionRisk": "Plaintext secrets in source/ZIP create direct credential exposure.",
+      "proves": "Common plaintext env files and high-signal secret patterns are absent.",
+      "doesNotProve": "Secrets were not leaked elsewhere or deployed config is correct.",
+      "failureHandling": "Remove secret, rotate if real, regenerate safe examples/vault.",
+      "ownerDecisionNeeded": true
+    },
+    {
+      "script": "validate:no-theater",
+      "command": "node scripts/validate-no-theater.mjs",
+      "category": "anti-theater",
+      "severity": "HARD_FAIL_CURRENT",
+      "productionRisk": "Fake success, production mocks, or hidden placeholders can mislead owner/users.",
+      "proves": "High-risk fake-success and mock-production markers are absent from runtime/test paths and proof docs exist.",
+      "doesNotProve": "All future behavior is real; behavioral tests still required.",
+      "failureHandling": "Replace fake success with honest unavailable/failure state or explicit test-only lane.",
+      "ownerDecisionNeeded": false
+    },
+    {
+      "script": "validate:locked-copy",
+      "command": "node scripts/validate-locked-copy.mjs",
+      "category": "brand/trust copy",
+      "severity": "HARD_FAIL_CURRENT",
+      "productionRisk": "Founder promise/disclosure drift can mislead users or create legal/brand risk.",
+      "proves": "Canonical locked copy JSON contains required product and disclosure anchors; runtime loads JSON source.",
+      "doesNotProve": "Visual design or page placement quality.",
+      "failureHandling": "Update canonical JSON intentionally and keep runtime tied to it.",
+      "ownerDecisionNeeded": true
+    },
+    {
+      "script": "validate:canonical-runtime",
+      "command": "node scripts/validate-canonical-runtime.mjs",
+      "category": "runtime architecture",
+      "severity": "HARD_FAIL_CURRENT",
+      "productionRisk": "Parallel TypeScript scaffold and plain .mjs runtime files can drift, causing validators to approve one path while the deployed app runs another.",
+      "proves": "Current app uses one canonical implementation path: plain .mjs runtime plus JSON contracts, with no TypeScript scaffold files under src/.",
+      "doesNotProve": "Browser visual quality, live providers, or future TypeScript build correctness.",
+      "failureHandling": "Remove scaffold drift or intentionally migrate to a real TypeScript build pipeline before continuing.",
+      "ownerDecisionNeeded": false
+    },
+    {
+      "script": "build",
+      "command": "node scripts/build-static-app.mjs",
+      "category": "build",
+      "severity": "HARD_FAIL_CURRENT",
+      "productionRisk": "App cannot produce deployable static output.",
+      "proves": "Current static build can generate route HTML/assets.",
+      "doesNotProve": "Deployed runtime, live functions, or visual approval.",
+      "failureHandling": "Fix build/runtime import/output error.",
+      "ownerDecisionNeeded": false
+    },
+    {
+      "script": "test:domain",
+      "command": "node tests/domain/phase2-contracts.mjs && node tests/domain/phase3-contracts.mjs && node tests/domain/phase4-contracts.mjs && node tests/domain/phase5-contracts.mjs && node tests/domain/phase6-contracts.mjs && node tests/domain/phase7-contracts.mjs && node tests/domain/phase9a-contracts.mjs && node tests/domain/phase9b-contracts.mjs && node tests/domain/phase9b1-contracts.mjs",
+      "category": "domain behavior",
+      "severity": "HARD_FAIL_CURRENT",
+      "productionRisk": "Core data/consent/AI/wisdom contracts can regress while routes still render.",
+      "proves": "Current phase domain contracts through Phase 9B.1 behave without provider theatre, numeric scoring, consent bypass, or brand/design parity regression.",
+      "doesNotProve": "Full browser Playwright journey, live providers, deployed runtime, or visual approval.",
+      "failureHandling": "Fix product/domain logic, not tests unless test is objectively wrong.",
+      "ownerDecisionNeeded": false
+    },
+    {
+      "script": "validate:phase2",
+      "command": "node scripts/validate-phase2.mjs",
+      "category": "static shell",
+      "severity": "HARD_FAIL_CURRENT",
+      "productionRisk": "Required founder-facing routes/disclosures may be missing or may claim unavailable features work.",
+      "proves": "Built static routes contain core brand/trust anchors and no fake completion claims.",
+      "doesNotProve": "Interactive journey, provider integrations, or visual polish.",
+      "failureHandling": "Fix route shell or disclosure anchors.",
+      "ownerDecisionNeeded": false
+    },
+    {
+      "script": "validate:phase3",
+      "command": "node scripts/validate-phase3.mjs",
+      "category": "local practice flow",
+      "severity": "HARD_FAIL_CURRENT",
+      "productionRisk": "Founder flow could capture/share/imply AI before consent/provider phases exist.",
+      "proves": "Question set, local card shape, inactive share state, and no fake submit/email/review claims.",
+      "doesNotProve": "Live AI, email, Network OS, or browser E2E.",
+      "failureHandling": "Fix local flow/card/claim boundary.",
+      "ownerDecisionNeeded": false
+    },
+    {
+      "script": "validate:phase4",
+      "command": "node scripts/validate-phase4.mjs",
+      "category": "LLM contract",
+      "severity": "HARD_FAIL_CURRENT",
+      "productionRisk": "AI provider path could leak secrets, fake output, skip schema validation, or lack honest unavailable state.",
+      "proves": "Server-side Gemini/OpenAI fallback contracts, schema/unavailable anchors, and env keys exist.",
+      "doesNotProve": "Live Gemini/OpenAI calls or deployed Cloudflare functions.",
+      "failureHandling": "Fix server provider/router/schema/failure state.",
+      "ownerDecisionNeeded": false
+    },
+    {
+      "script": "validate:phase5",
+      "command": "node scripts/validate-scooter-wisdom.mjs",
+      "category": "Scooter Wisdom governance",
+      "severity": "HARD_FAIL_CURRENT",
+      "productionRisk": "Generic/fabricated/raw Scooter persona could enter runtime.",
+      "proves": "Approved wisdom is mandatory, raw sources blocked, no wisdom env mode exists, prompt includes approved context.",
+      "doesNotProve": "Scooter has approved future interview material or live AI quality.",
+      "failureHandling": "Fix approved-wisdom source/validator/prompt contract.",
+      "ownerDecisionNeeded": true
+    },
+    {
+      "script": "validate:phase6",
+      "command": "node scripts/validate-phase6.mjs",
+      "category": "voice/avatar provider contract",
+      "severity": "HARD_FAIL_CURRENT",
+      "productionRisk": "Voice/avatar provider integration can leak secrets, fake media success, skip cost guards, or break static fallback.",
+      "proves": "ElevenLabs-first voice + talking-photo provider posture, fallback providers, request-level cost guards, safe unavailable states, and degraded static/text fallback contract exist for Phase 6/9D.",
+      "doesNotProve": "Live ElevenLabs credentials, paid provider account status, real media quality, persistent usage metering, headed gauntlet execution, or visual avatar approval.",
+      "failureHandling": "Fix provider contract, cost guard, fallback, env registry, or no-theater boundary before continuing.",
+      "ownerDecisionNeeded": false
+    },
+    {
+      "script": "smoke:routes",
+      "command": "node scripts/route-smoke.mjs",
+      "category": "static route smoke",
+      "severity": "HARD_FAIL_CURRENT",
+      "productionRisk": "Critical current routes may fail to serve after build.",
+      "proves": "Built routes return 200 from local static server and include trust anchors.",
+      "doesNotProve": "Browser interactivity, visual screenshots, deployed hosting, or functions.",
+      "failureHandling": "Fix build/routes/server output.",
+      "ownerDecisionNeeded": false
+    },
+    {
+      "script": "smoke:visual",
+      "command": "node scripts/visual-smoke.mjs",
+      "category": "visual smoke",
+      "severity": "STRONG_WARNING_CURRENT",
+      "productionRisk": "Visual/layout regressions can reduce trust, but container browser gaps should not block structural ZIP delivery.",
+      "proves": "Screenshots can be produced when Chromium is available.",
+      "doesNotProve": "Human visual approval or product correctness.",
+      "failureHandling": "Attempt and disclose. Resolve before production visual approval/COMPLETE if screenshots are required.",
+      "ownerDecisionNeeded": true
+    },
+    {
+      "script": "env:create-local",
+      "command": "node scripts/env/create-local-env.mjs",
+      "category": "local env setup",
+      "severity": "STRONG_WARNING_CURRENT_HARD_FAIL_BEFORE_LOCAL_RUNTIME_PROOF",
+      "productionRisk": "Owner cannot create local env deterministically.",
+      "proves": "Placeholders can be generated from registry.",
+      "doesNotProve": "Real keys exist or are valid.",
+      "failureHandling": "Fix registry/script. Hard fail before local live provider validation.",
+      "ownerDecisionNeeded": false
+    },
+    {
+      "script": "env:local:from-vault",
+      "command": "node scripts/env/restore-local-env-from-vault.mjs",
+      "category": "env recovery",
+      "severity": "STRONG_WARNING_CURRENT_HARD_FAIL_BEFORE_LOCAL_RUNTIME_PROOF",
+      "productionRisk": "Encrypted env persistence may not restore local env.",
+      "proves": "Vault restore path works when passphrase is available.",
+      "doesNotProve": "Provider credentials are valid.",
+      "failureHandling": "Fix vault/restore script. Hard fail before live runtime proof.",
+      "ownerDecisionNeeded": false
+    },
+    {
+      "script": "env:cloudflare:plan",
+      "command": "node scripts/env/write-cloudflare-env-plan.mjs",
+      "category": "deployment env plan",
+      "severity": "STRONG_WARNING_CURRENT_HARD_FAIL_BEFORE_DEPLOY",
+      "productionRisk": "Cloudflare variables may be missed at deploy.",
+      "proves": "Names-only deploy plan can be generated from registry for implemented phase scope.",
+      "doesNotProve": "Cloudflare values are applied or valid.",
+      "failureHandling": "Fix registry/scope/sync script before deployment.",
+      "ownerDecisionNeeded": true
+    },
+    {
+      "script": "validate:all",
+      "command": "orchestrates current hard-fail validation commands",
+      "category": "validation orchestration",
+      "severity": "INFO_NO_VALIDATION",
+      "productionRisk": "None directly; each child command carries its own severity.",
+      "proves": "Convenience command references current hard-fail set.",
+      "doesNotProve": "Anything beyond child commands.",
+      "failureHandling": "Fix child command or validate:all composition.",
+      "ownerDecisionNeeded": false
+    },
+    {
+      "script": "env:create-local:force",
+      "command": "node scripts/env/create-local-env.mjs --force",
+      "category": "local env setup alias",
+      "severity": "STRONG_WARNING_CURRENT_HARD_FAIL_BEFORE_LOCAL_RUNTIME_PROOF",
+      "productionRisk": "Same as env:create-local; force alias may overwrite local placeholder file intentionally.",
+      "proves": "Forced placeholder regeneration can run when chosen by operator.",
+      "doesNotProve": "Real keys exist or are valid.",
+      "failureHandling": "Fix registry/script; use with care locally.",
+      "ownerDecisionNeeded": true
+    },
+    {
+      "script": "env:local:from-vault:force",
+      "command": "node scripts/env/restore-local-env-from-vault.mjs --force",
+      "category": "env recovery alias",
+      "severity": "STRONG_WARNING_CURRENT_HARD_FAIL_BEFORE_LOCAL_RUNTIME_PROOF",
+      "productionRisk": "Same as env:local:from-vault; force alias may overwrite local env intentionally.",
+      "proves": "Forced vault restore path can run when chosen by operator.",
+      "doesNotProve": "Provider credentials are valid.",
+      "failureHandling": "Fix vault/restore script; use with care locally.",
+      "ownerDecisionNeeded": true
+    },
+    {
+      "script": "validate:phase7",
+      "command": "node tests/domain/phase7-contracts.mjs",
+      "category": "network handoff contract",
+      "severity": "HARD_FAIL_CURRENT",
+      "productionRisk": "Consentless, unsigned, fake, or auto-contact Network OS submissions would violate Phase 7 trust boundary.",
+      "proves": "Pitch Lab builds deterministic consent-gated payloads, signs server-to-server requests, rejects disabled/missing config, and refuses auto-contact success.",
+      "doesNotProve": "Live Network OS persistence, Google Sheets, real shared secret, deployed Cloudflare routing, or browser Playwright journey.",
+      "failureHandling": "Fix payload contract, signing, consent, or honest failure behavior before packaging Phase 7.",
+      "ownerDecisionNeeded": false
+    },
+    {
+      "script": "validate:phase9a",
+      "command": "node scripts/validate-phase9a.mjs",
+      "category": "E2E journey/completeness",
+      "severity": "HARD_FAIL_CURRENT",
+      "productionRisk": "Founder journey can feel incomplete, expose scoring risk, or claim unconfirmed submission success after email was removed.",
+      "proves": "Pitch Lab has copy-card path, qualitative Story Strength Signals, no numeric/fundability score, no email-me-card resurfacing, clear what-happens-next copy, and confirmed-submission-only thank-you behavior.",
+      "doesNotProve": "Live provider quality, browser Playwright execution, deployed Network OS handoff, or Phase 9B design overhaul.",
+      "failureHandling": "Fix journey copy/runtime validators or remove the risky claim/feature before packaging.",
+      "ownerDecisionNeeded": false
+    },
+    {
+      "script": "validate:phase9b",
+      "command": "node scripts/validate-phase9b.mjs",
+      "category": "brand/design overhaul",
+      "severity": "HARD_FAIL_CURRENT",
+      "productionRisk": "Pitch Lab can regress into generic UI, missing West Peek logo/brand assets, hidden consent copy, or hard-to-read story-card surfaces before founder-facing release.",
+      "proves": "West Peek logo assets, black/white/orange palette, mantra hierarchy, story-card readability anchors, and consent/trust copy are present in built routes.",
+      "doesNotProve": "Human visual approval, pixel-perfect parity with existing Join West Peek apps, or headed Playwright behavior; Phase 9B.1 adds source-family parity checks.",
+      "failureHandling": "Restore brand assets, palette/mantra anchors, readability, or consent/trust surfaces; do not weaken disclosure for design polish.",
+      "ownerDecisionNeeded": true
+    },
+    {
+      "script": "validate:phase9b1",
+      "command": "node scripts/validate-phase9b1.mjs",
+      "category": "brand/design parity",
+      "severity": "HARD_FAIL_CURRENT",
+      "productionRisk": "Pitch Lab can look West Peek-colored but still drift away from the preferred Ventures/Live app family or use fabricated brand assets.",
+      "proves": "Provided West Peek logo assets, Ventures/Live inspiration anchors, sharper editorial black-white-orange styling, and no-theater boundaries are present.",
+      "doesNotProve": "Pixel-perfect live-site parity, human visual approval, headed browser behavior, or deployed rendering.",
+      "failureHandling": "Restore provided logo, parity anchors, editorial styling, or trust boundaries before packaging.",
+      "ownerDecisionNeeded": true
+    },
+    {
+      "script": "validate:master-gauntlet",
+      "command": "node scripts/validate-master-gauntlet.mjs",
+      "category": "master gauntlet / E2E proof harness",
+      "severity": "HARD_FAIL_CURRENT",
+      "productionRisk": "Level 5 product can appear complete while the capstone E2E journey, media requirements, consent boundaries, and provider failure states are not even wired for proof.",
+      "proves": "Master Gauntlet docs, Playwright config, e2e spec, fixtures, official Scooter photo asset, ElevenLabs-first provider posture, and required media moments exist and are wired for local/headed execution.",
+      "doesNotProve": "Headed browser execution, real ElevenLabs provider success, Cloudflare deployment, or live Network OS persistence. Those require the gauntlet run and real env/provider inputs.",
+      "failureHandling": "Restore missing gauntlet files, official media assets, provider posture, or no-theater assertions before packaging.",
+      "ownerDecisionNeeded": false
+    }
+  ],
+  "futureRequiredProofs": [
+    {
+      "phase": "phase6",
+      "proof": "voice/avatar provider disabled/failure/cost-guard tests",
+      "severity": "HARD_FAIL_WHEN_FEATURE_ENABLED"
+    },
+    {
+      "phase": "phase7",
+      "proof": "signed Network OS handoff + pending intake + no auto-contact creation",
+      "severity": "HARD_FAIL_FOR_COMPLETE"
+    },
+    {
+      "phase": "phase9",
+      "proof": "local Playwright Master Gauntlet deep journey/outcome E2E",
+      "severity": "HARD_FAIL_FOR_COMPLETE"
+    },
+    {
+      "phase": "phase10",
+      "proof": "deployed smoke and postdeploy critical-lane E2E once safe",
+      "severity": "HARD_FAIL_FOR_DEPLOYED_COMPLETE"
+    },
+    {
+      "phase": "phase9d-headed",
+      "proof": "Run npm run gauntlet:headed locally after Playwright is installed and env/provider assets are ready.",
+      "severity": "HARD_FAIL_FOR_COMPLETE"
+    },
+    {
+      "phase": "phase9d-provider",
+      "proof": "Run ElevenLabs voice/video provider proof only after real API key and approved voice/avatar IDs are provided.",
+      "severity": "HARD_FAIL_FOR_MEDIA_COMPLETE"
+    },
+    {
+      "phase": "phase9d-env",
+      "proof": "Final env subset remains pending; real values must be encrypted into secrets/pitch-lab.env.vault.enc and plaintext env removed.",
+      "severity": "HARD_FAIL_FOR_PRODUCTION_SETUP"
+    }
+  ]
+}

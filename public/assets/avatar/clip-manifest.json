@@ -1,0 +1,56 @@
+{
+  "version": "phase9d-elevenlabs-first-ai-scooter-media-v1",
+  "providerPolicy": "ElevenLabs first for MVP voice + talking-photo/video. HeyGen and MakeUGC are fallback/research lanes only after MVP proof.",
+  "coreProductRule": "Talking AI Scooter appears at key moments for every intended founder journey; text-only is degraded mode, not the product concept.",
+  "sourcePhoto": "/assets/avatar/scooter-avatar-source.png",
+  "drivingVideoReservedPath": "/assets/avatar/scooter-driving-video-source.mp4",
+  "clips": [
+    {
+      "id": "welcome",
+      "moment": "welcome",
+      "requiredForMvp": true,
+      "dynamic": "cached_or_prerendered",
+      "status": "source_ready_not_rendered",
+      "src": "",
+      "fallback": "static_scooter_avatar_degraded_mode",
+      "maxSeconds": 20,
+      "sourceProof": "source_photo_and_driving_video_ready"
+    },
+    {
+      "id": "midpoint-checkin",
+      "moment": "midpoint_checkin",
+      "requiredForMvp": false,
+      "dynamic": "optional_later",
+      "status": "not_rendered",
+      "src": "",
+      "fallback": "text_coaching",
+      "maxSeconds": 15
+    },
+    {
+      "id": "final-summary",
+      "moment": "final_summary",
+      "requiredForMvp": true,
+      "dynamic": "dynamic_personalized",
+      "status": "source_ready_not_rendered",
+      "src": "",
+      "fallback": "text_summary_degraded_mode",
+      "maxSeconds": 40,
+      "sourceProof": "source_photo_and_driving_video_ready"
+    },
+    {
+      "id": "share-cta",
+      "moment": "share_cta",
+      "requiredForMvp": true,
+      "dynamic": "cached_or_lightly_dynamic",
+      "status": "source_ready_not_rendered",
+      "src": "",
+      "fallback": "text_share_boundary_degraded_mode",
+      "maxSeconds": 15,
+      "sourceProof": "source_photo_and_driving_video_ready"
+    }
+  ],
+  "drivingVideoStatus": "uploaded_and_committed",
+  "drivingVideoSource": "/assets/avatar/scooter-driving-video-source.mp4",
+  "drivingVideoBytes": 27347394,
+  "drivingVideoSha256": "c46759420f2721b6270b89dcabb4f95e395fd15ba84595b166a5a15d0847fcec"
+}

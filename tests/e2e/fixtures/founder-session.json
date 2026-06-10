@@ -1,0 +1,17 @@
+{
+  "founder": {
+    "name": "Test Founder",
+    "email": "founder@example.com",
+    "companyName": "Repeatable Story Co",
+    "website": "https://example.com"
+  },
+  "answers": [
+    "We are building a relationship-intelligence tool for founder-led companies.",
+    "It is for founders who need clearer story, investor readiness, and better relationship routing.",
+    "The painful problem is that good products often get ignored because the story is hard to repeat.",
+    "The timing matters because AI makes story iteration faster but also creates more generic pitches.",
+    "The team has direct founder, investor, and AI product-building experience.",
+    "Early proof includes live West Peek deal flow, current founder tooling, and working Network OS integration.",
+    "We need strategic founders, investor feedback, and useful introductions."
+  ]
+}
