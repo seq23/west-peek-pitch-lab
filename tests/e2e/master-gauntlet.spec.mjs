@@ -3,6 +3,8 @@ import { test, expect } from '@playwright/test';
 const STORAGE_ANSWERS_KEY = 'west-peek-pitch-lab.phase3.answers.v1';
 const STORAGE_AI_CARD_KEY = 'west-peek-pitch-lab.phase4.ai-story-card.v1';
 const STORAGE_SHARE_STATUS_KEY = 'west-peek-pitch-lab.phase7.share-status.v1';
+const STORAGE_PROFILE_KEY = 'west-peek-pitch-lab.founder-profile.v1';
+const STORAGE_DECK_CONTEXT_KEY = 'west-peek-pitch-lab.deck-context.v1';
 
 // Required validation anchor: does not guarantee
 const founderAnswers = {
@@ -51,7 +53,7 @@ const fakeAiResponse = {
 
 const fakeShareSuccess = {
   ok: true,
-  review_status: 'pending_human_review',
+  review_status: 'pending_network_review',
   contact_created: false,
   intake_id: 'test-intake-001'
 };
@@ -82,14 +84,17 @@ async function expectNoForbiddenPromises(page) {
 async function seedCompleteAnswers(page) {
   await page.addInitScript(({ key, answers }) => {
     window.localStorage.setItem(key, JSON.stringify(answers));
-  }, { key: STORAGE_ANSWERS_KEY, answers: founderAnswers });
+    window.localStorage.setItem(profileKey, JSON.stringify({ name: 'Avery Founder', email: 'avery@example.com', companyName: 'ExampleCo', website: 'https://example.com' }));
+  }, { key: STORAGE_ANSWERS_KEY, profileKey: STORAGE_PROFILE_KEY, answers: founderAnswers });
 }
 
 async function seedAiCard(page) {
   await page.addInitScript(({ answersKey, aiKey, answers, aiCard }) => {
     window.localStorage.setItem(answersKey, JSON.stringify(answers));
     window.localStorage.setItem(aiKey, JSON.stringify(aiCard));
-  }, { answersKey: STORAGE_ANSWERS_KEY, aiKey: STORAGE_AI_CARD_KEY, answers: founderAnswers, aiCard: fakeAiResponse });
+    window.localStorage.setItem(profileKey, JSON.stringify({ name: 'Avery Founder', email: 'avery@example.com', companyName: 'ExampleCo', website: 'https://example.com' }));
+    window.localStorage.setItem(deckKey, JSON.stringify({ deck_provided: false, deck_context_used: false }));
+  }, { answersKey: STORAGE_ANSWERS_KEY, aiKey: STORAGE_AI_CARD_KEY, profileKey: STORAGE_PROFILE_KEY, deckKey: STORAGE_DECK_CONTEXT_KEY, answers: founderAnswers, aiCard: fakeAiResponse });
 }
 
 function liveEnvEnabled(name) {
@@ -102,14 +107,14 @@ test.describe('West Peek Pitch Lab Master Gauntlet — hostile max-depth', () =>
   });
 
   test('all public routes render core brand, trust boundaries, and no forbidden success claims', async ({ page }) => {
-    const routes = ['/', '/how-it-works', '/practice', '/story-card', '/share', '/thank-you', '/privacy', '/terms'];
+    const routes = ['/', '/how-it-works', '/practice', '/story-card', '/share', '/thank-you', '/privacy', '/terms', '/ai-disclosure', '/founder-network-notice', '/data-consent', '/contact', '/delete-my-info'];
     for (const route of routes) {
       await page.goto(route);
       await expect(page.locator('body')).toContainText('Good people should meet good people.');
       await expect(page.locator('body')).toContainText('Good products need good stories.');
       await expect(page.locator('body')).toContainText('AI Scooter');
       await expect(page.locator('body')).toContainText('Trust boundary');
-      await expect(page.locator('body')).toContainText('does not represent an investment decision');
+      await expect(page.locator('body')).toContainText('not an investment committee');
       await expect(page.locator('body')).toContainText(/not guarantee/i);
       await expectNoForbiddenPromises(page);
     }
@@ -141,7 +146,11 @@ test.describe('West Peek Pitch Lab Master Gauntlet — hostile max-depth', () =>
 
   test('practice flow blocks thin answers, advances through all seven prompts, and persists founder answers locally', async ({ page }) => {
     await page.goto('/practice');
-    await expect(page.locator('body')).toContainText('Local practice flow');
+    await expect(page.locator('body')).toContainText('AI Scooter coaching conversation');
+    await page.getByLabel('Name').fill('Avery Founder');
+    await page.getByLabel('Email').fill('avery@example.com');
+    await page.getByLabel('Company name').fill('ExampleCo');
+    await page.getByRole('button', { name: /Start AI Scooter practice/i }).click();
 
     await page.locator('textarea').first().fill('too short');
     await page.getByRole('button', { name: /next question/i }).click();
@@ -229,10 +238,7 @@ test.describe('West Peek Pitch Lab Master Gauntlet — hostile max-depth', () =>
     });
 
     await page.goto('/share');
-    await page.getByLabel('Founder name').fill('Avery Founder');
-    await page.getByLabel('Email').fill('avery@example.com');
-    await page.getByLabel('Company name').fill('ExampleCo');
-    await page.getByRole('button', { name: /Share with West Peek/i }).click();
+    await page.getByRole('button', { name: /Share Founder Story Packet with West Peek/i }).click();
     await expect(page.locator('[data-share-error]')).toContainText('Consent is required');
     expect(called).toBe(false);
     await expectNoForbiddenPromises(page);
@@ -245,11 +251,8 @@ test.describe('West Peek Pitch Lab Master Gauntlet — hostile max-depth', () =>
     });
 
     await page.goto('/share');
-    await page.getByLabel('Founder name').fill('Avery Founder');
-    await page.getByLabel('Email').fill('avery@example.com');
-    await page.getByLabel('Company name').fill('ExampleCo');
     await page.getByLabel(/I consent to share/i).check();
-    await page.getByRole('button', { name: /Share with West Peek/i }).click();
+    await page.getByRole('button', { name: /Share Founder Story Packet with West Peek/i }).click();
     await expect(page.locator('[data-share-result]')).toContainText('Submission was not completed');
     await expect(page.locator('[data-share-result]')).toContainText('No submitted state was recorded');
     const shareStatus = await page.evaluate((key) => localStorage.getItem(key), STORAGE_SHARE_STATUS_KEY);
@@ -257,7 +260,7 @@ test.describe('West Peek Pitch Lab Master Gauntlet — hostile max-depth', () =>
     await expectNoForbiddenPromises(page);
   });
 
-  test('confirmed Network OS handoff records pending human review without auto-contact or exaggerated success', async ({ page }) => {
+  test('confirmed Network OS handoff records pending network review without auto-contact or exaggerated success', async ({ page }) => {
     await seedAiCard(page);
     await page.route('**/api/pitch/share', async (route) => {
       const requestBody = route.request().postDataJSON();
@@ -267,17 +270,14 @@ test.describe('West Peek Pitch Lab Master Gauntlet — hostile max-depth', () =>
     });
 
     await page.goto('/share');
-    await page.getByLabel('Founder name').fill('Avery Founder');
-    await page.getByLabel('Email').fill('avery@example.com');
-    await page.getByLabel('Company name').fill('ExampleCo');
     await page.getByLabel(/I consent to share/i).check();
-    await page.getByRole('button', { name: /Share with West Peek/i }).click();
-    await expect(page.locator('[data-share-result]')).toContainText('Shared with West Peek for human review');
-    await expect(page.locator('[data-share-result]')).toContainText('Contact created: No');
+    await page.getByRole('button', { name: /Share Founder Story Packet with West Peek/i }).click();
+    await expect(page.locator('[data-share-result]')).toContainText('Founder Story Packet shared with West Peek for network review');
+    await expect(page.locator('[data-share-result]')).toContainText('Database write:');
 
     await page.getByRole('link', { name: /Continue/i }).click();
-    await expect(page.locator('body')).toContainText('pending_human_review');
-    await expect(page.locator('body')).toContainText('Contact created automatically: No');
+    await expect(page.locator('body')).toContainText('pending_network_review');
+    await expect(page.locator('body')).toContainText('No outreach, intro, investment review, or follow-up is automatic.');
     await expectNoForbiddenPromises(page);
   });
 
@@ -297,16 +297,13 @@ test.describe('West Peek Pitch Lab Master Gauntlet — hostile max-depth', () =>
     });
 
     await page.goto('/share');
-    await page.getByLabel('Founder name').fill('Avery Founder');
-    await page.getByLabel('Email').fill('avery@example.com');
-    await page.getByLabel('Company name').fill('ExampleCo');
     await page.getByLabel(/I consent to share/i).check();
-    await page.getByRole('button', { name: /Share with West Peek/i }).click();
-    await expect(page.locator('[data-share-result]')).toContainText('Shared with West Peek for human review');
+    await page.getByRole('button', { name: /Share Founder Story Packet with West Peek/i }).click();
+    await expect(page.locator('[data-share-result]')).toContainText('Founder Story Packet shared with West Peek for network review');
 
     expect(observedPayload).not.toBeNull();
     const shareStatus = await page.evaluate((key) => JSON.parse(localStorage.getItem(key) || 'null'), STORAGE_SHARE_STATUS_KEY);
-    expect(shareStatus.reviewStatus).toBe('pending_human_review');
+    expect(shareStatus.reviewStatus).toBe('pending_network_review');
     expect(shareStatus.contactCreated).toBe(false);
     expect(shareStatus.intakeId).toBe('test-intake-001');
     await expectNoForbiddenPromises(page);
@@ -363,10 +360,10 @@ test.describe('West Peek Pitch Lab Master Gauntlet — hostile max-depth', () =>
     await page.getByLabel('Email').fill('gauntlet-live-founder@example.com');
     await page.getByLabel('Company name').fill('Gauntlet Live Company');
     await page.getByLabel(/I consent to share/i).check();
-    await page.getByRole('button', { name: /Share with West Peek/i }).click();
-    await expect(page.locator('[data-share-result]')).toContainText('Shared with West Peek for human review');
+    await page.getByRole('button', { name: /Share Founder Story Packet with West Peek/i }).click();
+    await expect(page.locator('[data-share-result]')).toContainText('Founder Story Packet shared with West Peek for network review');
     const shareStatus = await page.evaluate((key) => JSON.parse(localStorage.getItem(key) || 'null'), STORAGE_SHARE_STATUS_KEY);
-    expect(shareStatus.reviewStatus).toBe('pending_human_review');
+    expect(shareStatus.reviewStatus).toBe('pending_network_review');
     expect(shareStatus.contactCreated).toBe(false);
     await expectNoForbiddenPromises(page);
   });
@@ -393,4 +390,37 @@ test.describe('West Peek Pitch Lab Master Gauntlet — hostile max-depth', () =>
       await expectNoForbiddenPromises(page);
     }
   });
+
+  test('profile gate, footer disclosures, policy routes, deck context, and Practice Out Loud are present', async ({ page }) => {
+    await page.goto('/practice');
+    await expect(page.locator('body')).toContainText('Enter your email to begin and save your Pitch Lab session');
+    await expect(page.locator('body')).toContainText('Optional deck-as-context');
+    await expect(page.locator('body')).toContainText('not a deck review');
+    await page.goto('/story-card');
+    await expect(page.locator('body')).toContainText('Practice Out Loud');
+    await expect(page.locator('body')).toContainText('local-first');
+    await page.goto('/');
+    for (const label of ['Terms', 'Privacy', 'AI Disclosure', 'Founder Network Notice', 'Data & Consent', 'Contact', 'Delete / Update My Info']) {
+      await expect(page.getByRole('link', { name: label }).last()).toBeVisible();
+    }
+  });
+
+  test('Founder Story Packet payload uses relationship routing and disclaimer acknowledgements', async ({ page }) => {
+    await seedAiCard(page);
+    let observedPayload = null;
+    await page.route('**/api/pitch/share', async (route) => {
+      observedPayload = route.request().postDataJSON();
+      expect(observedPayload.aiPersona).toBe('AI Scooter');
+      expect(observedPayload.consent.disclaimersAcknowledged.network_review_only).toBe(true);
+      expect(observedPayload.consent.includeDeckFile).toBe(false);
+      expect(observedPayload.consent.includePracticeVideo).toBe(false);
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(fakeShareSuccess) });
+    });
+    await page.goto('/share');
+    await page.getByLabel(/I consent to share my Founder Story Packet/i).check();
+    await page.getByRole('button', { name: /Share Founder Story Packet with West Peek/i }).click();
+    expect(observedPayload).not.toBeNull();
+    await expect(page.locator('[data-share-result]')).toContainText('network review');
+  });
+
 });

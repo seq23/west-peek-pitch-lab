@@ -17,17 +17,22 @@ const storyCard = {
   nextSteps: 'Refine proof, test story with five prospects, then share with West Peek.'
 };
 const founder = { name: 'Taylor Founder', email: 'founder@example.com', companyName: 'Founder Co', website: 'https://example.com' };
-const consent = { shareWithWestPeek: true, consentVersion: 'pitch-lab-share-v1', consentedAt: '2026-06-09T12:00:00.000Z' };
+const consent = { shareWithWestPeek: true, consentVersion: 'pitch-lab-share-v1', consentedAt: '2026-06-09T12:00:00.000Z', disclaimersAcknowledged: { ai_disclosure: true, no_investment_advice: true, no_guaranteed_follow_up: true, network_review_only: true } };
 
 const built = buildPitchLabNetworkPayload({ founder, storyCard, consent, submittedAt: '2026-06-09T12:00:00.000Z' });
 assert.equal(built.ok, true);
 assert.equal(built.payload.source, 'pitch_lab');
-assert.equal(built.payload.capture_type, 'pitch_practice');
-assert.equal(built.payload.routing.person_type, 'founder');
-assert.equal(built.payload.routing.trigger_intent, 'deal_flow');
-assert.equal(built.payload.routing.human_review_required, true);
-assert.equal(built.payload.routing.execution_allowed, false);
-assert.equal(built.payload.routing.review_status, 'pending_human_review');
+assert.equal(built.payload.capture_type, 'founder_story_packet');
+assert.equal(built.payload.person_type, 'founder');
+assert.equal(built.payload.trigger_intent, 'relationship_routing');
+assert.equal(built.payload.network_intake, true);
+assert.equal(built.payload.human_review_required, true);
+assert.equal(built.payload.execution_allowed, false);
+assert.equal(built.payload.review_status, 'pending_network_review');
+assert.equal(built.payload.investment_decision, false);
+assert.equal(built.payload.follow_up_guaranteed, false);
+assert.equal(built.payload.ai_persona, 'AI Scooter');
+assert.equal(built.payload.disclaimers_acknowledged.network_review_only, true);
 
 const noConsent = buildPitchLabNetworkPayload({ founder, storyCard, consent: { shareWithWestPeek: false } });
 assert.equal(noConsent.ok, false);
@@ -41,7 +46,10 @@ const fakeFetch = async (_url, request) => {
   assert.equal(request.method, 'POST');
   assert.ok(request.headers['x-pitch-lab-signature']);
   assert.ok(request.headers['x-pitch-lab-submitted-at']);
-  return new Response(JSON.stringify({ ok: true, intake_id: 'intake_test_123', review_status: 'pending_human_review', contact_created: false }), { status: 200, headers: { 'content-type': 'application/json' } });
+  const body = JSON.parse(request.body);
+  assert.equal(body.trigger_intent, 'relationship_routing');
+  assert.equal(body.investment_decision, false);
+  return new Response(JSON.stringify({ ok: true, intake_id: 'intake_test_123', review_status: 'pending_network_review', contact_created: false }), { status: 200, headers: { 'content-type': 'application/json' } });
 };
 const sent = await submitPitchLabShare({ founder, storyCard, consent }, {
   NETWORK_OS_HANDOFF_ENABLED: 'true',
@@ -50,16 +58,34 @@ const sent = await submitPitchLabShare({ founder, storyCard, consent }, {
   NETWORK_OS_TIMEOUT_MS: '1000'
 }, fakeFetch);
 assert.equal(sent.ok, true);
-assert.equal(sent.review_status, 'pending_human_review');
+assert.equal(sent.review_status, 'pending_network_review');
 assert.equal(sent.contact_created, false);
 
-const autoContact = await submitPitchLabShare({ founder, storyCard, consent }, {
+const profileUpsert = await submitPitchLabShare({ founder, storyCard, consent }, {
   NETWORK_OS_HANDOFF_ENABLED: 'true',
   NETWORK_OS_PITCH_LAB_ENDPOINT: 'https://network.joinwestpeek.com/api/intake/pitch-lab',
   NETWORK_OS_SHARED_SECRET: 'local-test-shared-secret-1234',
   NETWORK_OS_TIMEOUT_MS: '1000'
-}, async () => new Response(JSON.stringify({ ok: true, intake_id: 'bad', review_status: 'pending_human_review', contact_created: true }), { status: 200 }));
-assert.equal(autoContact.ok, false);
-assert.equal(autoContact.error_code, 'CONTACT_AUTO_CREATE_GUARD');
+}, async () => new Response(JSON.stringify({ ok: true, intake_id: 'ok_profile', review_status: 'pending_network_review', database_write_status: 'linked_to_existing_profile', profile_created: false, contact_created: true, execution_allowed: false, follow_up_guaranteed: false }), { status: 200 }));
+assert.equal(profileUpsert.ok, true);
+assert.equal(profileUpsert.database_write_status, 'linked_to_existing_profile');
 
-console.log('PHASE 7 DOMAIN OK — consent-gated signed Network OS handoff contract is deterministic and no auto-contact success is accepted.');
+const autoExecution = await submitPitchLabShare({ founder, storyCard, consent }, {
+  NETWORK_OS_HANDOFF_ENABLED: 'true',
+  NETWORK_OS_PITCH_LAB_ENDPOINT: 'https://network.joinwestpeek.com/api/intake/pitch-lab',
+  NETWORK_OS_SHARED_SECRET: 'local-test-shared-secret-1234',
+  NETWORK_OS_TIMEOUT_MS: '1000'
+}, async () => new Response(JSON.stringify({ ok: true, intake_id: 'bad', review_status: 'pending_network_review', execution_allowed: true, follow_up_guaranteed: false }), { status: 200 }));
+assert.equal(autoExecution.ok, false);
+assert.equal(autoExecution.error_code, 'AUTO_EXECUTION_GUARD');
+
+const followUpPromise = await submitPitchLabShare({ founder, storyCard, consent }, {
+  NETWORK_OS_HANDOFF_ENABLED: 'true',
+  NETWORK_OS_PITCH_LAB_ENDPOINT: 'https://network.joinwestpeek.com/api/intake/pitch-lab',
+  NETWORK_OS_SHARED_SECRET: 'local-test-shared-secret-1234',
+  NETWORK_OS_TIMEOUT_MS: '1000'
+}, async () => new Response(JSON.stringify({ ok: true, intake_id: 'bad', review_status: 'pending_network_review', execution_allowed: false, follow_up_guaranteed: true }), { status: 200 }));
+assert.equal(followUpPromise.ok, false);
+assert.equal(followUpPromise.error_code, 'FOLLOW_UP_GUARANTEE_GUARD');
+
+console.log('PHASE 7 DOMAIN OK — relationship-routing Founder Story Packet handoff is consent-gated, profile upsert is allowed, and auto-execution/follow-up promises are rejected.');

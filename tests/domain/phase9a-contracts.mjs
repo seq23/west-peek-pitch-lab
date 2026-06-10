@@ -66,11 +66,13 @@ assert.doesNotMatch(clipboardText, /fundability score/i);
 const shared = buildPitchLabNetworkPayload({
   founder: { name: 'Founder Person', email: 'founder@example.com', companyName: 'Founder Co' },
   storyCard: aiShape.value.storyCard,
-  consent: { shareWithWestPeek: true, consentVersion: 'pitch-lab-share-v1', consentedAt: '2026-06-09T12:00:00.000Z' }
+  consent: { shareWithWestPeek: true, consentVersion: 'pitch-lab-share-v1', consentedAt: '2026-06-09T12:00:00.000Z', disclaimersAcknowledged: { ai_disclosure: true, no_investment_advice: true, no_guaranteed_follow_up: true, network_review_only: true } }
 });
 assert.equal(shared.ok, true);
-assert.equal(shared.payload.routing.review_status, 'pending_human_review');
-assert.equal(shared.payload.routing.execution_allowed, false);
-assert.equal(shared.payload.routing.human_review_required, true);
+assert.equal(shared.payload.review_status, 'pending_network_review');
+assert.equal(shared.payload.execution_allowed, false);
+assert.equal(shared.payload.human_review_required, true);
+assert.equal(shared.payload.trigger_intent, 'relationship_routing');
+assert.equal(shared.payload.investment_decision, false);
 
 console.log('PHASE 9A DOMAIN OK — journey logic has Story Strength Signals, copy path, consented handoff, and no numeric/fundability scoring.');

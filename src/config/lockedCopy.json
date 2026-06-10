@@ -1,10 +1,10 @@
 {
   "productName": "West Peek Pitch Lab",
-  "featureName": "Pitch Practice with Scooter",
+  "featureName": "Pitch Practice with AI Scooter \u00b7 Pitch Practice with Scooter",
   "founderLine": "Good products need good stories.",
   "brandLine": "Good people should meet good people.",
   "primaryCta": "Practice your pitch",
   "secondaryCta": "See how it works",
-  "aiDisclosure": "AI Scooter is an AI storytelling coach inspired by Scooter Taylor. This is not the real-time human Scooter and does not represent an investment decision or guarantee of review, funding, or a meeting.",
-  "noProviderCallsNotice": "Phase 2 is a static shell. AI, voice, avatar video, email, and Network OS handoff are intentionally not active yet."
+  "aiDisclosure": "AI Scooter is an AI storytelling coach inspired by Scooter Taylor and an AI pitch-practice coach for founder story clarity. This is not the real-time human Scooter; AI Scooter is not the real Scooter, not a live human reviewer, not an investment committee, and does not provide investment, legal, tax, securities, or financial advice.",
+  "noProviderCallsNotice": "Pitch Lab degrades honestly when AI, voice, avatar video, deck parsing, camera, or Network OS providers are unavailable. No fake output or false success is generated."
 }

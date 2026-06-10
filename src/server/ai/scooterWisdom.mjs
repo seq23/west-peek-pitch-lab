@@ -10,7 +10,7 @@ export function buildScooterWisdomContext({ maxChunks = 8 } = {}) {
   const chunks = registry.approvedChunks
     .filter((chunk) => chunk.approvalStatus === 'approved')
     .slice(0, maxChunks)
-    .map((chunk) => `- [${chunk.category}] ${chunk.runtimeText} Use case: ${chunk.useCase}`);
+    .map((chunk) => `- [${chunk.category}] ${chunk.wisdomTier === 'gem' ? '💎 AI Scooter Gem: ' : ''}${chunk.runtimeText} Use case: ${chunk.useCase}. Direct quote allowed: ${chunk.directQuoteAllowed === true ? 'yes' : 'no'}`);
 
   const forbiddenClaims = registry.forbiddenClaims.map((claim) => `- ${claim}`);
 

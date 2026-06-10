@@ -117,3 +117,21 @@
 - Fixed hostile gauntlet false-positive promise detection so explicit negative boundary copy is allowed.
 - Fixed localStorage test seeding so share-status receipts are not wiped on navigation to thank-you.
 - Maintains 13 behavioral tests across desktop and mobile.
+
+## Network Sync Semantics Patch — 06-10-26
+
+- Reframed Pitch Lab handoff guard from stale “no contact auto-create” semantics to current “profile/database upsert allowed; auto-execution/follow-up promise forbidden” semantics.
+- Updated Network OS handoff contract docs to allow database-backed profile upsert while preserving no outreach, no intro, no investment review, and no guaranteed follow-up.
+- Added superseded headers to stale historical docs that still mention old `pitch_practice`, `deal_flow`, or `pitch_story_card` handoff framing.
+- Updated share and thank-you UI copy to show database write status instead of contact-creation status.
+- Updated hostile Master Gauntlet copy expectations.
+
+Validation run before package:
+
+- `npm run validate:all` — PASSED
+
+Not proven:
+
+- Browser Playwright execution.
+- Live deployed Network OS handoff.
+- Postdeploy functions/E2E.

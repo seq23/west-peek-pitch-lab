@@ -20,6 +20,13 @@
       "prohibitedExtrapolations": [
         "Do not present this as a direct Scooter quote unless separately approved as a quote.",
         "Do not imply West Peek has evaluated or endorsed the company."
+      ],
+      "wisdomTier": "gem",
+      "displayLabel": "AI Scooter Gem",
+      "directQuoteAllowed": false,
+      "sourceConfidence": "approved_seed",
+      "tags": [
+        "founder_storytelling"
       ]
     },
     {
@@ -33,6 +40,13 @@
       "prohibitedExtrapolations": [
         "Do not promise introductions.",
         "Do not claim West Peek will make a connection."
+      ],
+      "wisdomTier": "standard",
+      "displayLabel": "AI Scooter coaching principle",
+      "directQuoteAllowed": false,
+      "sourceConfidence": "approved_seed",
+      "tags": [
+        "networking_wisdom"
       ]
     },
     {
@@ -46,6 +60,13 @@
       "prohibitedExtrapolations": [
         "Do not score the founder publicly.",
         "Do not label the company fundable or not fundable."
+      ],
+      "wisdomTier": "standard",
+      "displayLabel": "AI Scooter coaching principle",
+      "directQuoteAllowed": false,
+      "sourceConfidence": "approved_seed",
+      "tags": [
+        "encouragement_style"
       ]
     },
     {
@@ -59,19 +80,35 @@
       "prohibitedExtrapolations": [
         "Do not nudge founders to share before value is delivered.",
         "Do not imply sharing creates review, funding, or a meeting."
+      ],
+      "wisdomTier": "standard",
+      "displayLabel": "AI Scooter coaching principle",
+      "directQuoteAllowed": false,
+      "sourceConfidence": "approved_seed",
+      "tags": [
+        "deal_flow_signals"
       ]
     }
   ],
   "forbiddenClaims": [
+    "A human has reviewed this.",
+    "Funding is likely.",
     "I personally reviewed your pitch.",
-    "Scooter personally reviewed your pitch.",
-    "West Peek will review this.",
-    "West Peek will invest.",
-    "This company is fundable.",
     "Scooter Taylor is live in this conversation.",
-    "This is confidential legal advice.",
+    "Scooter personally reviewed your pitch.",
+    "Straight from Scooter.",
+    "This company is fundable.",
+    "This is an investment review.",
     "This is confidential financial advice.",
-    "This is confidential investment advice."
+    "This is confidential investment advice.",
+    "This is confidential legal advice.",
+    "West Peek will invest.",
+    "West Peek will review this.",
+    "You are VC-ready.",
+    "You are fundable.",
+    "Your deck is investor-ready.",
+    "Your info will definitely be routed.",
+    "Your submission was accepted."
   ],
   "pendingScooterInterviewQuestions": [
     "What makes a founder compelling?",

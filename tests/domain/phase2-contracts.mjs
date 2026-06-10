@@ -10,7 +10,7 @@ assert.equal(LOCKED_PITCH_LAB_COPY.founderLine, 'Good products need good stories
 assert.equal(LOCKED_PITCH_LAB_COPY.brandLine, 'Good people should meet good people.');
 assert.ok(DISCLOSURES.aiScooter.includes('not the real-time human Scooter'));
 assert.ok(DISCLOSURES.noGuarantee.includes('will not guarantee investment'));
-assert.deepEqual(PHASE_2_ROUTES, ['/', '/practice', '/story-card', '/share', '/thank-you', '/privacy', '/terms', '/how-it-works']);
+assert.deepEqual(PHASE_2_ROUTES, ['/', '/practice', '/story-card', '/share', '/thank-you', '/privacy', '/terms', '/ai-disclosure', '/founder-network-notice', '/data-consent', '/contact', '/delete-my-info', '/how-it-works']);
 
 for (const route of PHASE_2_ROUTES) {
   const html = renderPage(route);

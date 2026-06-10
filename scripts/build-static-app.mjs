@@ -52,7 +52,9 @@ const clientModules = {
   'consent.mjs': 'consent.mjs',
   'aiStoryCardClient.mjs': 'ai-story-card.js',
   'shareFlow.mjs': 'share-flow.js',
-  'clipboard.mjs': 'clipboard.mjs'
+  'clipboard.mjs': 'clipboard.mjs',
+  'disclaimerModel.mjs': 'disclaimerModel.mjs',
+  'scooterJourneyModel.mjs': 'scooterJourneyModel.mjs'
 };
 for (const [moduleFile, outputName] of Object.entries(clientModules)) {
   fs.copyFileSync(path.join(root, 'src/runtime', moduleFile), path.join(dist, 'assets', outputName));

@@ -149,3 +149,10 @@ Reason:
 ## Phase 5 Patch — Non-Optional Scooter Wisdom Invariant
 
 Scooter Wisdom is not a feature flag, mode, optional provider, or env-controlled switch. West Peek Pitch Lab cannot run its AI coaching identity without the approved Scooter Wisdom Layer. Runtime must always load approved wisdom from `content/scooter-wisdom/approved/approved-wisdom.json`; raw wisdom is never runtime material; vector/dynamic/raw modes are not available in MVP. Env vars must not turn Scooter Wisdom on/off, select a wisdom mode, or override the approved version.
+
+raw intake can be messy
+voice memo
+candidate wisdom
+approved runtime wisdom
+AI Scooter Gem
+direct_quote_allowed

@@ -1,7 +1,7 @@
 import { PITCH_QUESTIONS, QUESTION_IDS, normalizeAnswer, validatePitchAnswers } from '../../runtime/pitchQuestions.mjs';
 import { STORY_STRENGTH_CATEGORIES, STORY_STRENGTH_LABELS, createStoryStrengthSignalsFromAnswers } from '../../runtime/storyCard.mjs';
 
-export const PHASE_4_AI_DISCLOSURE = 'AI Scooter is an AI storytelling coach inspired by Scooter Taylor. This is not the real-time human Scooter, not an investment decision, and not a guarantee of review, funding, intros, or a meeting.';
+export const PHASE_4_AI_DISCLOSURE = 'AI Scooter is an AI pitch-practice coach. It is not the real Scooter, not a live human reviewer, not an investment committee, not an investment decision, and not a guarantee of funding, investment review, meetings, introductions, acceptance, or follow-up.';
 
 export const ALLOWED_LLM_PROVIDERS = ['gemini', 'openai', 'test_local'];
 
@@ -140,6 +140,9 @@ export function validateAiResponseShape(raw, answers = {}) {
       disclosure: allowedNotice,
       critique: critiqueResult.critique,
       storyCard: cardResult.card,
+      finalScooterSummary: {
+        script: clampText(raw?.finalScooterSummary?.script || `Here’s what I’m hearing. The strongest part of your story is ${cardResult.card.founderEdge}. The biggest gap is ${cardResult.card.biggestStoryGap}. Add one concrete proof point before sharing.`, 700)
+      },
       storyStrengthSignals: strengthResult.signals,
       warnings
     }

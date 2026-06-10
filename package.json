@@ -7,7 +7,7 @@
     "validate:phase1": "node scripts/validate-phase1.mjs",
     "validate:env": "node scripts/validate-env-contract.mjs",
     "validate:no-secrets": "node scripts/check-no-plaintext-secrets.mjs",
-    "validate:all": "npm run validate:matrix && npm run validate:phase1 && npm run validate:env && npm run validate:no-secrets && npm run validate:no-theater && npm run validate:locked-copy && npm run validate:canonical-runtime && npm run build && npm run test:domain && npm run validate:phase2 && npm run validate:phase3 && npm run validate:phase4 && npm run validate:phase5 && npm run validate:phase6 && npm run validate:phase7 && npm run validate:phase9a && npm run validate:phase9b && npm run validate:phase9b1 && npm run validate:master-gauntlet && npm run smoke:routes",
+    "validate:all": "npm run validate:matrix && npm run validate:phase1 && npm run validate:env && npm run validate:no-secrets && npm run validate:no-theater && npm run validate:locked-copy && npm run validate:canonical-runtime && npm run build && npm run test:domain && npm run validate:phase2 && npm run validate:phase3 && npm run validate:phase4 && npm run validate:phase5 && npm run validate:phase6 && npm run validate:phase7 && npm run validate:phase9a && npm run validate:phase9b && npm run validate:phase9b1 && npm run validate:master-gauntlet && npm run smoke:routes && npm run test:profile-lead-contracts",
     "env:create-local": "node scripts/env/create-local-env.mjs",
     "env:create-local:force": "node scripts/env/create-local-env.mjs --force",
     "env:vault:create-placeholders": "node scripts/env/create-env-vault.mjs --force",
@@ -36,7 +36,15 @@
     "preview:static": "npm run build && node scripts/preview-static.mjs",
     "validate:master-gauntlet": "node scripts/validate-master-gauntlet.mjs",
     "gauntlet": "node scripts/run-master-gauntlet.mjs",
-    "gauntlet:headed": "node scripts/run-master-gauntlet.mjs --headed"
+    "gauntlet:headed": "node scripts/run-master-gauntlet.mjs --headed",
+    "wisdom:new": "node scripts/create-scooter-wisdom-candidate.mjs",
+    "wisdom:extract": "node scripts/extract-scooter-wisdom-candidates.mjs",
+    "wisdom:compile": "node scripts/compile-scooter-wisdom-runtime.mjs",
+    "wisdom:validate": "node scripts/validate-scooter-wisdom.mjs",
+    "gauntlet:postdeploy": "node scripts/run-postdeploy-gauntlet.mjs",
+    "gauntlet:postdeploy:headed": "node scripts/run-postdeploy-gauntlet.mjs --headed",
+    "gauntlet:postdeploy:functions": "node scripts/run-postdeploy-functions.mjs",
+    "test:profile-lead-contracts": "node tests/domain/profile-lead-contracts.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.60.0"

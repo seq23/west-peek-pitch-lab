@@ -177,3 +177,14 @@ Phase 1 does not apply values to Cloudflare. It only creates a deterministic pla
 - `npm run validate:env` must pass.
 - `.env.example` and `.env.local.example` must contain every key from `config/env.registry.json`.
 - `scripts/check-no-plaintext-secrets.mjs` must pass before artifact delivery.
+
+
+## Pitch Lab → Network OS profile/packet endpoints
+
+NETWORK_OS_PROFILE_CAPTURE_ENABLED=true
+NETWORK_OS_PITCH_LAB_PROFILE_ENDPOINT=https://network.example.com/api/intake/pitch-lab-profile
+NETWORK_OS_PITCH_LAB_PACKET_ENDPOINT=https://network.example.com/api/intake/pitch-lab
+NETWORK_OS_SHARED_SECRET=<shared-secret>
+NETWORK_OS_TIMEOUT_MS=15000
+
+Profile capture sends only founder name, email, company, and optional website. Pitch answers remain private until the Founder Story Packet is explicitly shared.

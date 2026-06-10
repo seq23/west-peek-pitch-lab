@@ -1,3 +1,5 @@
+> **SUPERSEDED FOR NETWORK OS HANDOFF** — Historical planning reference only. Current handoff law is `founder_profile_lead` → `founder_story_packet` with `trigger_intent: relationship_routing`, Network OS database upsert, no email notification, no auto-execution, and no guaranteed follow-up. Do not use stale `pitch_practice`, `deal_flow`, or `pitch_story_card` framing for current implementation.
+
 # West Peek Pitch Lab — Product Spec
 
 **Status:** Approved and locked for Phase 1  
@@ -182,3 +184,7 @@ The MVP succeeds only if:
 - AI disclosure is visible;
 - provider failures fail safely;
 - required validation passes.
+
+## Phase 10 locked product framing
+
+West Peek Pitch Lab is an AI Scooter-led founder story practice system. It captures minimal founder identity, guides founders through a structured chat-style coaching experience, optionally uses a deck as context, generates a Pitch Story Card, supports optional local camera rehearsal, and lets founders explicitly share a Founder Story Packet with West Peek for network review and relationship routing — with clear disclaimers, strict AI guardrails, no fake human review, no investment-review framing, and no guaranteed outcomes.

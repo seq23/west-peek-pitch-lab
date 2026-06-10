@@ -1,7 +1,5 @@
-# Raw Scooter Wisdom Sources
+# Raw Scooter Wisdom Intake
 
-Raw transcripts, interview notes, and voice memo transcripts belong here.
+Raw intake can be messy. It can be voice memos, audio files, videos, transcripts, pasted notes, chat logs, emails, bullets, meeting notes, or stream-of-consciousness material.
 
-Runtime rule: files in this folder are never loaded by AI Scooter automatically.
-
-Promotion rule: material must be reviewed and copied into `content/scooter-wisdom/approved/approved-wisdom.json` before runtime use.
+Raw files are never runtime material. Transcribe audio/video first, then extract candidate wisdom with `npm run wisdom:extract`.
