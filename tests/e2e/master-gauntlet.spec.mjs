@@ -92,6 +92,10 @@ async function seedAiCard(page) {
   }, { answersKey: STORAGE_ANSWERS_KEY, aiKey: STORAGE_AI_CARD_KEY, answers: founderAnswers, aiCard: fakeAiResponse });
 }
 
+function liveEnvEnabled(name) {
+  return String(process.env[name] || '').toLowerCase() === 'true';
+}
+
 test.describe('West Peek Pitch Lab Master Gauntlet — hostile max-depth', () => {
   test.beforeEach(async ({ page }) => {
     page.on('pageerror', (error) => { throw error; });
@@ -109,6 +113,16 @@ test.describe('West Peek Pitch Lab Master Gauntlet — hostile max-depth', () =>
       await expect(page.locator('body')).toContainText(/not guarantee/i);
       await expectNoForbiddenPromises(page);
     }
+  });
+
+  test('hero uses the canonical Scooter image instead of initials fallback', async ({ page }) => {
+    await page.goto('/');
+    const photo = page.locator('.avatar-frame img.avatar-photo');
+    await expect(photo).toHaveAttribute('src', '/assets/avatar/scooter-avatar-source.png');
+    await expect(photo).toBeVisible();
+    await expect(page.locator('.avatar-initials')).toHaveCount(0);
+    await expect(page.locator('.avatar-frame')).not.toContainText(/^ST$/);
+    await expectNoForbiddenPromises(page);
   });
 
   test('primary navigation reaches the founder journey surfaces on desktop and mobile', async ({ page }) => {
@@ -267,6 +281,37 @@ test.describe('West Peek Pitch Lab Master Gauntlet — hostile max-depth', () =>
     await expectNoForbiddenPromises(page);
   });
 
+  test('share transaction sends complete consented handoff payload and persists only confirmed receipt', async ({ page }) => {
+    await seedAiCard(page);
+    let observedPayload = null;
+
+    await page.route('**/api/pitch/share', async (route) => {
+      observedPayload = route.request().postDataJSON();
+      expect(observedPayload.founder.name).toBe('Avery Founder');
+      expect(observedPayload.founder.email).toBe('avery@example.com');
+      expect(observedPayload.founder.companyName).toBe('ExampleCo');
+      expect(observedPayload.consent.shareWithWestPeek).toBe(true);
+      expect(observedPayload.storyCard.oneLinePitch).toContain('West Peek Pitch Lab helps founders');
+      expect(observedPayload.storyCard.nextSteps).toContain('Tighten the customer wedge');
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(fakeShareSuccess) });
+    });
+
+    await page.goto('/share');
+    await page.getByLabel('Founder name').fill('Avery Founder');
+    await page.getByLabel('Email').fill('avery@example.com');
+    await page.getByLabel('Company name').fill('ExampleCo');
+    await page.getByLabel(/I consent to share/i).check();
+    await page.getByRole('button', { name: /Share with West Peek/i }).click();
+    await expect(page.locator('[data-share-result]')).toContainText('Shared with West Peek for human review');
+
+    expect(observedPayload).not.toBeNull();
+    const shareStatus = await page.evaluate((key) => JSON.parse(localStorage.getItem(key) || 'null'), STORAGE_SHARE_STATUS_KEY);
+    expect(shareStatus.reviewStatus).toBe('pending_human_review');
+    expect(shareStatus.contactCreated).toBe(false);
+    expect(shareStatus.intakeId).toBe('test-intake-001');
+    await expectNoForbiddenPromises(page);
+  });
+
   test('thank-you page refuses to claim success without a confirmed local submission receipt', async ({ page }) => {
     await page.goto('/thank-you');
     await expect(page.locator('body')).toContainText('No confirmed submission found');
@@ -290,6 +335,53 @@ test.describe('West Peek Pitch Lab Master Gauntlet — hostile max-depth', () =>
       }
     }
     await expectNoForbiddenPromises(page);
+  });
+
+  test('avatar render POST is a real transaction endpoint and never returns fake video success', async ({ request }) => {
+    const response = await request.post('/api/avatar/render', {
+      data: { moment: 'final_summary', text: 'This is a short final AI Scooter summary for provider-gated video formation.' }
+    });
+    expect([202, 400, 429, 503]).toContain(response.status());
+    const body = await response.json();
+    expect(JSON.stringify(body)).not.toMatch(/fake|placeholder success/i);
+    if (response.status() === 202) {
+      expect(body.status).toBe('avatar_render_queued');
+      expect(body.avatarReady).toBe(false);
+      expect(body.providerResponse).toBeTruthy();
+    } else {
+      expect(JSON.stringify(body)).not.toMatch(/avatar_render_queued|avatarReady\s*[:=]\s*true|videoReady\s*[:=]\s*true/i);
+      if (Object.prototype.hasOwnProperty.call(body, 'avatarReady')) expect(body.avatarReady).toBe(false);
+      if (body.status) expect(String(body.status)).not.toMatch(/success|ready|generated/i);
+    }
+  });
+
+  test('LIVE gated Network OS handoff E2E requires explicit opt-in env', async ({ page }) => {
+    test.skip(!liveEnvEnabled('PITCH_LAB_LIVE_NETWORK_OS_E2E'), 'Set PITCH_LAB_LIVE_NETWORK_OS_E2E=true only when live Network OS env is configured.');
+    await seedAiCard(page);
+    await page.goto('/share');
+    await page.getByLabel('Founder name').fill('Gauntlet Live Founder');
+    await page.getByLabel('Email').fill('gauntlet-live-founder@example.com');
+    await page.getByLabel('Company name').fill('Gauntlet Live Company');
+    await page.getByLabel(/I consent to share/i).check();
+    await page.getByRole('button', { name: /Share with West Peek/i }).click();
+    await expect(page.locator('[data-share-result]')).toContainText('Shared with West Peek for human review');
+    const shareStatus = await page.evaluate((key) => JSON.parse(localStorage.getItem(key) || 'null'), STORAGE_SHARE_STATUS_KEY);
+    expect(shareStatus.reviewStatus).toBe('pending_human_review');
+    expect(shareStatus.contactCreated).toBe(false);
+    await expectNoForbiddenPromises(page);
+  });
+
+  test('LIVE gated avatar video formation E2E requires explicit opt-in env', async ({ request }) => {
+    test.skip(!liveEnvEnabled('PITCH_LAB_LIVE_AVATAR_E2E'), 'Set PITCH_LAB_LIVE_AVATAR_E2E=true only when live avatar provider env is configured.');
+    const response = await request.post('/api/avatar/render', {
+      data: { moment: 'final_summary', text: 'Good products need good stories. This is a live gated avatar formation proof.' }
+    });
+    expect(response.status()).toBe(202);
+    const body = await response.json();
+    expect(body.status).toBe('avatar_render_queued');
+    expect(body.provider).toBeTruthy();
+    expect(body.providerResponse?.id).toBeTruthy();
+    expect(JSON.stringify(body)).not.toMatch(/fake|placeholder/i);
   });
 
   test('UI does not expose secret names, raw env values, provider keys, or implementation-only file names', async ({ page }) => {

@@ -155,16 +155,11 @@ button.button:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
   overflow: hidden;
   border: 1px solid var(--wp-line-dark);
 }
-.avatar-initials {
-  width: 52%;
-  aspect-ratio: 1;
-  display: grid;
-  place-items: center;
-  background: var(--wp-white);
-  color: var(--wp-black);
-  font-size: clamp(2rem, 5vw, 4rem);
-  font-weight: 950;
-  letter-spacing: -0.08em;
+.avatar-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 .avatar-copy p:last-child { margin-bottom: 0; }
 

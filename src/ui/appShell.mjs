@@ -79,7 +79,7 @@ function avatarCard() {
         <span>${LOCKED_PITCH_LAB_COPY.featureName}</span>
       </div>
       <div class="avatar-frame" aria-hidden="true">
-        <div class="avatar-initials">ST</div>
+        <img class="avatar-photo" src="/assets/avatar/scooter-avatar-source.png" alt="" loading="eager" />
       </div>
       <div class="avatar-copy">
         <p class="eyebrow">AI Scooter</p>
