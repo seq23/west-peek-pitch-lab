@@ -12,6 +12,14 @@ fs.mkdirSync(path.join(dist, 'assets'), { recursive: true });
 const styles = fs.readFileSync(path.join(root, 'src/styles.css'), 'utf8');
 fs.writeFileSync(path.join(dist, 'assets/styles.css'), styles);
 
+const DEPLOY_EXCLUDED_PUBLIC_ASSETS = new Set([
+  'assets/avatar/scooter-driving-video-source.mp4'
+]);
+
+function shouldCopyPublicAsset(relativePath) {
+  return !DEPLOY_EXCLUDED_PUBLIC_ASSETS.has(relativePath.split(path.sep).join('/'));
+}
+
 function copyPublicAssetDir(relativeDir) {
   const source = path.join(root, 'public', relativeDir);
   if (!fs.existsSync(source)) return;
@@ -20,10 +28,15 @@ function copyPublicAssetDir(relativeDir) {
   for (const entry of fs.readdirSync(source, { withFileTypes: true })) {
     const from = path.join(source, entry.name);
     const to = path.join(target, entry.name);
+    const relativeAssetPath = path.join(relativeDir, entry.name);
+    if (!shouldCopyPublicAsset(relativeAssetPath)) continue;
     if (entry.isDirectory()) {
       fs.mkdirSync(to, { recursive: true });
       for (const nested of fs.readdirSync(from, { withFileTypes: true })) {
-        if (nested.isFile()) fs.copyFileSync(path.join(from, nested.name), path.join(to, nested.name));
+        const nestedRelativeAssetPath = path.join(relativeDir, entry.name, nested.name);
+        if (nested.isFile() && shouldCopyPublicAsset(nestedRelativeAssetPath)) {
+          fs.copyFileSync(path.join(from, nested.name), path.join(to, nested.name));
+        }
       }
     } else if (entry.isFile()) fs.copyFileSync(from, to);
   }
