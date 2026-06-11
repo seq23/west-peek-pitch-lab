@@ -49,7 +49,10 @@
     "validate:everything:live",
     "validate:everything:live:headed",
     "validate:everything:live:postdeploy",
-    "validate:everything:live:postdeploy:headed"
+    "validate:everything:live:postdeploy:headed",
+    "env:cloudflare:sync:dry",
+    "env:cloudflare:sync",
+    "env:cloudflare:sync:all"
   ],
   "entries": [
     {
@@ -513,6 +516,39 @@
       "doesNotProve": "Does not guarantee live providers unless live mode and restored env succeed; does not prove human visual/media/business approval.",
       "failureHandling": "Inspect tmp/test-operations/summary.md and the referenced per-step log; fix exact failing lane or accept clearly labeled unproven layer.",
       "ownerDecisionNeeded": false
+    },
+    {
+      "script": "env:cloudflare:sync:dry",
+      "command": "node scripts/env/sync-cloudflare-pages-env.mjs --from-vault",
+      "category": "deploy/env operations",
+      "severity": "WARNING_ONLY",
+      "productionRisk": "Cloudflare runtime env drift can break deployed provider behavior while local provider proof passes.",
+      "proves": "Restored local env can be mapped to Cloudflare Pages-bound variables without printing secret values or applying changes.",
+      "doesNotProve": "Cloudflare dashboard state, deployed runtime behavior, or provider success after deployment.",
+      "failureHandling": "Fix vault access, registry mapping, or local env values before attempting apply.",
+      "ownerDecisionNeeded": false
+    },
+    {
+      "script": "env:cloudflare:sync",
+      "command": "node scripts/env/sync-cloudflare-pages-env.mjs --from-vault --apply --cleanup",
+      "category": "deploy/env operations",
+      "severity": "WARNING_ONLY",
+      "productionRisk": "Missing Cloudflare Pages env/secrets can cause deployed LLM, voice, media, and postdeploy proof failures.",
+      "proves": "Wrangler accepted the Cloudflare Pages env/secret bulk upload for current implemented phase values without exposing secret values.",
+      "doesNotProve": "Existing deployments picked up the new values, production provider calls succeed, or deployed browser LLM proof passes.",
+      "failureHandling": "Inspect sync report, Wrangler auth/project selection, Cloudflare project name, and rerun deployed proof after fresh deploy.",
+      "ownerDecisionNeeded": true
+    },
+    {
+      "script": "env:cloudflare:sync:all",
+      "command": "node scripts/env/sync-cloudflare-pages-env.mjs --from-vault --all --apply --cleanup",
+      "category": "deploy/env operations",
+      "severity": "WARNING_ONLY",
+      "productionRisk": "Future-phase env values may be needed for guarded provider/deploy experiments but should not hard-fail routine validation.",
+      "proves": "Wrangler accepted Cloudflare Pages env/secret bulk upload for all usable registry values without exposing secret values.",
+      "doesNotProve": "Future-phase features are implemented, safe, deployed, or provider-proven.",
+      "failureHandling": "Use only when intentionally syncing all phases; inspect report and rerun relevant provider/postdeploy proof.",
+      "ownerDecisionNeeded": true
     }
   ],
   "futureRequiredProofs": [

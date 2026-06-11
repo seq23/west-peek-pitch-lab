@@ -76,7 +76,10 @@
     "validate:everything:live": "node scripts/run-test-operations-orchestrator.mjs --live",
     "validate:everything:live:headed": "node scripts/run-test-operations-orchestrator.mjs --live --headed",
     "validate:everything:live:postdeploy": "node scripts/run-test-operations-orchestrator.mjs --live --postdeploy",
-    "validate:everything:live:postdeploy:headed": "node scripts/run-test-operations-orchestrator.mjs --live --postdeploy --headed"
+    "validate:everything:live:postdeploy:headed": "node scripts/run-test-operations-orchestrator.mjs --live --postdeploy --headed",
+    "env:cloudflare:sync:dry": "node scripts/env/sync-cloudflare-pages-env.mjs --from-vault",
+    "env:cloudflare:sync": "node scripts/env/sync-cloudflare-pages-env.mjs --from-vault --apply --cleanup",
+    "env:cloudflare:sync:all": "node scripts/env/sync-cloudflare-pages-env.mjs --from-vault --all --apply --cleanup"
   },
   "devDependencies": {
     "@playwright/test": "^1.60.0"
