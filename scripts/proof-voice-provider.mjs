@@ -36,7 +36,7 @@ if (live) {
   const rendered = await renderScooterVoice({ env, body: { moment: 'welcome', text: proofText }, fetchImpl: fetch });
   const b64 = String(rendered.body?.audioBase64 || '');
   add('live ElevenLabs voice render returns playable-sized audio payload', rendered.ok && rendered.httpStatus === 200 && rendered.body?.voiceReady === true && b64.length > 1000 ? 'pass' : 'fail', { httpStatus: rendered.httpStatus, providerStatus: rendered.body?.status, contentType: rendered.body?.audioContentType, audioBase64Bytes: b64.length, reason: rendered.body?.reason || 'live proof requires real voice render' });
-  add('live voice response does not expose secrets', JSON.stringify(rendered.body || {}).match(/ELEVENLABS_API_KEY|xi-api-key|sk-|Bearer\s/i) ? 'fail' : 'pass', { reason: 'provider response leaked secret-shaped content' });
+  add('live voice response does not expose secrets', JSON.stringify(rendered.body || {}).match(/ELEVENLABS_API_KEY|xi-api-key|sk-|Bearer\s/i) ? 'fail' : 'pass', { reason: JSON.stringify(rendered.body || {}).match(/ELEVENLABS_API_KEY|xi-api-key|sk-|Bearer\s/i) ? 'provider response leaked secret-shaped content' : 'provider response contains no secret-shaped content' });
 } else {
   const dry = await renderScooterVoice({ env: { ...env, ELEVENLABS_API_KEY: '' }, body: { moment: 'welcome', text: 'Welcome to West Peek Pitch Lab.' }, fetchImpl: fetch });
   { const ok = dry.httpStatus === 503 && dry.body?.voiceReady === false; add('dry-run voice proof fails honestly without provider env', ok ? 'pass' : 'fail', { httpStatus: dry.httpStatus, providerStatus: dry.body?.status, reason: ok ? dry.body?.reason : 'dry-run should fail honestly without provider env' }); }
