@@ -20,3 +20,5 @@ logs/*.txt
 secrets/*.env.vault.json
 secrets/*.decrypted.*
 !secrets/*.env.vault.enc
+
+tmp/
