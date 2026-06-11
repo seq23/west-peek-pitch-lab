@@ -5,8 +5,14 @@ import { getAvatarStatus, renderScooterAvatar, validateAvatarRequest } from '../
 import { SCOOTER_MEDIA_IDENTITY } from '../../src/server/media/scooterMediaIdentity.mjs';
 
 const placeholderEnv = {
-  VOICE_PROVIDER: 'elevenlabs',
+  VOICE_PROVIDER: 'fish_audio',
+  VOICE_FALLBACK_PROVIDER: 'elevenlabs',
   VOICE_DYNAMIC_GENERATION_ENABLED: 'true',
+  FISH_API_KEY: 'REPLACE_WITH_LOCAL_FISH_API_KEY',
+  FISH_API_BASE_URL: 'https://api.fish.audio',
+  FISH_TTS_MODEL: 's2-pro',
+  FISH_TTS_FORMAT: 'mp3',
+  FISH_VOICE_REFERENCE_ID: 'REPLACE_WITH_FISH_SCOOTER_VOICE_REFERENCE_ID_AFTER_CLONE',
   VOICE_MAX_CHARS: '1400',
   ELEVENLABS_API_KEY: 'REPLACE_WITH_LOCAL_ELEVENLABS_API_KEY',
   ELEVENLABS_MODEL: 'eleven_multilingual_v2',
@@ -24,7 +30,7 @@ const placeholderEnv = {
   HEYGEN_AVATAR_ID: 'REPLACE_WITH_HEYGEN_AVATAR_ID_OR_USE_HEYGEN_IMAGE_URL'
 };
 
-assert.equal(getVoiceStatus(placeholderEnv).configured, false, 'placeholder ElevenLabs key and placeholder identity must not configure voice');
+assert.equal(getVoiceStatus(placeholderEnv).configured, false, 'placeholder Fish key/reference and fallback identity must not configure voice');
 assert.equal(SCOOTER_MEDIA_IDENTITY.rules.apiKeysRemainEnvOnly, true, 'media identity must not store API keys');
 assert.equal(SCOOTER_MEDIA_IDENTITY.rules.talkingScooterIsCoreExperience, true, 'talking Scooter must be core to the intended MVP');
 assert.equal(SCOOTER_MEDIA_IDENTITY.rules.textOnlyIsDegradedMode, true, 'text-only/static mode is degraded fallback, not intended experience');
@@ -43,9 +49,27 @@ let result = await renderScooterVoice({ env: placeholderEnv, body: { moment: 'we
 assert.equal(result.httpStatus, 503, 'missing voice key must fail safely');
 assert.equal(result.body.voiceReady, false);
 
-result = await renderScooterVoice({ env: { ...placeholderEnv, ELEVENLABS_API_KEY: 'live-ish-key' }, identity: approvedIdentity, body: { moment: 'welcome', text: 'Hi Scooter.' }, fetchImpl: async () => new Response(new Uint8Array([1,2,3]), { status: 200 }) });
-assert.equal(result.httpStatus, 200, 'configured voice provider should return ready when provider returns audio');
+result = await renderScooterVoice({ env: { ...placeholderEnv, FISH_API_KEY: 'fish-live-ish-key', FISH_VOICE_REFERENCE_ID: 'fish-scooter-reference-id' }, identity: approvedIdentity, body: { moment: 'welcome', text: 'Hi Scooter.' }, fetchImpl: async (url, init) => {
+  assert.match(String(url), /api\.fish\.audio\/v1\/tts/);
+  assert.equal(init.headers.authorization, 'Bearer fish-live-ish-key');
+  assert.equal(init.headers.model, 's2-pro');
+  const body = JSON.parse(init.body);
+  assert.equal(body.reference_id, 'fish-scooter-reference-id');
+  assert.equal(body.format, 'mp3');
+  return new Response(new Uint8Array([1,2,3]), { status: 200 });
+} });
+assert.equal(result.httpStatus, 200, 'configured Fish voice provider should return ready when provider returns audio');
+assert.equal(result.body.provider, 'fish_audio');
 assert.equal(result.body.audioBase64, 'AQID');
+
+result = await renderScooterVoice({ env: { ...placeholderEnv, FISH_API_KEY: '', FISH_VOICE_REFERENCE_ID: '', ELEVENLABS_API_KEY: 'live-ish-key', VOICE_PROVIDER: 'fish_audio' }, identity: approvedIdentity, body: { moment: 'welcome', text: 'Hi Scooter.' }, fetchImpl: async (url) => {
+  assert.match(String(url), /api\.elevenlabs\.io\/v1\/text-to-speech/);
+  return new Response(new Uint8Array([4,5,6]), { status: 200 });
+} });
+assert.equal(result.httpStatus, 200, 'fallback ElevenLabs provider should return ready when Fish is not configured and fallback is configured');
+assert.equal(result.body.provider, 'elevenlabs');
+assert.equal(result.body.fallbackUsed, true);
+assert.equal(result.body.audioBase64, 'BAUG');
 
 const status = getAvatarStatus(placeholderEnv);
 assert.equal(status.provider, 'did', 'D-ID must be default avatar provider in 9D');

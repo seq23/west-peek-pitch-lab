@@ -27,20 +27,20 @@ function parseEnvFile(file) {
 }
 const env = { ...parseEnvFile(path.join(root, '.env')), ...parseEnvFile(path.join(root, '.env.local')), ...process.env };
 const status = getVoiceStatus(env, SCOOTER_MEDIA_IDENTITY);
-{ const ok = SCOOTER_MEDIA_IDENTITY.elevenLabsVoiceId && !/^REPLACE_WITH_|DISABLED|__SET|placeholder/i.test(SCOOTER_MEDIA_IDENTITY.elevenLabsVoiceId); add('voice identity has committed non-placeholder voice ID', ok ? 'pass' : 'fail', { voiceIdSource: 'src/server/media/scooterMediaIdentity.mjs', reason: ok ? undefined : 'missing committed voice ID' }); }
-add('voice provider status is honest', status.configured ? 'pass' : 'warn', { configured: status.configured, enabled: status.enabled, provider: status.provider, maxChars: status.maxChars, reason: status.configured ? undefined : 'ElevenLabs voice is not configured in this environment' });
+{ const ok = SCOOTER_MEDIA_IDENTITY.approvedVoiceSampleAsset === '/assets/avatar/scooter-voice-only.mp3'; add('voice identity has committed approved Scooter voice sample', ok ? 'pass' : 'fail', { voiceSampleSource: 'src/server/media/scooterMediaIdentity.mjs', reason: ok ? undefined : 'missing approved Scooter voice sample' }); }
+add('voice provider status is honest', status.configured ? 'pass' : 'warn', { configured: status.configured, enabled: status.enabled, provider: status.provider, maxChars: status.maxChars, reason: status.configured ? undefined : 'Fish Audio voice clone or fallback ElevenLabs voice is not configured in this environment' });
 const invalid = await renderScooterVoice({ env, body: { moment: 'bad_moment', text: 'Hello.' }, fetchImpl: fetch });
 { const ok = invalid.httpStatus === 400 && invalid.body?.voiceReady === false; add('invalid voice request rejects safely', ok ? 'pass' : 'fail', { httpStatus: invalid.httpStatus, providerStatus: invalid.body?.status, reason: ok ? undefined : 'invalid voice request should not render' }); }
 if (live) {
   const proofText = 'Welcome to West Peek Pitch Lab. Good products need good stories. Tell me what you are building, and let us sharpen the story.';
   const rendered = await renderScooterVoice({ env, body: { moment: 'welcome', text: proofText }, fetchImpl: fetch });
   const b64 = String(rendered.body?.audioBase64 || '');
-  add('live ElevenLabs voice render returns playable-sized audio payload', rendered.ok && rendered.httpStatus === 200 && rendered.body?.voiceReady === true && b64.length > 1000 ? 'pass' : 'fail', { httpStatus: rendered.httpStatus, providerStatus: rendered.body?.status, contentType: rendered.body?.audioContentType, audioBase64Bytes: b64.length, reason: rendered.body?.reason || 'live proof requires real voice render' });
-  add('live voice response does not expose secrets', JSON.stringify(rendered.body || {}).match(/ELEVENLABS_API_KEY|xi-api-key|sk-|Bearer\s/i) ? 'fail' : 'pass', { reason: JSON.stringify(rendered.body || {}).match(/ELEVENLABS_API_KEY|xi-api-key|sk-|Bearer\s/i) ? 'provider response leaked secret-shaped content' : 'provider response contains no secret-shaped content' });
+  add('live configured voice render returns playable-sized audio payload', rendered.ok && rendered.httpStatus === 200 && rendered.body?.voiceReady === true && b64.length > 1000 ? 'pass' : 'fail', { httpStatus: rendered.httpStatus, providerStatus: rendered.body?.status, contentType: rendered.body?.audioContentType, audioBase64Bytes: b64.length, reason: rendered.body?.reason || 'live proof requires real voice render' });
+  add('live voice response does not expose secrets', JSON.stringify(rendered.body || {}).match(/FISH_API_KEY|ELEVENLABS_API_KEY|authorization|xi-api-key|sk-|Bearer\s/i) ? 'fail' : 'pass', { reason: JSON.stringify(rendered.body || {}).match(/FISH_API_KEY|ELEVENLABS_API_KEY|authorization|xi-api-key|sk-|Bearer\s/i) ? 'provider response leaked secret-shaped content' : 'provider response contains no secret-shaped content' });
 } else {
-  const dry = await renderScooterVoice({ env: { ...env, ELEVENLABS_API_KEY: '' }, body: { moment: 'welcome', text: 'Welcome to West Peek Pitch Lab.' }, fetchImpl: fetch });
+  const dry = await renderScooterVoice({ env: { ...env, FISH_API_KEY: '', FISH_VOICE_REFERENCE_ID: '', ELEVENLABS_API_KEY: '' }, body: { moment: 'welcome', text: 'Welcome to West Peek Pitch Lab.' }, fetchImpl: fetch });
   { const ok = dry.httpStatus === 503 && dry.body?.voiceReady === false; add('dry-run voice proof fails honestly without provider env', ok ? 'pass' : 'fail', { httpStatus: dry.httpStatus, providerStatus: dry.body?.status, reason: ok ? dry.body?.reason : 'dry-run should fail honestly without provider env' }); }
-  add('live ElevenLabs call intentionally skipped', 'warn', { reason: 'set MEDIA_PROOF_RUN_LIVE=true after restoring env vault to test real voice generation' });
+  add('live configured voice call intentionally skipped', 'warn', { reason: 'set MEDIA_PROOF_RUN_LIVE=true after restoring env vault to test real voice generation' });
 }
 report.summary = failures.length ? 'VOICE PROOF FAILED' : (warnings.length ? 'VOICE PROOF INCOMPLETE — LIVE PROVIDER PROOF MAY STILL BE REQUIRED' : 'VOICE PROOF PASSED');
 const outDir = path.join(root, 'tmp');

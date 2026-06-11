@@ -24,7 +24,7 @@ const registry = JSON.parse(read('config/env.registry.json') || '{}');
 if (!['phase6','phase9a','phase9b','phase9b1','phase9d'].includes(registry?.rules?.currentImplementedPhase)) failures.push('Env registry currentImplementedPhase must be phase6 or later.');
 const keys = new Set((registry.variables || []).map((v) => v.key));
 for (const key of [
-  'VOICE_PROVIDER','ELEVENLABS_API_KEY','ELEVENLABS_MODEL','VOICE_DYNAMIC_GENERATION_ENABLED','VOICE_CACHE_ENABLED','VOICE_MAX_CHARS',
+  'VOICE_PROVIDER','VOICE_FALLBACK_PROVIDER','FISH_API_KEY','FISH_API_BASE_URL','FISH_TTS_MODEL','FISH_TTS_FORMAT','FISH_VOICE_REFERENCE_ID','ELEVENLABS_API_KEY','ELEVENLABS_MODEL','VOICE_DYNAMIC_GENERATION_ENABLED','VOICE_CACHE_ENABLED','VOICE_MAX_CHARS',
   'AVATAR_PROVIDER','AVATAR_MODE','AVATAR_SECONDARY_PROVIDER','AVATAR_VOICE_MODE','AVATAR_DYNAMIC_GENERATION_ENABLED','AVATAR_RENDER_FINAL_SUMMARY_ONLY','AVATAR_MAX_SCRIPT_CHARS','AVATAR_MAX_VIDEO_SECONDS','AVATAR_CACHE_ENABLED',
   'DID_API_KEY','DID_API_BASE_URL','DID_SOURCE_URL','DID_VOICE_PROVIDER','DID_VOICE_ID','HEYGEN_API_KEY','HEYGEN_API_BASE_URL','HEYGEN_AVATAR_ID','HEYGEN_IMAGE_URL','HEYGEN_VOICE_ID','MAKEUGC_API_KEY','MAKEUGC_API_BASE_URL',
   'COST_GUARD_ENABLED','AVATAR_DAILY_MAX_RENDERS','AVATAR_MONTHLY_MAX_RENDERS','AVATAR_REQUIRE_OPERATOR_APPROVAL'
@@ -35,11 +35,12 @@ for (const key of [
 const voice = read('src/server/voice/voiceService.mjs');
 const avatar = read('src/server/avatar/avatarService.mjs');
 if (!voice.includes('voice_unavailable') || !voice.includes('No fake voice output was generated')) failures.push('Voice service must expose honest unavailable/no-placeholder behavior.');
+if (!voice.includes('/v1/tts') || !voice.includes('reference_id')) failures.push('Voice service must call Fish Audio TTS endpoint with reference_id for cloned Scooter voice.');
 if (!avatar.includes('avatar_unavailable') || !avatar.includes('degraded mode')) failures.push('Avatar service must expose honest unavailable/degraded fallback behavior.');
 if (!avatar.includes('AVATAR_MAX_VIDEO_SECONDS') || !avatar.includes('AVATAR_MAX_SCRIPT_CHARS')) failures.push('Avatar service must enforce request-level length/time guardrails.');
 if (!avatar.includes('AVATAR_DYNAMIC_GENERATION_ENABLED')) failures.push('Avatar service must respect dynamic generation flag.');
 if (keys.has('ELEVENLABS_VOICE_ID') || keys.has('MAKEUGC_AVATAR_ID') || keys.has('MAKEUGC_VOICE_ID')) failures.push('Provider identity IDs must not be env vars unless the selected provider requires account-scoped avatar IDs.');
-if (!voice.includes('ELEVENLABS_API_KEY') || !avatar.includes('DID_API_KEY') || !avatar.includes('HEYGEN_API_KEY') || !avatar.includes('MAKEUGC_API_KEY')) failures.push('Provider services must reference managed provider API keys server-side.');
+if (!voice.includes('FISH_API_KEY') || !voice.includes('FISH_VOICE_REFERENCE_ID') || !voice.includes('ELEVENLABS_API_KEY') || !avatar.includes('DID_API_KEY') || !avatar.includes('HEYGEN_API_KEY') || !avatar.includes('MAKEUGC_API_KEY')) failures.push('Provider services must reference Fish/Fallback/provider API keys server-side.');
 const mediaIdentity = read('src/server/media/scooterMediaIdentity.mjs');
 if (!mediaIdentity.includes('approvedVoiceSampleAsset') || !mediaIdentity.includes('scooter-voice-only.mp3')) failures.push('Media identity must commit uploaded Scooter MP3 as canonical voice sample / clone source.');
 if (!mediaIdentity.includes('uploadedScooterMp3IsNotFinishedWelcomeClip')) failures.push('Media identity must state uploaded Scooter MP3 is not a finished welcome/share clip.');

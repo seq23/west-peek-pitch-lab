@@ -24,7 +24,7 @@ if (fs.existsSync(vaultPath)) {
     if (passphrase) {
       const payload = decryptJson(envelope, passphrase);
       const keys = new Set((payload.variables || []).map((item) => item.key));
-      const required = ['OPENAI_API_KEY','DID_API_KEY','DID_SOURCE_URL','HEYGEN_API_KEY','AVATAR_PROVIDER','AVATAR_DYNAMIC_GENERATION_ENABLED'];
+      const required = ['OPENAI_API_KEY','DID_API_KEY','DID_SOURCE_URL','HEYGEN_API_KEY','AVATAR_PROVIDER','AVATAR_DYNAMIC_GENERATION_ENABLED','FISH_API_KEY','FISH_VOICE_REFERENCE_ID'];
       const missingKeys = required.filter((key) => !keys.has(key));
       add('env vault decrypts and contains real-feature key names', missingKeys.length ? 'warn' : 'pass', { checkedKeys: required, missingKeys, reason: missingKeys.length ? 'some proof-related env names are not in vault payload' : undefined });
       add('env proof reports only key names and never raw values', 'pass', { variables: payload.variables?.length || 0 });
