@@ -40,7 +40,7 @@ export function getVoiceStatus(env = {}, identity = SCOOTER_MEDIA_IDENTITY) {
     model: getEnv(env, 'ELEVENLABS_MODEL', 'eleven_multilingual_v2'),
     cacheEnabled: boolEnv(env, 'VOICE_CACHE_ENABLED', true),
     maxChars: Number(getEnv(env, 'VOICE_MAX_CHARS', '1400')) || 1200,
-    voiceIdSource: 'src/server/media/scooterMediaIdentity.mjs',
+    voiceIdSource: 'canonical_scooter_voice_identity',
     disclosure: 'Voice is AI-generated with the committed Scooter voice identity only when ElevenLabs is configured. Text coaching remains available without voice.'
   };
 }
