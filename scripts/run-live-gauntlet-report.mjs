@@ -152,6 +152,26 @@ const steps = [
     args: ['run', 'env:proof'],
     log: 'env-vault-proof.log'
   },
+
+  {
+    id: 'llm-live-provider',
+    name: 'Live LLM provider proof',
+    command: 'npm',
+    args: ['run', 'proof:llm:live'],
+    env: { PITCH_LAB_LIVE_LLM_PROOF: 'true' },
+    log: 'proof-llm-live.log',
+    note: 'Hard fail if AI Scooter cannot talk back through a real configured LLM provider.'
+  },
+  {
+    id: 'llm-live-browser',
+    name: 'Live deployed browser LLM response E2E',
+    command: 'npm',
+    args: ['run', 'proof:llm:live:browser'],
+    env: { PITCH_LAB_LIVE_LLM_E2E: 'true', ...deployEnv },
+    log: 'proof-llm-live-browser.log',
+    allowFailure: !deployUrl,
+    note: 'Hard fail with deploy URL: browser must trigger deployed LLM route and render AI Scooter response.'
+  },
   {
     id: 'voice-live',
     name: 'Live Fish voice provider proof',
@@ -228,6 +248,29 @@ const counts = results.reduce((acc, item) => {
 const failed = results.filter((item) => item.status === 'FAIL');
 const warned = results.filter((item) => item.status === 'WARN');
 
+const resultById = new Map(results.map((item) => [item.id, item]));
+function coverageStatus(ids) {
+  const selected = ids.map((id) => resultById.get(id)).filter(Boolean);
+  if (!selected.length) return 'UNPROVEN';
+  if (selected.some((item) => item.status === 'FAIL')) return 'FAIL';
+  if (selected.some((item) => item.status === 'WARN')) return 'WARN';
+  return 'PASS';
+}
+const coverageMatrix = [
+  ['Founder landing journey', coverageStatus(['postdeploy-journey', 'master-browser'])],
+  ['Founder profile + intake persistence', coverageStatus(['postdeploy-journey', 'master-browser'])],
+  ['Practice prompt flow', coverageStatus(['postdeploy-journey', 'master-browser'])],
+  ['Live LLM API response', coverageStatus(['llm-live-provider', 'postdeploy-functions'])],
+  ['Live LLM browser response', coverageStatus(['llm-live-browser'])],
+  ['Final story summary text path', coverageStatus(['llm-live-browser', 'master-browser'])],
+  ['Runtime media cache policy', coverageStatus(['validate-all', 'media-live'])],
+  ['Voice provider live proof', coverageStatus(['voice-live'])],
+  ['Avatar provider live proof', coverageStatus(['media-live'])],
+  ['Story card copy/share path', coverageStatus(['postdeploy-journey', 'master-browser'])],
+  ['Network OS payload handoff', coverageStatus(['master-browser', 'postdeploy-functions'])],
+  ['Security/no-secret exposure', coverageStatus(['validate-all', 'postdeploy-functions', 'master-browser'])],
+  ['Mobile/browser core surfaces', coverageStatus(['master-browser'])]
+];
 const summary = {
   summary: failed.length ? 'LIVE GAUNTLET FAILED' : warned.length ? 'LIVE GAUNTLET COMPLETED WITH WARNINGS' : 'LIVE GAUNTLET PASSED',
   startedAt,
@@ -236,6 +279,7 @@ const summary = {
   headed,
   liveProviderMode,
   counts,
+  coverageMatrix,
   results
 };
 
@@ -257,6 +301,12 @@ const md = [
   '| Status | ID | Name | Exit | Log |',
   '|---|---|---|---:|---|',
   ...results.map((r) => `| ${r.status} | ${r.id} | ${r.name} | ${r.exitCode} | ${r.log} |`),
+  '',
+  '## Runtime Feature Coverage Matrix',
+  '',
+  '| Feature | Status |',
+  '|---|---|',
+  ...coverageMatrix.map(([feature, status]) => `| ${feature} | ${status} |`),
   '',
   '## Repair List',
   '',

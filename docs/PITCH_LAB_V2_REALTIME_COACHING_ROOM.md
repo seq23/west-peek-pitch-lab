@@ -164,3 +164,14 @@ MVP v1 should include an optional final prompt: “Anything else AI Scooter shou
 ## MVP v1 Blocker: Talking Scooter Provider Proof
 
 The MVP media journey is product-locked, but it should not be called media-complete until the talking-avatar provider path is proven end to end. Required proof includes reusable welcome cache policy, dynamic final summary session/content-hash cache policy, generic/contextual share close policy, playable provider output when generated, honest provider failure, and text-first/non-blocking Story Card behavior.
+
+## Runtime Proof Lock — AI Scooter Must Talk Back
+
+AI Scooter is not considered operational merely because static copy says “AI Scooter” or because a fallback Story Card shell exists. The app must prove two separate layers before release confidence:
+
+1. Direct provider/API proof: a real configured LLM provider returns a schema-backed AI Scooter story card.
+2. Browser E2E proof: a founder clicks Generate AI Pitch Story Card in the deployed app and sees the live AI Scooter response rendered in the UI.
+
+The browser proof must not stub `/api/pitch/story-card`. Stubs are allowed only in local failure/success fixture tests that prove fallback and copy-only behavior. Live release proof must call the deployed route.
+
+If either layer fails, the response path is `UNPROVEN`, even if the rest of the gauntlet passes.

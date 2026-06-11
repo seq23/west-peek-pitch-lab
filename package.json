@@ -7,7 +7,7 @@
     "validate:phase1": "node scripts/validate-phase1.mjs",
     "validate:env": "node scripts/validate-env-contract.mjs",
     "validate:no-secrets": "node scripts/check-no-plaintext-secrets.mjs",
-    "validate:all": "npm run validate:matrix && npm run validate:phase1 && npm run validate:env && npm run validate:no-secrets && npm run validate:no-theater && npm run validate:locked-copy && npm run validate:canonical-runtime && npm run build && npm run test:domain && npm run validate:phase2 && npm run validate:phase3 && npm run validate:phase4 && npm run validate:phase5 && npm run validate:phase6 && npm run validate:phase7 && npm run validate:phase9a && npm run validate:phase9b && npm run validate:phase9b1 && npm run validate:master-gauntlet && npm run smoke:routes && npm run test:profile-lead-contracts",
+    "validate:all": "npm run validate:matrix && npm run validate:phase1 && npm run validate:env && npm run validate:no-secrets && npm run validate:no-theater && npm run validate:locked-copy && npm run validate:canonical-runtime && npm run build && npm run test:domain && npm run validate:phase2 && npm run validate:phase3 && npm run validate:phase4 && npm run validate:phase5 && npm run validate:phase6 && npm run validate:phase7 && npm run validate:phase9a && npm run validate:phase9b && npm run validate:phase9b1 && npm run validate:master-gauntlet && npm run validate:e2e-data-trace && npm run smoke:routes && npm run test:profile-lead-contracts",
     "env:create-local": "node scripts/env/create-local-env.mjs",
     "env:create-local:force": "node scripts/env/create-local-env.mjs --force",
     "env:vault:create-placeholders": "node scripts/env/create-env-vault.mjs --force",
@@ -63,7 +63,11 @@
     "proof:media:live": "MEDIA_PROOF_RUN_LIVE=true node scripts/proof-scooter-media-provider.mjs",
     "fish:clone:scooter": "node scripts/fish/create-scooter-voice-model.mjs",
     "gauntlet:live:report": "node scripts/run-live-gauntlet-report.mjs --live",
-    "gauntlet:live:report:headed": "node scripts/run-live-gauntlet-report.mjs --live --headed"
+    "gauntlet:live:report:headed": "node scripts/run-live-gauntlet-report.mjs --live --headed",
+    "validate:e2e-data-trace": "node scripts/run-e2e-data-trace.mjs --validate",
+    "proof:llm": "node scripts/proof-llm-provider.mjs",
+    "proof:llm:live": "PITCH_LAB_LIVE_LLM_PROOF=true node scripts/proof-llm-provider.mjs",
+    "proof:llm:live:browser": "PITCH_LAB_LIVE_LLM_E2E=true PLAYWRIGHT_SKIP_WEBSERVER=true npx playwright test tests/e2e/llm-live-response.spec.mjs --project=desktop-chromium"
   },
   "devDependencies": {
     "@playwright/test": "^1.60.0"

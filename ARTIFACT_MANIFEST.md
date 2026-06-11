@@ -221,3 +221,23 @@
 - Added real journey proof for optional 8th context and basic keyboard/accessibility: `tests/e2e/founder-context-and-accessibility-proof.spec.mjs`, `npm run proof:journey`, and `npm run proof:journey:headed`.
 - Expanded media provider proof so cached clip manifest entries are checked for playable local/remote references when configured.
 - Kept hard failures focused on real outcomes: camera/playback/persistence/consent/env/provider honesty/accessibility basics, not visual polish theater.
+
+## 06-11-26 — Hostile E2E Data Trace + Live LLM Gauntlet Lock
+
+- Added `scripts/proof-llm-provider.mjs` for direct LLM provider proof.
+- Added `tests/e2e/llm-live-response.spec.mjs` to prove the deployed browser can trigger the live LLM route and render AI Scooter’s response without route stubbing.
+- Added `scripts/run-e2e-data-trace.mjs` and `npm run validate:e2e-data-trace` as a hard-fail validation layer that checks core app promises are wired into explicit proof surfaces instead of silently falling out of Playwright.
+- Updated `scripts/run-live-gauntlet-report.mjs` to include `llm-live-provider` and `llm-live-browser` lanes and emit a runtime feature coverage matrix.
+- Updated `scripts/run-master-gauntlet.mjs` so the local master gauntlet runs the full Playwright suite, not just one spec.
+- Updated `REPO_VALIDATION_MATRIX.md`, `_repo_validation_matrix.json`, `docs/MASTER_GAUNTLET.md`, and `docs/PITCH_LAB_V2_REALTIME_COACHING_ROOM.md` to require live AI Scooter talk-back proof before production confidence.
+- Static/local validation passed in the build environment: `npm run validate:all`, `npm run validate:e2e-data-trace`, `npm run proof:llm` dry-run safety, `npm run proof:media` dry-run safety, and `npm run proof:voice` dry-run safety.
+- Browser Playwright execution could not complete in the sandbox because Playwright Chromium binaries could not be downloaded due network/DNS failure. Local machine validation must run the full browser/live gauntlet after updating.
+
+
+## 06-11-26 — Local Playwright Gauntlet Preflight Hardening
+
+- Added `docs/LOCAL_PLAYWRIGHT_FULL_GAUNTLET_RUN_06-11-26.md` to record the exact local full-gauntlet run path and the sandbox browser-runtime blocker.
+- Hardened `scripts/run-master-gauntlet.mjs` with a Chromium binary preflight so missing local Playwright browsers fail clearly before the suite emits noisy launch failures.
+- Updated `scripts/validate-master-gauntlet.mjs` so the gauntlet runner must retain the browser preflight and local install/run instructions.
+- Static validation in this sandbox passed: `npm ci`, `npm run validate:all`, including E2E data trace 69 pass / 0 warn / 0 fail.
+- Full Playwright browser execution remains local-machine validation because sandbox browser installation failed on DNS resolution for `cdn.playwright.dev`.

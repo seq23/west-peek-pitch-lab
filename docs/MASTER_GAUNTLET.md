@@ -133,3 +133,37 @@ npm run proof:journey:headed
 ```
 
 These focused proofs cover real browser camera/mic rehearsal, local recording/playback, permission-denied fallback, MediaRecorder-unavailable fallback, voice provider proof, encrypted env-vault proof, optional founder context, consented rehearsal metadata, and basic keyboard/label usability. They are product-outcome tests, not pixel or tooltip-theater tests.
+
+## Hostile Runtime Feature Coverage Lock — 06-11-26
+
+A passing gauntlet is no longer allowed to mean only that the existing suite returned green. For this app, the gauntlet must prove every integral runtime promise or explicitly label it `UNPROVEN` in the report.
+
+Required coverage:
+
+1. Founder lands and can start the app.
+2. Founder profile/intake data persists through the session.
+3. Founder answers the guided pitch prompts and reaches a real Story Card path.
+4. AI Scooter talks back through a real live LLM provider in API proof.
+5. AI Scooter talks back through the deployed browser journey in Playwright proof.
+6. Final summary appears as text-first output before media rendering.
+7. Runtime media cache policy supports reusable static and dynamic session clips.
+8. Fish voice proof and avatar provider proof run in live report mode when env is restored.
+9. Share/story-card path preserves copy-only behavior until explicit consent.
+10. Network OS handoff forms a consented payload and never claims auto-contact success.
+11. No secrets, raw env values, provider result URLs, or implementation-only details leak into UI/logs.
+12. Mobile and desktop surfaces remain usable enough for the founder journey.
+
+New proof layers:
+
+- `npm run validate:e2e-data-trace` is a hard-fail static trace that checks whether the critical app data flows have explicit proof surfaces.
+- `npm run proof:llm:live` is the direct live LLM provider proof.
+- `npm run proof:llm:live:browser` is the deployed Playwright proof that the browser triggers the live LLM route and renders AI Scooter’s response.
+- `npm run gauntlet:live:report` now includes live LLM provider and browser response lanes in addition to validation, env vault, voice, media, postdeploy functions, postdeploy journey, local browser, camera, and media-browser lanes.
+
+Rules:
+
+- Route stubbing is forbidden inside the live LLM browser proof.
+- A successful API response is not enough; the deployed browser must render the response.
+- A generated Story Card fixture is not enough; live mode must use the configured provider.
+- If live env is absent, the feature must be reported as unproven or blocked, not silently called complete.
+- If Playwright does not exercise a user-facing promise, the validation matrix must say `UNPROVEN`.

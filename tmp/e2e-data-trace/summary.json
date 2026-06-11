@@ -1,0 +1,358 @@
+{
+  "generatedAt": "2026-06-11T17:21:08.999Z",
+  "summary": "E2E DATA TRACE PASSED",
+  "counts": {
+    "pass": 69,
+    "warn": 0,
+    "fail": 0
+  },
+  "checks": [
+    {
+      "id": "file:playwright.config.mjs",
+      "status": "pass",
+      "detail": "exists"
+    },
+    {
+      "id": "file:scripts/run-master-gauntlet.mjs",
+      "status": "pass",
+      "detail": "exists"
+    },
+    {
+      "id": "file:scripts/run-live-gauntlet-report.mjs",
+      "status": "pass",
+      "detail": "exists"
+    },
+    {
+      "id": "file:scripts/proof-llm-provider.mjs",
+      "status": "pass",
+      "detail": "exists"
+    },
+    {
+      "id": "file:tests/e2e/master-gauntlet.spec.mjs",
+      "status": "pass",
+      "detail": "exists"
+    },
+    {
+      "id": "file:tests/e2e/llm-live-response.spec.mjs",
+      "status": "pass",
+      "detail": "exists"
+    },
+    {
+      "id": "file:tests/e2e/post-deploy-functions.spec.mjs",
+      "status": "pass",
+      "detail": "exists"
+    },
+    {
+      "id": "file:tests/e2e/post-deploy-journey.spec.mjs",
+      "status": "pass",
+      "detail": "exists"
+    },
+    {
+      "id": "file:functions/api/pitch/story-card.js",
+      "status": "pass",
+      "detail": "exists"
+    },
+    {
+      "id": "file:functions/api/pitch/share.js",
+      "status": "pass",
+      "detail": "exists"
+    },
+    {
+      "id": "file:functions/api/avatar/render.js",
+      "status": "pass",
+      "detail": "exists"
+    },
+    {
+      "id": "file:functions/api/voice/render.js",
+      "status": "pass",
+      "detail": "exists"
+    },
+    {
+      "id": "file:src/runtime/aiStoryCardClient.mjs",
+      "status": "pass",
+      "detail": "exists"
+    },
+    {
+      "id": "file:src/runtime/shareFlow.mjs",
+      "status": "pass",
+      "detail": "exists"
+    },
+    {
+      "id": "file:src/runtime/practiceFlow.mjs",
+      "status": "pass",
+      "detail": "exists"
+    },
+    {
+      "id": "file:public/assets/avatar/clip-manifest.json",
+      "status": "pass",
+      "detail": "exists"
+    },
+    {
+      "id": "file:REPO_VALIDATION_MATRIX.md",
+      "status": "pass",
+      "detail": "exists"
+    },
+    {
+      "id": "file:_repo_validation_matrix.json",
+      "status": "pass",
+      "detail": "exists"
+    },
+    {
+      "id": "master-gauntlet-coverage:practice flow blocks thin answers",
+      "status": "pass",
+      "detail": "present"
+    },
+    {
+      "id": "master-gauntlet-coverage:AI story generation fails honestly",
+      "status": "pass",
+      "detail": "present"
+    },
+    {
+      "id": "master-gauntlet-coverage:AI story generation success remains copy-only",
+      "status": "pass",
+      "detail": "present"
+    },
+    {
+      "id": "master-gauntlet-coverage:share transaction sends complete consented handoff payload",
+      "status": "pass",
+      "detail": "present"
+    },
+    {
+      "id": "master-gauntlet-coverage:Network OS failure keeps the founder in honest non-submitted state",
+      "status": "pass",
+      "detail": "present"
+    },
+    {
+      "id": "master-gauntlet-coverage:share transaction includes consented rehearsal transcript/status",
+      "status": "pass",
+      "detail": "present"
+    },
+    {
+      "id": "master-gauntlet-coverage:avatar render POST is a real transaction endpoint",
+      "status": "pass",
+      "detail": "present"
+    },
+    {
+      "id": "master-gauntlet-coverage:UI does not expose secret names",
+      "status": "pass",
+      "detail": "present"
+    },
+    {
+      "id": "master-gauntlet-coverage:Founder Story Packet payload uses relationship routing",
+      "status": "pass",
+      "detail": "present"
+    },
+    {
+      "id": "live-llm-e2e:PITCH_LAB_LIVE_LLM_E2E",
+      "status": "pass",
+      "detail": "present"
+    },
+    {
+      "id": "live-llm-e2e:deployed story-card API returns a real schema-backed AI Scooter response",
+      "status": "pass",
+      "detail": "present"
+    },
+    {
+      "id": "live-llm-e2e:deployed browser journey triggers live LLM and renders AI Scooter response in the UI",
+      "status": "pass",
+      "detail": "present"
+    },
+    {
+      "id": "live-llm-e2e:await page.getByRole('button', { name: /Generate AI Pitch Story Card/i }).click();",
+      "status": "pass",
+      "detail": "present"
+    },
+    {
+      "id": "live-llm-e2e:expect(response.status()).toBe(200)",
+      "status": "pass",
+      "detail": "present"
+    },
+    {
+      "id": "live-llm-e2e:expect(body.aiEnhanced).toBe(true)",
+      "status": "pass",
+      "detail": "present"
+    },
+    {
+      "id": "live-llm-e2e:localStorage.getItem",
+      "status": "pass",
+      "detail": "present"
+    },
+    {
+      "id": "live-llm-e2e:forbid:page.route('**/api/pitch/story-card'",
+      "status": "pass",
+      "detail": "absent"
+    },
+    {
+      "id": "live-llm-e2e:forbid:route.fulfill",
+      "status": "pass",
+      "detail": "absent"
+    },
+    {
+      "id": "live-llm-e2e:forbid:fakeAiResponse",
+      "status": "pass",
+      "detail": "absent"
+    },
+    {
+      "id": "live-llm-e2e:forbid:test_local",
+      "status": "pass",
+      "detail": "absent"
+    },
+    {
+      "id": "llm-provider-proof:PITCH_LAB_LIVE_LLM_PROOF",
+      "status": "pass",
+      "detail": "present"
+    },
+    {
+      "id": "llm-provider-proof:live configured LLM provider returns schema-backed AI Scooter story card",
+      "status": "pass",
+      "detail": "present"
+    },
+    {
+      "id": "llm-provider-proof:missing provider env fails honestly without placeholder AI output",
+      "status": "pass",
+      "detail": "present"
+    },
+    {
+      "id": "llm-provider-proof:invalid LLM request rejects before provider output",
+      "status": "pass",
+      "detail": "present"
+    },
+    {
+      "id": "llm-provider-proof:live LLM response does not expose secrets",
+      "status": "pass",
+      "detail": "present"
+    },
+    {
+      "id": "live-gauntlet-llm-lanes:llm-live-provider",
+      "status": "pass",
+      "detail": "present"
+    },
+    {
+      "id": "live-gauntlet-llm-lanes:Live LLM provider proof",
+      "status": "pass",
+      "detail": "present"
+    },
+    {
+      "id": "live-gauntlet-llm-lanes:llm-live-browser",
+      "status": "pass",
+      "detail": "present"
+    },
+    {
+      "id": "live-gauntlet-llm-lanes:Live deployed browser LLM response E2E",
+      "status": "pass",
+      "detail": "present"
+    },
+    {
+      "id": "live-gauntlet-llm-lanes:proof:llm:live",
+      "status": "pass",
+      "detail": "present"
+    },
+    {
+      "id": "live-gauntlet-llm-lanes:proof:llm:live:browser",
+      "status": "pass",
+      "detail": "present"
+    },
+    {
+      "id": "package-scripts:validate:e2e-data-trace",
+      "status": "pass",
+      "detail": "present"
+    },
+    {
+      "id": "package-scripts:proof:llm",
+      "status": "pass",
+      "detail": "present"
+    },
+    {
+      "id": "package-scripts:proof:llm:live",
+      "status": "pass",
+      "detail": "present"
+    },
+    {
+      "id": "package-scripts:proof:llm:live:browser",
+      "status": "pass",
+      "detail": "present"
+    },
+    {
+      "id": "matrix-doc:E2E data trace",
+      "status": "pass",
+      "detail": "present"
+    },
+    {
+      "id": "matrix-doc:Live LLM browser response",
+      "status": "pass",
+      "detail": "present"
+    },
+    {
+      "id": "matrix-doc:AI Scooter talks back",
+      "status": "pass",
+      "detail": "present"
+    },
+    {
+      "id": "matrix-doc:UNPROVEN",
+      "status": "pass",
+      "detail": "present"
+    },
+    {
+      "id": "matrix-json:validate:e2e-data-trace",
+      "status": "pass",
+      "detail": "present"
+    },
+    {
+      "id": "matrix-json:proof:llm:live:browser",
+      "status": "pass",
+      "detail": "present"
+    },
+    {
+      "id": "data-trace:founder profile:source",
+      "status": "pass",
+      "detail": "west-peek-pitch-lab.founder-profile.v1 found in src/runtime/practiceFlow.mjs"
+    },
+    {
+      "id": "data-trace:founder profile:proof",
+      "status": "pass",
+      "detail": "proof linked in tests/e2e/master-gauntlet.spec.mjs"
+    },
+    {
+      "id": "data-trace:pitch answers:source",
+      "status": "pass",
+      "detail": "west-peek-pitch-lab.phase3.answers.v1 found in src/runtime/practiceFlow.mjs"
+    },
+    {
+      "id": "data-trace:pitch answers:proof",
+      "status": "pass",
+      "detail": "proof linked in tests/e2e/master-gauntlet.spec.mjs"
+    },
+    {
+      "id": "data-trace:AI story card:source",
+      "status": "pass",
+      "detail": "/api/pitch/story-card found in src/runtime/aiStoryCardClient.mjs"
+    },
+    {
+      "id": "data-trace:AI story card:proof",
+      "status": "pass",
+      "detail": "proof linked in tests/e2e/llm-live-response.spec.mjs"
+    },
+    {
+      "id": "data-trace:share handoff:source",
+      "status": "pass",
+      "detail": "/api/pitch/share found in src/runtime/shareFlow.mjs"
+    },
+    {
+      "id": "data-trace:share handoff:proof",
+      "status": "pass",
+      "detail": "proof linked in tests/e2e/master-gauntlet.spec.mjs"
+    },
+    {
+      "id": "data-trace:runtime media cache:source",
+      "status": "pass",
+      "detail": "runtimeMediaCacheContract found in public/assets/avatar/clip-manifest.json"
+    },
+    {
+      "id": "data-trace:runtime media cache:proof",
+      "status": "pass",
+      "detail": "proof linked in scripts/proof-scooter-media-provider.mjs"
+    }
+  ],
+  "failures": [],
+  "warnings": []
+}

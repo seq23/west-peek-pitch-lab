@@ -31,6 +31,7 @@
     "validate:phase9b",
     "validate:phase9b1",
     "validate:master-gauntlet",
+    "validate:e2e-data-trace",
     "smoke:routes"
   ],
   "warningOnlyCommands": [
@@ -383,6 +384,50 @@
       "proves": "Live voice/avatar provider request path plus runtime media cache contract without requiring committed static clip files.",
       "doesNotProve": "That every future dynamic final-summary clip is approved or reusable across sessions.",
       "failureHandling": "Inspect provider-safe proof report; fix env/provider wiring or cache contract, not by hardcoding provider result URLs.",
+      "ownerDecisionNeeded": false
+    },
+    {
+      "script": "validate:e2e-data-trace",
+      "command": "node scripts/run-e2e-data-trace.mjs --validate",
+      "category": "e2e data trace / gauntlet completeness",
+      "severity": "HARD_FAIL_CURRENT",
+      "productionRisk": "Integral user promises can disappear from Playwright or live gauntlet coverage while validators still pass green.",
+      "proves": "E2E data flow anchors exist from profile/answers/AI story card/share/media surfaces into explicit Playwright or provider-proof lanes, including live LLM browser proof.",
+      "doesNotProve": "Actual browser execution, live deployed provider success, Cloudflare env correctness, or human visual approval.",
+      "failureHandling": "Restore missing journey/data-flow proof, add explicit Playwright/provider lane, or mark the affected promise UNPROVEN before delivery.",
+      "ownerDecisionNeeded": false
+    },
+    {
+      "script": "proof:llm",
+      "command": "node scripts/proof-llm-provider.mjs",
+      "category": "live LLM / Playwright E2E",
+      "severity": "RELEASE_HARD_FAIL_WHEN_LIVE_ENV_AVAILABLE",
+      "productionRisk": "LLM route can fake readiness or silently fall back unless direct provider boundaries are proven.",
+      "proves": "Invalid LLM input rejects, missing provider env fails honestly, and live mode can prove schema-backed AI Scooter response without secret leaks.",
+      "doesNotProve": "Long-term provider quality, cost forecasting, all prompt variants, or future production secret rotation.",
+      "failureHandling": "Fix env/provider/config/browser path. Do not mark AI Scooter live response as proven while this fails.",
+      "ownerDecisionNeeded": false
+    },
+    {
+      "script": "proof:llm:live",
+      "command": "PITCH_LAB_LIVE_LLM_PROOF=true node scripts/proof-llm-provider.mjs",
+      "category": "live LLM / Playwright E2E",
+      "severity": "RELEASE_HARD_FAIL_WHEN_LIVE_ENV_AVAILABLE",
+      "productionRisk": "AI Scooter cannot be considered live until a real configured LLM provider returns a schema-backed response.",
+      "proves": "Live configured LLM provider returns schema-backed AI Scooter story card with no guarantee/score/secret leakage.",
+      "doesNotProve": "Long-term provider quality, cost forecasting, all prompt variants, or future production secret rotation.",
+      "failureHandling": "Fix env/provider/config/browser path. Do not mark AI Scooter live response as proven while this fails.",
+      "ownerDecisionNeeded": false
+    },
+    {
+      "script": "proof:llm:live:browser",
+      "command": "PITCH_LAB_LIVE_LLM_E2E=true PLAYWRIGHT_SKIP_WEBSERVER=true npx playwright test tests/e2e/llm-live-response.spec.mjs --project=desktop-chromium",
+      "category": "live LLM / Playwright E2E",
+      "severity": "RELEASE_HARD_FAIL_WHEN_LIVE_ENV_AVAILABLE",
+      "productionRisk": "The live app can pass API checks while the browser never shows the AI response to the founder.",
+      "proves": "Deployed browser clicks Generate AI Pitch Story Card, calls the live route without route stubbing, renders AI Scooter response, and stores the card locally.",
+      "doesNotProve": "Long-term provider quality, cost forecasting, all prompt variants, or future production secret rotation.",
+      "failureHandling": "Fix env/provider/config/browser path. Do not mark AI Scooter live response as proven while this fails.",
       "ownerDecisionNeeded": false
     }
   ],

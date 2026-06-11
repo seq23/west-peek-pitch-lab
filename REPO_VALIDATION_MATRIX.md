@@ -229,3 +229,42 @@ Phase 9D full product completion still requires the local/headed gauntlet run an
 ## Live gauntlet report runner
 
 `gauntlet:live:report` and `gauntlet:live:report:headed` are admitted as warning/reporting commands, not `validate:all` hard-fails. They run real provider/browser/post-deploy lanes, redact secret-shaped output, and write one repair report under `tmp/live-gauntlet-report/`. Media proof accepts either an approved playable asset or a complete runtime generation/cache contract; committed clip files are optional fallbacks for reusable moments, not the only valid product state.
+
+## Hostile E2E Data Trace + Live LLM Coverage Addendum
+
+This repo is a Level 5 product app. A green gauntlet is not allowed to mean “some tests passed.” It must mean every integral runtime promise is either proven by Playwright/provider proof or explicitly labeled `UNPROVEN`.
+
+New hard-fail validator:
+
+| Validator / Test | Command | Category | Severity | Production Risk | What It Proves | What It Does Not Prove | Failure Handling | Owner Decision Needed? |
+|---|---|---|---|---|---|---|---|---|
+| E2E data trace | `npm run validate:e2e-data-trace` | e2e data trace / gauntlet completeness | HARD FAIL CURRENT | Integral app promises can fall out of Playwright/live coverage while the suite still reports green. | Profile, answers, AI story card, share handoff, runtime media cache, live LLM browser proof, and gauntlet report lanes are wired into explicit proof surfaces. | It does not run browsers or live providers by itself. | Add the missing proof lane or mark the promise `UNPROVEN`; do not ship a silent gap. | No |
+
+Live LLM proof lanes now required for production confidence:
+
+| Validator / Test | Command | Category | Severity | Production Risk | What It Proves | What It Does Not Prove | Failure Handling | Owner Decision Needed? |
+|---|---|---|---|---|---|---|---|---|
+| Live LLM provider proof | `npm run proof:llm:live` | live provider/API | RELEASE HARD FAIL WHEN LIVE ENV AVAILABLE | AI Scooter cannot be considered live if no real LLM provider returns a schema-backed response. | Real configured LLM returns a schema-backed AI Scooter story card with no secret/score/guarantee leakage. | Browser rendering, visual quality, provider cost, all prompt variants. | Fix env/provider/schema routing; keep AI Scooter response `UNPROVEN` until it passes. | No |
+| Live LLM browser response | `npm run proof:llm:live:browser` | deployed Playwright E2E | RELEASE HARD FAIL WHEN LIVE ENV AVAILABLE | API success is insufficient if the founder cannot trigger and see AI Scooter talk back in the app. | Deployed browser clicks Generate AI Pitch Story Card, does not stub the route, receives live AI response, renders it, and stores it locally. | Long-term provider quality, all UX copy variants, and future prompt drift. | Fix deployed env, route, hydration, UI render, or provider response; do not mark COMPLETE if this is failing in release mode. | No |
+
+Required live report coverage matrix:
+
+```text
+Founder landing journey................PASS/FAIL/UNPROVEN
+Founder profile + intake persistence...PASS/FAIL/UNPROVEN
+Practice prompt flow...................PASS/FAIL/UNPROVEN
+Live LLM API response..................PASS/FAIL/UNPROVEN
+Live LLM browser response..............PASS/FAIL/UNPROVEN
+Final story summary text path..........PASS/FAIL/UNPROVEN
+Runtime media cache policy.............PASS/FAIL/UNPROVEN
+Voice provider live proof..............PASS/FAIL/UNPROVEN
+Avatar provider live proof.............PASS/FAIL/UNPROVEN
+Story card copy/share path.............PASS/FAIL/UNPROVEN
+Network OS payload handoff.............PASS/FAIL/UNPROVEN
+Security/no-secret exposure............PASS/FAIL/UNPROVEN
+Mobile/browser core surfaces...........PASS/FAIL/UNPROVEN
+```
+
+If any line is not tested, it must be listed as `UNPROVEN`. It must not disappear from the gauntlet.
+
+Plain-language release rule: **AI Scooter talks back** only after both the direct live LLM provider proof and the deployed Playwright browser proof pass. Static copy, fixtures, fallback cards, and route existence do not satisfy this promise.

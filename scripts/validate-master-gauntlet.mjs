@@ -16,6 +16,9 @@ for (const file of [
   'tests/e2e/fixtures/network-os-success.json',
   'tests/e2e/fixtures/network-os-failure.json',
   'scripts/run-master-gauntlet.mjs',
+  'scripts/run-e2e-data-trace.mjs',
+  'scripts/proof-llm-provider.mjs',
+  'tests/e2e/llm-live-response.spec.mjs',
   'public/assets/avatar/scooter-avatar-source.png',
   'public/assets/avatar/clip-manifest.json',
   'src/server/media/scooterMediaIdentity.mjs'
@@ -71,6 +74,25 @@ if ((spec.match(/test\(/g) || []).length < 10) failures.push('Master gauntlet mu
 for (const term of ['Network OS failure', 'explicit consent', 'thank-you page refuses', 'AI story generation fails honestly', 'UI does not expose secret names']) {
   if (!spec.includes(term)) failures.push(`Master gauntlet missing max-depth behavior: ${term}`);
 }
+for (const term of ['llm-live-provider', 'llm-live-browser', 'Live deployed browser LLM response E2E']) {
+  if (!read('scripts/run-live-gauntlet-report.mjs').includes(term)) failures.push(`Live gauntlet missing LLM proof lane: ${term}`);
+}
+for (const term of ['PITCH_LAB_LIVE_LLM_E2E', 'deployed browser journey triggers live LLM and renders AI Scooter response in the UI', 'expect(response.status()).toBe(200)', 'route.fulfill']) {
+  const liveSpec = read('tests/e2e/llm-live-response.spec.mjs');
+  if (term === 'route.fulfill') {
+    if (liveSpec.includes(term)) failures.push('Live LLM browser proof must not stub the story-card route.');
+  } else if (!liveSpec.includes(term)) failures.push(`Live LLM browser proof missing: ${term}`);
+}
+for (const term of ['live configured LLM provider returns schema-backed AI Scooter story card', 'missing provider env fails honestly without placeholder AI output']) {
+  if (!read('scripts/proof-llm-provider.mjs').includes(term)) failures.push(`LLM provider proof missing: ${term}`);
+}
+for (const term of ['PLAYWRIGHT BROWSER PREFLIGHT FAILED', 'npx playwright install chromium', 'npm run gauntlet:headed']) {
+  if (!read('scripts/run-master-gauntlet.mjs').includes(term)) failures.push(`Master gauntlet runner missing browser preflight/local run instruction: ${term}`);
+}
+
+for (const term of ['validate:e2e-data-trace', 'proof:llm:live:browser']) {
+  if (!read('package.json').includes(term)) failures.push(`Package script missing required LLM/E2E trace hook: ${term}`);
+}
 
 if (failures.length) {
   console.error('MASTER GAUNTLET VALIDATION FAILED');
@@ -78,4 +100,4 @@ if (failures.length) {
   process.exit(1);
 }
 console.log('MASTER GAUNTLET VALIDATION PASSED');
-console.log('Gauntlet created for local/headed Playwright execution; live provider proof remains gated on env/API IDs and runtime media cache policy.');
+console.log('Gauntlet created for local/headed Playwright execution plus explicit live LLM/provider/media lanes and E2E data trace.');
