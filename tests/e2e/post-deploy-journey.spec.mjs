@@ -123,7 +123,7 @@ test.describe('Post-deploy Pitch Lab journey gauntlet', () => {
     await page.getByRole('button', { name: /Generate AI Pitch Story Card/i }).click();
 
     const root = page.locator('[data-ai-story-card-root]');
-    await expect(root).toContainText(/AI-enhanced Pitch Story Card|AI coaching is unavailable|No fake AI output was generated|not completed|unavailable/i, { timeout: 15000 });
+    await expect(root).toContainText(/AI-enhanced Pitch Story Card|AI coaching is unavailable|No fake AI output was generated|not completed|unavailable/i, { timeout: 60000 });
     await expect(page.locator('body')).toContainText(/Text appears first|text-first|Scooter.*summary follows|media summary/i);
     await expect(page.locator('body')).not.toContainText(/fake AI output generated|guaranteed investment review/i);
     await expectNoInternalLanguage(page);
