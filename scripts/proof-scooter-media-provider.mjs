@@ -82,11 +82,17 @@ if (live) {
   });
   add('live voice render', voice.ok ? 'pass' : 'fail', { httpStatus: voice.httpStatus, status: voice.body?.status, reason: voice.body?.reason });
 
+  const publicBaseUrl = (env.PUBLIC_APP_URL || env.PITCH_LAB_DEPLOY_URL || 'https://72449148.west-peek-pitch-lab.pages.dev').replace(/\/$/, '');
+  const scooterAudioUrl = env.SCOOTER_VOICE_AUDIO_URL || `${publicBaseUrl}/assets/avatar/scooter-voice-only.mp3`;
   const avatar = await renderScooterAvatar({
     env,
-    body: { moment: 'final_summary', text: 'Here is what I am hearing. The story has shape, but the proof needs to get sharper before you share it. Add one concrete traction point so the next person can believe the momentum quickly.' }
+    body: {
+      moment: 'final_summary',
+      text: 'Here is what I am hearing. The story has shape, but the proof needs to get sharper before you share it. Add one concrete traction point so the next person can believe the momentum quickly.',
+      audioUrl: scooterAudioUrl
+    }
   });
-  add('live talking-avatar render request', avatar.ok ? 'pass' : 'fail', { httpStatus: avatar.httpStatus, status: avatar.body?.status, reason: avatar.body?.reason, provider: avatar.body?.provider, providerErrors: avatar.body?.providerErrors, providerError: avatar.body?.providerError });
+  add('live talking-avatar render request', avatar.ok ? 'pass' : 'fail', { httpStatus: avatar.httpStatus, status: avatar.body?.status, reason: avatar.body?.reason, provider: avatar.body?.provider, providerId: avatar.body?.providerResponse?.id, providerErrors: avatar.body?.providerErrors, providerError: avatar.body?.providerError });
 } else {
   add('live provider call intentionally skipped', 'warn', { reason: 'set MEDIA_PROOF_RUN_LIVE=true with real provider env to run paid live proof' });
 }
