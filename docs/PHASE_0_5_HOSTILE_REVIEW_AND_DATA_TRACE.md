@@ -86,9 +86,9 @@ Do not keep long-term parallel implementations.
 
 ### 2. Practice: `/practice`
 
-**User action:** founder answers seven prompts.
+**User action:** founder answers eight prompts, with the final context prompt optional.
 
-**Data collected:** seven pitch answers.
+**Data collected:** seven required pitch answers plus optional context.
 
 **State changed:** answers are stored in browser `localStorage` using `west-peek-pitch-lab.phase3.answers.v1`.
 

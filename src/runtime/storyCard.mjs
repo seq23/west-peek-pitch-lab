@@ -10,6 +10,7 @@ export const STORY_CARD_SECTIONS = [
   'tractionProof',
   'founderEdge',
   'whyNow',
+  'additionalContext',
   'biggestStoryGap',
   'suggestedNextSteps',
   'suggestedPeopleOrRelationships'
@@ -62,6 +63,7 @@ export function createLocalDraftStoryCard(answers) {
     tractionProof: sentenceFrom(normalized.proof_traction),
     founderEdge: sentenceFrom(normalized.founder_edge),
     whyNow: sentenceFrom(normalized.why_now),
+    additionalContext: sentenceFrom(normalized.anything_else),
     biggestStoryGap: validation.ok
       ? 'Use the Story Strength Snapshot to see what needs sharpening before sharing.'
       : 'Complete all required answers before reviewing story gaps.',

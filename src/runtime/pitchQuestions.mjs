@@ -68,6 +68,17 @@ export const PITCH_QUESTIONS = [
     avoid: 'Avoid: “funding” with no use of funds, target relationship, or next step.',
     minLength: 20,
     maxLength: 1600
+  },
+  {
+    id: 'anything_else',
+    label: 'Anything else AI Scooter should know?',
+    helper: 'Add any important context that did not fit the earlier prompts. This can include market nuance, founder background, customer proof, constraints, use of funds, strategic goals, or context you chose not to upload in a deck.',
+    hint: 'Use this only for context that would help Scooter sharpen your story. You do not need to repeat answers you already gave.',
+    example: 'Example: “We are avoiding enterprise buyers until Q4 because onboarding is too heavy right now. Our best near-term path is regional operators with 20–100 locations.”',
+    avoid: 'Avoid confidential material you are not comfortable using in a Pitch Lab session.',
+    minLength: 0,
+    maxLength: 2200,
+    required: false
   }
 ];
 
@@ -79,6 +90,8 @@ export function normalizeAnswer(value) {
 
 export function validateAnswer(question, value) {
   const answer = normalizeAnswer(value);
+  const required = question.required !== false;
+  if (!required && answer.length === 0) return { ok: true, message: '' };
   if (answer.length < question.minLength) {
     return {
       ok: false,

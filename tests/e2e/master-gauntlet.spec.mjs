@@ -16,7 +16,8 @@ const founderAnswers = {
   why_now: 'The timing matters because AI makes story iteration faster, but it also creates generic pitches, so founders need sharper context and human relationship judgment.',
   founder_edge: 'The team has direct founder, investor, AI product-building, and West Peek relationship-network experience, so we understand both the tooling and the human trust layer.',
   proof_traction: 'Early proof includes live West Peek deal flow, current founder tooling, working Network OS integration, and active founder-story workflows.',
-  help_needed: 'We need strategic founders, investor feedback, warm customer introductions, and operators who can pressure-test the routing workflow.'
+  help_needed: 'We need strategic founders, investor feedback, warm customer introductions, and operators who can pressure-test the routing workflow.',
+  anything_else: 'We are not uploading a confidential deck in this test, so AI Scooter should treat this as manual context for the Founder Story Packet.'
 };
 
 const fakeAiResponse = {
@@ -171,7 +172,7 @@ test.describe('West Peek Pitch Lab Master Gauntlet — hostile max-depth', () =>
     }
   });
 
-  test('practice flow blocks thin answers, advances through all seven prompts, and persists founder answers locally', async ({ page }) => {
+  test('practice flow blocks thin answers, advances through all eight prompts, and persists founder answers locally', async ({ page }) => {
     await page.goto('/practice');
     await expect(page.locator('body')).toContainText('AI Scooter coaching conversation');
     await page.getByRole('textbox', { name: 'Name', exact: true }).fill('Avery Founder');

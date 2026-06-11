@@ -169,3 +169,55 @@
 - Added `docs/MVP_V1_PLAYWRIGHT_E2E_HOSTILE_REVIEW_06-10-26.md`.
 - Expanded `tests/e2e/master-gauntlet.spec.mjs` with contract-level coverage for guidance, next-step cues, Practice Out Loud surface states, selected rehearsal persistence, consented rehearsal payload behavior, and required AI Scooter speaking moments.
 - Preserved validation-simplification posture: no hard-fail visual polish assertions, no live camera requirement in CI, no live provider spend by default, and no Network OS repo changes.
+
+## 06-10-26 — MVP v1 browser gauntlet repair
+
+- Added `docs/MVP_V1_BROWSER_GAUNTLET_REPAIR_06-10-26.md`.
+- Fixed static build client-module copy so `scooterMediaContract.mjs` ships with browser assets.
+- Restored browser hydration for practice, Story Card, Practice Out Loud, and share status flows.
+- Kept validation common-sense: surface/transaction/persistence/consent checks without petty visual hard-fails.
+
+## 06-10-26 Post-Deploy Gauntlet Expansion
+
+- Expanded `tests/e2e/post-deploy-journey.spec.mjs` for deployed hydration, critical founder journey, MVP v1 media moments, Practice Out Loud guidance, and consent/share gates.
+- Expanded `tests/e2e/post-deploy-functions.spec.mjs` for Story Card, share, avatar render, and voice render API honesty.
+- Updated `docs/POST_DEPLOY_JOURNEY_GAUNTLET.md` and `docs/MASTER_GAUNTLET.md`.
+- Kept the hard-fail boundary aligned with the validation simplification matrix: product contracts and safety only, not pixel/animation/copy brittleness.
+
+
+
+## 06-10-26 — Cumulative roadmap execution addendum
+
+- Added optional 8th founder prompt: “Anything else AI Scooter should know?”
+- Kept the 8th prompt optional so founders can add non-deck context without making the core flow heavier.
+- Updated local draft, AI prompt context, clipboard formatting, domain tests, and validation from 7 required prompts to 7 required + 1 optional context prompt.
+- Added `docs/MVP_V1_TALKING_SCOOTER_PROVIDER_PROOF_PLAN.md` to make provider proof a blocker before claiming talking-avatar MVP media completeness.
+- Added `docs/SCOOTER_WISDOM_ADMIN_REVIEW_QUEUE_ROADMAP.md` for later admin intake/review queue automation with human-gated approval.
+- Updated docs index and supporting docs to keep MVP v1, provider proof, future realtime V2, and Scooter Wisdom automation distinct.
+
+
+## MVP v1 media provider proof pass — 06-10-26
+
+- Added `scripts/proof-scooter-media-provider.mjs`.
+- Added `npm run proof:media`.
+- Added `docs/MVP_V1_MEDIA_PROVIDER_PROOF_EXECUTION_06-10-26.md`.
+- Updated ElevenLabs talking-video status so `elevenlabs_video` cannot be marked configured until `ELEVENLABS_VIDEO_ENDPOINT_CONFIRMED=true` and real provider assets/workflow are proven.
+- Static proof confirms source assets and manifest slots exist, but live talking-avatar proof remains required.
+
+## 06-10-26 — Live Media Headed Proof Harness
+
+- Added `scripts/preview-media-proof.mjs` for local static + API media proof with `.env.local` support.
+- Added `scripts/run-media-proof-headed.mjs` to run focused Playwright media proof headed or live-headed.
+- Added `tests/e2e/media-provider-proof.spec.mjs` for MVP v1 talking-Scooter media journey proof.
+- Added `docs/MVP_V1_LIVE_MEDIA_HEADED_PROOF_RUNBOOK_06-10-26.md`.
+- Added npm commands: `proof:media:headed`, `proof:media:live:headed`, and `proof:media:live:headed:from-vault`.
+
+## 06-10-26 — Real Test Coverage Hostile Review Expansion
+
+- Added `docs/MVP_V1_REAL_TEST_COVERAGE_HOSTILE_REVIEW_06-10-26.md`.
+- Added real browser camera rehearsal proof: `tests/e2e/founder-camera-rehearsal-proof.spec.mjs`, `npm run proof:camera`, and `npm run proof:camera:headed`.
+- Added voice provider proof: `scripts/proof-voice-provider.mjs`, `npm run proof:voice`, and `npm run proof:voice:live`.
+- Added encrypted env-vault proof: `scripts/env/proof-env-vault.mjs` and `npm run env:proof`.
+- Added real journey proof for optional 8th context and basic keyboard/accessibility: `tests/e2e/founder-context-and-accessibility-proof.spec.mjs`, `npm run proof:journey`, and `npm run proof:journey:headed`.
+- Expanded media provider proof so cached clip manifest entries are checked for playable local/remote references when configured.
+- Kept hard failures focused on real outcomes: camera/playback/persistence/consent/env/provider honesty/accessibility basics, not visual polish theater.

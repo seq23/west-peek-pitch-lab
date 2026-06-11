@@ -44,7 +44,21 @@
     "gauntlet:postdeploy": "node scripts/run-postdeploy-gauntlet.mjs",
     "gauntlet:postdeploy:headed": "node scripts/run-postdeploy-gauntlet.mjs --headed",
     "gauntlet:postdeploy:functions": "node scripts/run-postdeploy-functions.mjs",
-    "test:profile-lead-contracts": "node tests/domain/profile-lead-contracts.mjs"
+    "test:profile-lead-contracts": "node tests/domain/profile-lead-contracts.mjs",
+    "proof:media": "node scripts/proof-scooter-media-provider.mjs",
+    "env:inspect": "node scripts/env/inspect-env-vault.mjs",
+    "env:restore": "node scripts/env/restore-local-env-from-vault.mjs",
+    "env:restore:force": "node scripts/env/restore-local-env-from-vault.mjs --force",
+    "proof:media:headed": "node scripts/run-media-proof-headed.mjs --headed",
+    "proof:media:live:headed": "node scripts/run-media-proof-headed.mjs --live --headed",
+    "proof:media:live:headed:from-vault": "npm run env:restore:force && node scripts/run-media-proof-headed.mjs --live --headed",
+    "proof:camera": "node scripts/run-camera-proof.mjs",
+    "proof:camera:headed": "node scripts/run-camera-proof.mjs --headed",
+    "proof:voice": "node scripts/proof-voice-provider.mjs",
+    "proof:voice:live": "MEDIA_PROOF_RUN_LIVE=true node scripts/proof-voice-provider.mjs",
+    "env:proof": "node scripts/env/proof-env-vault.mjs",
+    "proof:journey": "node scripts/run-real-journey-proof.mjs",
+    "proof:journey:headed": "node scripts/run-real-journey-proof.mjs --headed"
   },
   "devDependencies": {
     "@playwright/test": "^1.60.0"

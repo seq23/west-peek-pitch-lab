@@ -9,8 +9,13 @@ Read these docs in this order. Older phase docs are retained for audit/history, 
 1. `MVP_V1_AI_SCOOTER_EXPERIENCE_CONTRACT.md` — product experience, founder journey, required AI Scooter media moments, MVP v1 vs future V2 boundary.
 2. `MVP_V1_SCOOTER_SPEAKING_AND_COST_DISCIPLINE.md` — when Scooter speaks, when he stays text-only, script duration guidance, provider/cost discipline.
 3. `MVP_V1_REHEARSAL_JOURNEY_IMPLEMENTATION_06-10-26.md` — current-stack Practice Out Loud implementation notes.
-4. `PITCH_LAB_V2_REALTIME_COACHING_ROOM.md` — later roadmap for true live/near-real-time coaching room infrastructure.
-5. `VALIDATION_SIMPLIFICATION_MATRIX.md` — validation authority. Do not add petty hard failures.
+4. `MVP_V1_TALKING_SCOOTER_PROVIDER_PROOF_PLAN.md` — required proof plan before claiming the talking-avatar media experience is live.
+5. `MVP_V1_MEDIA_PROVIDER_PROOF_EXECUTION_06-10-26.md` — latest provider proof execution status; currently incomplete until live provider output is proven.
+6. `MVP_V1_LIVE_MEDIA_HEADED_PROOF_RUNBOOK_06-10-26.md` — visible browser proof path using the canonical encrypted env vault for real provider testing.
+7. `PITCH_LAB_V2_REALTIME_COACHING_ROOM.md` — later roadmap for true live/near-real-time coaching room infrastructure.
+8. `SCOOTER_WISDOM_ADMIN_REVIEW_QUEUE_ROADMAP.md` — later admin intake/review queue for Scooter Wisdom.
+9. `VALIDATION_SIMPLIFICATION_MATRIX.md` — validation authority. Do not add petty hard failures.
+10. `MVP_V1_REAL_TEST_COVERAGE_HOSTILE_REVIEW_06-10-26.md` — real browser/provider/env proof coverage added after the hostile test review: camera rehearsal, voice proof, env-vault proof, optional context, and keyboard/accessibility basics.
 
 ## Historical / supporting docs
 

@@ -54,7 +54,8 @@ const clientModules = {
   'shareFlow.mjs': 'share-flow.js',
   'clipboard.mjs': 'clipboard.mjs',
   'disclaimerModel.mjs': 'disclaimerModel.mjs',
-  'scooterJourneyModel.mjs': 'scooterJourneyModel.mjs'
+  'scooterJourneyModel.mjs': 'scooterJourneyModel.mjs',
+  'scooterMediaContract.mjs': 'scooterMediaContract.mjs'
 };
 for (const [moduleFile, outputName] of Object.entries(clientModules)) {
   fs.copyFileSync(path.join(root, 'src/runtime', moduleFile), path.join(dist, 'assets', outputName));

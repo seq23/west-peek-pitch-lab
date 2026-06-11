@@ -44,7 +44,7 @@ export function attachAiStoryCardControls() {
   const target = document.querySelector('[data-ai-story-card-root]'); const button = document.querySelector('[data-generate-ai-card]'); if(!target||!button) return;
   button.addEventListener('click', async () => {
     const answers = readAnswers(); const localCard = createLocalDraftStoryCard(answers);
-    if (localCard.validation && !localCard.validation.ok) { target.innerHTML = `<div class="boundary-card"><h3>Finish the local practice flow first.</h3><p>AI generation requires all seven founder answers to pass validation.</p></div>`; return; }
+    if (localCard.validation && !localCard.validation.ok) { target.innerHTML = `<div class="boundary-card"><h3>Finish the local practice flow first.</h3><p>AI generation requires all required founder answers to pass validation. The final context prompt is optional.</p></div>`; return; }
     updateScooter(SCOOTER_COMPANION_STATES.story_reviewing, 'AI Scooter is sharpening your story. Text appears first; the talking summary follows.');
     target.innerHTML = '<p class="phase-note">AI Scooter is sharpening your story…</p>';
     try {

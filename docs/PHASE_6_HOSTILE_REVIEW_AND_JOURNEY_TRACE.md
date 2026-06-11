@@ -20,7 +20,7 @@ The ElevenLabs voice ID and managed avatar IDs are account/object identifiers, n
 ## E2E user journey trace through Phase 6
 
 1. Founder lands on West Peek Pitch Lab and sees the product promise and AI Scooter disclosure.
-2. Founder starts practice and answers seven story prompts.
+2. Founder starts practice and answers seven required story prompts plus optional context.
 3. Answers stay local in browser until AI generation is requested.
 4. Founder sees a local non-AI Pitch Story Card shell.
 5. Founder requests AI Pitch Story Card; server-side LLM path uses Gemini primary then OpenAI fallback if configured.

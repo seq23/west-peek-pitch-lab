@@ -25,7 +25,7 @@ if (!['phase6','phase9a','phase9b','phase9b1','phase9d'].includes(registry?.rule
 const keys = new Set((registry.variables || []).map((v) => v.key));
 for (const key of [
   'VOICE_PROVIDER','ELEVENLABS_API_KEY','ELEVENLABS_MODEL','VOICE_DYNAMIC_GENERATION_ENABLED','VOICE_CACHE_ENABLED','VOICE_MAX_CHARS',
-  'AVATAR_PROVIDER','AVATAR_MODE','AVATAR_DYNAMIC_GENERATION_ENABLED','AVATAR_RENDER_FINAL_SUMMARY_ONLY','AVATAR_MAX_SCRIPT_CHARS','AVATAR_MAX_VIDEO_SECONDS','AVATAR_CACHE_ENABLED',
+  'AVATAR_PROVIDER','AVATAR_MODE','AVATAR_DYNAMIC_GENERATION_ENABLED','AVATAR_RENDER_FINAL_SUMMARY_ONLY','AVATAR_MAX_SCRIPT_CHARS','AVATAR_MAX_VIDEO_SECONDS','AVATAR_CACHE_ENABLED','ELEVENLABS_VIDEO_ENDPOINT_CONFIRMED','ELEVENLABS_VIDEO_MODEL_ID',
   'HEYGEN_API_KEY','HEYGEN_API_BASE_URL','HEYGEN_VOICE_MODE','MAKEUGC_API_KEY','MAKEUGC_API_BASE_URL',
   'COST_GUARD_ENABLED','AVATAR_DAILY_MAX_RENDERS','AVATAR_MONTHLY_MAX_RENDERS','AVATAR_REQUIRE_OPERATOR_APPROVAL'
 ]) {
@@ -38,6 +38,7 @@ if (!voice.includes('voice_unavailable') || !voice.includes('No fake voice outpu
 if (!avatar.includes('avatar_unavailable') || !avatar.includes('degraded mode')) failures.push('Avatar service must expose honest unavailable/degraded fallback behavior.');
 if (!avatar.includes('AVATAR_MAX_VIDEO_SECONDS') || !avatar.includes('AVATAR_MAX_SCRIPT_CHARS')) failures.push('Avatar service must enforce request-level length/time guardrails.');
 if (!avatar.includes('AVATAR_DYNAMIC_GENERATION_ENABLED')) failures.push('Avatar service must respect dynamic generation flag.');
+if (!avatar.includes('ELEVENLABS_VIDEO_ENDPOINT_CONFIRMED')) failures.push('Avatar service must not mark ElevenLabs video configured until endpoint proof is explicit.');
 if (keys.has('ELEVENLABS_VOICE_ID') || keys.has('HEYGEN_AVATAR_ID') || keys.has('MAKEUGC_AVATAR_ID') || keys.has('MAKEUGC_VOICE_ID')) failures.push('Provider identity IDs must not be env vars; they live in src/server/media/scooterMediaIdentity.mjs.');
 if (!voice.includes('ELEVENLABS_API_KEY') || !avatar.includes('ELEVENLABS_API_KEY') || !avatar.includes('HEYGEN_API_KEY') || !avatar.includes('MAKEUGC_API_KEY')) failures.push('Provider services must reference managed provider API keys server-side.');
 if (!voice.includes('scooterMediaIdentity') || !avatar.includes('scooterMediaIdentity')) failures.push('Voice/avatar services must load non-secret Scooter media identity from repo asset module.');

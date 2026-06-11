@@ -61,6 +61,8 @@ docs/COST_AND_PROVIDER_PLAN.md
 | `AVATAR_MAX_SCRIPT_CHARS` | phase9d | server_config | plain_var | forbidden | `1200` |
 | `AVATAR_MAX_VIDEO_SECONDS` | phase9d | server_config | plain_var | forbidden | `65` |
 | `AVATAR_CACHE_ENABLED` | phase6 | server_config | plain_var | forbidden | `true` |
+| `ELEVENLABS_VIDEO_ENDPOINT_CONFIRMED` | phase9d_proof | server_config | plain_var | forbidden | `false` |
+| `ELEVENLABS_VIDEO_MODEL_ID` | phase9d_proof | server_config | plain_var | forbidden | `TO_BE_SET_AFTER_PROVIDER_PROOF` |
 | `HEYGEN_API_KEY` | phase6 | server_secret | secret | forbidden | `REPLACE_WITH_LOCAL_HEYGEN_API_KEY` |
 | `HEYGEN_API_BASE_URL` | phase6 | server_config | plain_var | forbidden | `https://api.heygen.com` |
 | `HEYGEN_VOICE_MODE` | phase6 | server_config | plain_var | forbidden | `uploaded_audio` |

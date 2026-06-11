@@ -39,6 +39,7 @@ const status = getAvatarStatus(placeholderEnv);
 assert.equal(status.provider, 'elevenlabs_video', 'ElevenLabs video must be default avatar provider in 9D');
 assert.equal(status.enabled, true, 'dynamic avatar video is intended enabled in MVP env, though provider identity/key may be unavailable');
 assert.equal(status.configured, false, 'placeholder key/voice ID must not configure avatar video');
+assert.equal(status.providerProofRequired, true, 'ElevenLabs video must remain proof-gated until endpoint and asset IDs are confirmed');
 
 result = await renderScooterAvatar({ env: placeholderEnv, body: { moment: 'final_summary', text: 'This is the final story.' }, fetchImpl: async () => { throw new Error('must not call avatar provider when unconfigured'); } });
 assert.equal(result.httpStatus, 503, 'unconfigured avatar render must fail safely with degraded fallback');
@@ -55,7 +56,7 @@ result = await renderScooterAvatar({
   fetchImpl: async () => { throw new Error('current ElevenLabs video endpoint is not called until final 9D provider setup'); }
 });
 assert.equal(result.httpStatus, 503, 'ElevenLabs video endpoint remains fail-closed until final provider setup');
-assert.match(result.body.providerError, /pending_9d_env_provider_setup/);
+assert.match(result.body.reason, /not configured|endpoint-proven/);
 assert.equal(result.body.staticFallback, true);
 
 console.log('PHASE 6 DOMAIN CONTRACTS PASSED');

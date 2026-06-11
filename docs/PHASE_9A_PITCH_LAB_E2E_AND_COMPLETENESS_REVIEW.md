@@ -18,7 +18,7 @@ The app is directionally correct, but Phase 9A needed three common-sense complet
 2. Founder sees the AI Scooter disclosure and no-guarantee boundary.
 3. Founder starts practice without account creation.
 4. Founder is warned not to include confidential information they are not comfortable sharing with an AI tool.
-5. Founder answers seven pitch questions. Answers are kept in browser-local state until server-side AI or share actions are explicitly requested.
+5. Founder answers eight pitch questions, with the final context prompt optional. Answers are kept in browser-local state until server-side AI or share actions are explicitly requested.
 6. The app creates a local draft Pitch Story Card and Story Strength Snapshot.
 7. Founder can copy the local card without email.
 8. Founder can request the AI Pitch Story Card only through the server-side endpoint. Missing providers fail honestly.

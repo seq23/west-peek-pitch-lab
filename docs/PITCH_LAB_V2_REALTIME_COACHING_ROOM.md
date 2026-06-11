@@ -149,3 +149,18 @@ It is a guided founder pitch-coaching experience.
 AI Scooter is not an image on the page.
 
 AI Scooter is the coaching presence that makes the product feel alive.
+
+
+## Later Roadmap: Scooter Wisdom Admin Intake + Review Queue
+
+A later upgrade should reduce manual repo-file handling for new Scooter knowledge without allowing raw knowledge to auto-go live. Scooter should be able to submit notes, audio, or transcripts into a private intake flow. The system should store raw wisdom, extract candidate wisdom, and present an approval queue where a human can edit, approve, reject, or archive candidates. Only approved wisdom should compile into runtime and deploy.
+
+This roadmap automates ingestion and candidate creation, but final approval remains human-gated.
+
+## MVP v1 Roadmap Bridge: Optional Founder Context
+
+MVP v1 should include an optional final prompt: “Anything else AI Scooter should know?” This is the founder-safe alternative to uploading a confidential deck. It lets founders add market nuance, founder background, customer proof, constraints, use-of-funds context, strategic goals, or context they chose not to upload.
+
+## MVP v1 Blocker: Talking Scooter Provider Proof
+
+The MVP media journey is product-locked, but it should not be called media-complete until the talking-avatar provider path is proven end to end. Required proof includes cached welcome clip, dynamic final summary clip, cached/light share close clip, playable media output, honest provider failure, and text-first/non-blocking Story Card behavior.

@@ -90,7 +90,7 @@ export function hydrateThankYouStatus() {
   const root = document.querySelector('[data-thank-you-status]'); if(!root) return;
   const status = readJson(shareStatusKey, null);
   if(!status?.ok) { root.innerHTML = `<div class="boundary-card"><h3>No confirmed submission found in this browser.</h3><p>This page only confirms a share after the app receives a confirmed receipt. Your Pitch Story Card may still be available on the Story Card page.</p><a class="button primary" href="/story-card">Return to Story Card</a></div>`; return; }
-  root.innerHTML = `<div class="boundary-card"><h3>Your Founder Story Packet was shared with West Peek for network review.</h3><p>Status: ${escapeHtml(status.reviewStatus || 'pending_network_review')}.</p><p>Automatic outreach started: ${status.contactCreated ? 'Unexpected — please verify.' : 'No'}</p><p>${escapeHtml(DISCLOSURE_COPY.thankYou)}</p><a class="button secondary" href="/story-card">Update and come back later</a></div>`;
+  root.innerHTML = `<div class="boundary-card"><h3>Your Founder Story Packet was shared with West Peek for network review.</h3><p>Status: ${escapeHtml(status.reviewStatus || 'pending_network_review')}.</p><p>Contact created automatically: ${status.contactCreated ? 'Unexpected — please verify.' : 'No'}</p><p>${escapeHtml(DISCLOSURE_COPY.thankYou)}</p><a class="button secondary" href="/story-card">Update and come back later</a></div>`;
 }
 
 export function hydrateShareFlow() { const root = document.querySelector('[data-share-boundary]'); if(!root) return; renderShareForm(root, readAiStoryCard()); }

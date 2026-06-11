@@ -23,7 +23,7 @@ The goal is not to assert every animation, glow, tooltip pixel, or exact copy li
 |---|---|---|---|
 | Surface | Public routes, navigation, brand, trust copy, AI Scooter presence | Product renders as Pitch Lab and exposes no false claims. | Exact spacing, glow intensity, animation duration. |
 | Guidance | Profile helpers, deck explanation, question hints, examples, avoid guidance, next-step cues | Founder understands what to do next without a tutorial modal. | Exact wording of every helper. |
-| Practice transaction | Profile start, deck skip, seven answers, thin-answer block, local persistence | Founder can complete the private practice journey. | Every possible invalid text variant. |
+| Practice transaction | Profile start, deck skip, seven required answers plus optional context, thin-answer block, local persistence | Founder can complete the private practice journey. | Every possible invalid text variant. |
 | Story transaction | Local card, AI unavailable state, AI success state, copy path | No fake AI output; useful text appears before media. | Provider-specific implementation detail. |
 | Scooter media contract | Required welcome, final summary, and share close moments | Talking Scooter is a product requirement at key moments; fallback is honest degraded mode. | Live provider success when env is not configured. |
 | Rehearsal journey | Camera-room surface, countdown/record/playback/choose/consent states | Founder sees how Practice Out Loud works and that local video is not uploaded. | Forcing browser camera/mic in CI. |

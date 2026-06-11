@@ -4,7 +4,7 @@ import { PITCH_QUESTIONS, validateAnswer, validatePitchAnswers } from '../../src
 import { createLocalDraftStoryCard } from '../../src/runtime/storyCard.mjs';
 import { PHASE_3_CONSENT_STATE } from '../../src/runtime/consent.mjs';
 
-assert.equal(PITCH_QUESTIONS.length, 7);
+assert.equal(PITCH_QUESTIONS.length, 8);
 assert.deepEqual(PITCH_QUESTIONS.map((question) => question.label), [
   'What are you building?',
   'Who is it for?',
@@ -12,11 +12,17 @@ assert.deepEqual(PITCH_QUESTIONS.map((question) => question.label), [
   'Why now?',
   'Why are you or your team the right people?',
   'What proof or traction do you have?',
-  'What kind of help, people, capital, customers, partners, or strategic relationships do you need next?'
+  'What kind of help, people, capital, customers, partners, or strategic relationships do you need next?',
+  'Anything else AI Scooter should know?'
 ]);
+assert.equal(PITCH_QUESTIONS.at(-1).required, false, 'final context prompt should be optional');
 
 for (const question of PITCH_QUESTIONS) {
-  assert.equal(validateAnswer(question, 'x').ok, false, `${question.id} should reject thin answers`);
+  if (question.required === false) {
+    assert.equal(validateAnswer(question, '').ok, true, `${question.id} should allow blank optional context`);
+  } else {
+    assert.equal(validateAnswer(question, 'x').ok, false, `${question.id} should reject thin answers`);
+  }
   assert.equal(validateAnswer(question, 'This answer has enough detail to satisfy the local question validation gate.').ok, true, `${question.id} should accept detailed answers`);
 }
 

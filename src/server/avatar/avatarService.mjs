@@ -32,7 +32,14 @@ export function validateAvatarRequest(body = {}, env = {}) {
 export function getAvatarStatus(env = {}, identity = SCOOTER_MEDIA_IDENTITY) {
   const provider = getEnv(env, 'AVATAR_PROVIDER', 'elevenlabs_video');
   const enabled = boolEnv(env, 'AVATAR_DYNAMIC_GENERATION_ENABLED', false);
-  const elevenLabsConfigured = provider === 'elevenlabs_video' && getEnv(env, 'ELEVENLABS_API_KEY') && !PLACEHOLDER_RE.test(getEnv(env, 'ELEVENLABS_API_KEY')) && identity.approvedPhotoAsset && !isPlaceholderMediaId(identity.elevenLabsVoiceId);
+  const elevenLabsVideoEndpointConfirmed = boolEnv(env, 'ELEVENLABS_VIDEO_ENDPOINT_CONFIRMED', false);
+  const elevenLabsConfigured = provider === 'elevenlabs_video'
+    && elevenLabsVideoEndpointConfirmed
+    && getEnv(env, 'ELEVENLABS_API_KEY')
+    && !PLACEHOLDER_RE.test(getEnv(env, 'ELEVENLABS_API_KEY'))
+    && identity.approvedPhotoAsset
+    && !isPlaceholderMediaId(identity.elevenLabsVoiceId)
+    && !isPlaceholderMediaId(identity.elevenLabsAvatarId);
   const heygenAvatarId = String(identity.heygenAvatarId || '').trim();
   const makeugcAvatarId = String(identity.makeugcAvatarId || '').trim();
   const makeugcVoiceId = String(identity.makeugcVoiceId || '').trim();
@@ -46,6 +53,8 @@ export function getAvatarStatus(env = {}, identity = SCOOTER_MEDIA_IDENTITY) {
     configured,
     fallbackProvider: provider === 'elevenlabs_video' ? 'heygen' : (provider === 'heygen' ? 'makeugc' : 'heygen'),
     mode: getEnv(env, 'AVATAR_MODE', 'elevenlabs_talking_photo_key_moments'),
+    elevenLabsVideoEndpointConfirmed,
+    providerProofRequired: provider === 'elevenlabs_video' && !elevenLabsVideoEndpointConfirmed,
     voiceMode: getEnv(env, 'HEYGEN_VOICE_MODE', 'uploaded_audio'),
     mediaIdentitySource: 'src/server/media/scooterMediaIdentity.mjs',
     requestLevelCostGuard: {
@@ -102,7 +111,7 @@ export async function renderScooterAvatar({ env = {}, body = {}, fetchImpl = fet
   if (!validation.ok) return { ok: false, httpStatus: 400, body: { status: 'invalid_avatar_request', avatarReady: false, errors: validation.errors } };
   const status = getAvatarStatus(env, identity);
   if (!status.enabled) return unavailable('Talking AI Scooter media generation is disabled in this environment. This is a degraded mode, not the intended MVP experience.', { provider: status.provider, staticFallback: true, degradedMode: true });
-  if (!status.configured) return unavailable('ElevenLabs-first talking-photo provider is not configured. No fake avatar video was generated.', { provider: status.provider, staticFallback: true, degradedMode: true });
+  if (!status.configured) return unavailable('ElevenLabs-first talking-photo provider is not configured or endpoint-proven. No fake avatar video was generated.', { provider: status.provider, staticFallback: true, degradedMode: true });
   if (status.requestLevelCostGuard.renderFinalSummaryOnly && validation.value.moment !== 'final_summary') {
     return { ok: false, httpStatus: 429, body: { status: 'avatar_blocked_by_cost_guard', avatarReady: false, reason: 'Dynamic avatar render is restricted to final_summary by cost guard. Cached welcome/share clips should be used for those moments.', staticFallback: true } };
   }

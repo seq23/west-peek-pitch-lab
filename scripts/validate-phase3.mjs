@@ -13,11 +13,12 @@ const requiredFiles = [
 ];
 for (const file of requiredFiles) if (!fs.existsSync(path.join(root, file))) failures.push(`Missing Phase 3 file: ${file}`);
 
-if (PITCH_QUESTIONS.length !== 7) failures.push(`Expected 7 pitch questions, found ${PITCH_QUESTIONS.length}`);
+if (PITCH_QUESTIONS.length !== 8) failures.push(`Expected 8 pitch questions, found ${PITCH_QUESTIONS.length}`);
 for (const label of [
   'What are you building?', 'Who is it for?', 'What painful problem does it solve?', 'Why now?',
   'Why are you or your team the right people?', 'What proof or traction do you have?',
-  'What kind of help, people, capital, customers, partners, or strategic relationships do you need next?'
+  'What kind of help, people, capital, customers, partners, or strategic relationships do you need next?',
+  'Anything else AI Scooter should know?'
 ]) {
   if (!PITCH_QUESTIONS.some((question) => question.label === label)) failures.push(`Missing locked question: ${label}`);
 }
@@ -40,7 +41,8 @@ for (const [label, terms] of [
 const builtClient = path.join(dist, 'assets', 'practice-flow.js');
 if (!fs.existsSync(builtClient)) failures.push('Missing built client module: dist/assets/practice-flow.js');
 
-const completeAnswers = Object.fromEntries(PITCH_QUESTIONS.map((question) => [question.id, 'This is a sufficiently detailed founder answer that satisfies the local validation requirement.']));
+const completeAnswers = Object.fromEntries(PITCH_QUESTIONS.map((question) => [question.id, question.required === false ? '' : 'This is a sufficiently detailed founder answer that satisfies the local validation requirement.']));
+if (PITCH_QUESTIONS.at(-1).required !== false) failures.push('Final context question must remain optional.');
 const card = createLocalDraftStoryCard(completeAnswers);
 if (card.aiEnhanced !== false) failures.push('Local draft card must not be AI-enhanced in Phase 3.');
 if (card.shareEnabled !== false) failures.push('Local draft card must not enable direct sharing before AI card generation.');
