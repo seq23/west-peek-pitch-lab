@@ -3,6 +3,7 @@ import { test, expect } from '@playwright/test';
 const STORAGE_ANSWERS_KEY = 'west-peek-pitch-lab.phase3.answers.v1';
 const STORAGE_PROFILE_KEY = 'west-peek-pitch-lab.founder-profile.v1';
 const STORAGE_DECK_CONTEXT_KEY = 'west-peek-pitch-lab.deck-context.v1';
+const STORAGE_AI_CARD_KEY = 'west-peek-pitch-lab.phase4.ai-story-card.v1';
 const STORAGE_REHEARSAL_TAKES_KEY = 'west-peek-pitch-lab.practice-out-loud.takes.v2';
 const STORAGE_SELECTED_REHEARSAL_KEY = 'west-peek-pitch-lab.practice-out-loud.selected.v2';
 
@@ -18,11 +19,21 @@ const answers = {
 };
 
 async function seedFounderSession(page) {
-  await page.addInitScript(({ answersKey, profileKey, deckKey, founderAnswers }) => {
+  await page.addInitScript(({ answersKey, profileKey, deckKey, aiCardKey, founderAnswers }) => {
     window.localStorage.setItem(answersKey, JSON.stringify(founderAnswers));
     window.localStorage.setItem(profileKey, JSON.stringify({ name: 'Avery Founder', email: 'avery@example.com', companyName: 'ExampleCo', website: 'https://example.com' }));
     window.localStorage.setItem(deckKey, JSON.stringify({ deck_provided: false, deck_context_used: false }));
-  }, { answersKey: STORAGE_ANSWERS_KEY, profileKey: STORAGE_PROFILE_KEY, deckKey: STORAGE_DECK_CONTEXT_KEY, founderAnswers: answers });
+    window.localStorage.setItem(aiCardKey, JSON.stringify({
+      storyCard: {
+        oneLinePitch: 'ExampleCo helps founders turn rough company context into a repeatable pitch story.',
+        companySummary: 'The product guides founders through profile, pitch prompts, rehearsal, and consented sharing.',
+        proofTraction: 'Working prototype, founder network, early users, and structured discovery notes.',
+        suggestedNextRelationships: 'Design partners, founder-friendly operators, and investors who understand workflow software.',
+        nextSteps: 'Use the story to decide whether sharing with West Peek is useful.'
+      },
+      generatedAt: new Date().toISOString()
+    }));
+  }, { answersKey: STORAGE_ANSWERS_KEY, profileKey: STORAGE_PROFILE_KEY, deckKey: STORAGE_DECK_CONTEXT_KEY, aiCardKey: STORAGE_AI_CARD_KEY, founderAnswers: answers });
 }
 
 async function openRehearsalRoom(page) {
@@ -72,7 +83,9 @@ test.describe('Founder Practice Out Loud camera rehearsal proof', () => {
     await page.reload();
     await expect(page.locator('[data-rehearsal-consent-status]')).toContainText('Selected take context is marked for packet inclusion');
     await page.goto('/share');
-    await expect(page.locator('.founder-story-packet')).toContainText('Selected rehearsal take transcript/status included');
+    await expect(page.locator('.founder-story-packet')).toContainText('Best take selected:');
+    await expect(page.locator('.founder-story-packet')).toContainText('Transcript saved: Yes');
+    await expect(page.locator('.founder-story-packet')).toContainText('Packet inclusion consent: Yes');
     await expect(page.getByLabel(/Include my selected Practice Out Loud take/i)).toBeChecked();
   });
 
@@ -116,11 +129,6 @@ test.describe('Founder Practice Out Loud fallback paths', () => {
 
   test('MediaRecorder unavailable degrades honestly without fake recording success', async ({ page }) => {
     await page.addInitScript(() => {
-      class FakeStream { getTracks() { return []; } }
-      Object.defineProperty(navigator, 'mediaDevices', {
-        configurable: true,
-        value: { getUserMedia: () => Promise.resolve(new FakeStream()) }
-      });
       Object.defineProperty(window, 'MediaRecorder', { configurable: true, value: undefined });
       HTMLMediaElement.prototype.play = () => Promise.resolve();
     });

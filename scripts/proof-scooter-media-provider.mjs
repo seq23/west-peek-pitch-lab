@@ -6,7 +6,24 @@ import { getAvatarStatus, renderScooterAvatar } from '../src/server/avatar/avata
 import { SCOOTER_MEDIA_IDENTITY } from '../src/server/media/scooterMediaIdentity.mjs';
 
 const root = process.cwd();
-const env = { ...process.env };
+
+function parseEnvFile(file) {
+  if (!fs.existsSync(file)) return {};
+  const parsed = {};
+  for (const raw of fs.readFileSync(file, 'utf8').split(/\r?\n/)) {
+    const line = raw.trim();
+    if (!line || line.startsWith('#')) continue;
+    const idx = line.indexOf('=');
+    if (idx <= 0) continue;
+    const key = line.slice(0, idx).trim();
+    let value = line.slice(idx + 1).trim();
+    if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) value = value.slice(1, -1);
+    parsed[key] = value;
+  }
+  return parsed;
+}
+
+const env = { ...parseEnvFile(path.join(root, '.env')), ...parseEnvFile(path.join(root, '.env.local')), ...process.env };
 const live = ['true','1','yes','on'].includes(String(env.MEDIA_PROOF_RUN_LIVE || '').toLowerCase());
 const failures = [];
 const warnings = [];

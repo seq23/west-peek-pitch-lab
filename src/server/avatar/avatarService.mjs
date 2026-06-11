@@ -33,13 +33,16 @@ export function getAvatarStatus(env = {}, identity = SCOOTER_MEDIA_IDENTITY) {
   const provider = getEnv(env, 'AVATAR_PROVIDER', 'elevenlabs_video');
   const enabled = boolEnv(env, 'AVATAR_DYNAMIC_GENERATION_ENABLED', false);
   const elevenLabsVideoEndpointConfirmed = boolEnv(env, 'ELEVENLABS_VIDEO_ENDPOINT_CONFIRMED', false);
+  const elevenLabsVideoApiUrl = getEnv(env, 'ELEVENLABS_VIDEO_API_URL');
   const elevenLabsConfigured = provider === 'elevenlabs_video'
+    && enabled
     && elevenLabsVideoEndpointConfirmed
+    && elevenLabsVideoApiUrl
+    && !PLACEHOLDER_RE.test(elevenLabsVideoApiUrl)
     && getEnv(env, 'ELEVENLABS_API_KEY')
     && !PLACEHOLDER_RE.test(getEnv(env, 'ELEVENLABS_API_KEY'))
     && identity.approvedPhotoAsset
-    && !isPlaceholderMediaId(identity.elevenLabsVoiceId)
-    && !isPlaceholderMediaId(identity.elevenLabsAvatarId);
+    && !isPlaceholderMediaId(identity.elevenLabsVoiceId);
   const heygenAvatarId = String(identity.heygenAvatarId || '').trim();
   const makeugcAvatarId = String(identity.makeugcAvatarId || '').trim();
   const makeugcVoiceId = String(identity.makeugcVoiceId || '').trim();
@@ -94,16 +97,36 @@ async function callMakeUgc({ env, request, fetchImpl, identity = SCOOTER_MEDIA_I
 }
 
 
-async function callElevenLabsVideo({ request, identity = SCOOTER_MEDIA_IDENTITY }) {
-  // ElevenLabs Image & Video/Lip-sync is the approved MVP provider priority, but exact live API
-  // endpoint/asset IDs must be confirmed during the env/provider subset of 9D before production use.
-  // This adapter intentionally fails closed instead of faking an MP4 or pretending the provider queued.
+async function callElevenLabsVideo({ env, request, fetchImpl, identity = SCOOTER_MEDIA_IDENTITY }) {
+  const endpoint = getEnv(env, 'ELEVENLABS_VIDEO_API_URL');
+  if (!endpoint) throw new Error('elevenlabs_video_api_url_missing');
   const hasIdentity = identity.approvedPhotoAsset && identity.elevenLabsVoiceId && !isPlaceholderMediaId(identity.elevenLabsVoiceId);
   if (!hasIdentity) throw new Error('elevenlabs_video_identity_not_configured');
   if (request.moment !== 'welcome' && request.moment !== 'final_summary' && request.moment !== 'share_cta') {
     throw new Error('elevenlabs_video_moment_not_required_for_mvp');
   }
-  throw new Error('elevenlabs_video_live_endpoint_pending_9d_env_provider_setup');
+  const response = await fetchImpl(endpoint, {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      'xi-api-key': getEnv(env, 'ELEVENLABS_API_KEY')
+    },
+    body: JSON.stringify({
+      model_id: getEnv(env, 'ELEVENLABS_VIDEO_MODEL_ID'),
+      voice_id: identity.elevenLabsVoiceId,
+      avatar_id: isPlaceholderMediaId(identity.elevenLabsAvatarId) ? undefined : identity.elevenLabsAvatarId,
+      source_image_url: getEnv(env, 'ELEVENLABS_VIDEO_SOURCE_IMAGE_URL', identity.approvedPhotoAsset),
+      audio_url: request.audioUrl || undefined,
+      text: request.text,
+      script: request.text,
+      moment: request.moment
+    })
+  });
+  const rawText = await response.text();
+  let raw;
+  try { raw = rawText ? JSON.parse(rawText) : {}; } catch { raw = { rawText: rawText.slice(0, 500) }; }
+  if (!response.ok) throw new Error(`elevenlabs_video_error_${response.status}`);
+  return raw;
 }
 
 export async function renderScooterAvatar({ env = {}, body = {}, fetchImpl = fetch, identity = SCOOTER_MEDIA_IDENTITY } = {}) {

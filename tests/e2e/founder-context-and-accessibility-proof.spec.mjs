@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 const STORAGE_ANSWERS_KEY = 'west-peek-pitch-lab.phase3.answers.v1';
 const STORAGE_PROFILE_KEY = 'west-peek-pitch-lab.founder-profile.v1';
 const STORAGE_DECK_CONTEXT_KEY = 'west-peek-pitch-lab.deck-context.v1';
-const STORAGE_AI_CARD_KEY = 'west-peek-pitch-lab.phase4.ai-card.v1';
+const STORAGE_AI_CARD_KEY = 'west-peek-pitch-lab.phase4.ai-story-card.v1';
 const STORAGE_SELECTED_REHEARSAL_KEY = 'west-peek-pitch-lab.practice-out-loud.selected.v2';
 const STORAGE_REHEARSAL_TAKES_KEY = 'west-peek-pitch-lab.practice-out-loud.takes.v2';
 
@@ -78,22 +78,24 @@ test.describe('Founder context and accessibility proof', () => {
     await seed(page, { anythingElse: 'Manual confidential-deck alternative context should travel only when the founder shares.', ai: true, rehearsal: true });
     await page.goto('/share');
     await expect(page.locator('.founder-story-packet')).toContainText('Practice Out Loud');
-    await expect(page.locator('.founder-story-packet')).toContainText('Selected rehearsal take transcript/status included');
+    await expect(page.locator('.founder-story-packet')).toContainText('Best take selected:');
+    await expect(page.locator('.founder-story-packet')).toContainText('Transcript saved: Yes');
+    await expect(page.locator('.founder-story-packet')).toContainText('Packet inclusion consent: Yes');
     await expect(page.getByLabel(/Include my selected Practice Out Loud take/i)).toBeChecked();
     await expect(page.locator('body')).not.toContainText(/video uploaded|contact created automatically: yes|funding guaranteed/i);
   });
 
   test('basic keyboard and label journey is usable without relying only on glow or mouse', async ({ page }) => {
     await page.goto('/practice');
-    await expect(page.getByRole('navigation')).toContainText('Practice');
-    await expect(page.getByRole('textbox', { name: /Name/i })).toBeVisible();
+    await expect(page.getByRole('navigation', { name: 'Primary navigation' })).toContainText('Practice');
+    await expect(page.getByRole('textbox', { name: /^Name\b/i })).toBeVisible();
     await expect(page.getByRole('textbox', { name: /^Email/i })).toBeVisible();
     await expect(page.getByLabel(/Company name/i)).toBeVisible();
 
     await page.keyboard.press('Tab');
     await page.keyboard.press('Tab');
     await expect(page.locator(':focus')).toBeVisible();
-    await page.getByRole('textbox', { name: /Name/i }).fill('Avery Founder');
+    await page.getByRole('textbox', { name: /^Name\b/i }).fill('Avery Founder');
     await page.getByRole('textbox', { name: /^Email/i }).fill('avery@example.com');
     await page.getByLabel(/Company name/i).fill('ExampleCo');
     await page.getByRole('button', { name: /Start AI Scooter practice/i }).focus();
