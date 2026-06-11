@@ -61,7 +61,9 @@
     "proof:journey:headed": "node scripts/run-real-journey-proof.mjs --headed",
     "env:vault:upsert-providers": "node scripts/env/upsert-provider-env-vault.mjs",
     "proof:media:live": "MEDIA_PROOF_RUN_LIVE=true node scripts/proof-scooter-media-provider.mjs",
-    "fish:clone:scooter": "node scripts/fish/create-scooter-voice-model.mjs"
+    "fish:clone:scooter": "node scripts/fish/create-scooter-voice-model.mjs",
+    "gauntlet:live:report": "node scripts/run-live-gauntlet-report.mjs --live",
+    "gauntlet:live:report:headed": "node scripts/run-live-gauntlet-report.mjs --live --headed"
   },
   "devDependencies": {
     "@playwright/test": "^1.60.0"
