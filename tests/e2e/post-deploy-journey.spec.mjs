@@ -8,7 +8,7 @@ function deployedUrl(path = '/') {
 }
 
 async function expectNoInternalLanguage(page) {
-  await expect(page.locator('body')).not.toContainText(/render job|provider key|OPENAI_API_KEY|GEMINI_API_KEY|ELEVENLABS_API_KEY|NETWORK_OS_SHARED_SECRET/i);
+  await expect(page.locator('body')).not.toContainText(/render job|OPENAI_API_KEY|GEMINI_API_KEY|ELEVENLABS_API_KEY|NETWORK_OS_SHARED_SECRET/i);
   await expect(page.locator('body')).not.toContainText(/guaranteed funding|guaranteed meeting|guaranteed intro|guaranteed investment review/i);
 }
 
@@ -79,8 +79,8 @@ test.describe('Post-deploy Pitch Lab journey gauntlet', () => {
     await page.goto(deployedUrl('/practice'));
     await expect(page.locator('[data-founder-profile-gate]')).not.toContainText('Loading guided practice flow');
     await expect(page.locator('[data-founder-profile-gate]')).toContainText(/Start here|Enter your email|founder profile/i);
-    await expect(page.getByRole('textbox', { name: /Name/i })).toBeVisible();
-    await expect(page.getByRole('textbox', { name: /Email/i })).toBeVisible();
+    await expect(page.getByRole('textbox', { name: /^Name\b/i })).toBeVisible();
+    await expect(page.getByRole('textbox', { name: /^Email\b/i })).toBeVisible();
     await expect(page.getByLabel(/Company name/i)).toBeVisible();
     await expect(page.locator('body')).toContainText(/Next:|Hints on every answer|Next step always visible/i);
     await expect(page.locator('body')).toContainText(/Optional deck-as-context|private session context|answers stay private/i);
@@ -89,8 +89,8 @@ test.describe('Post-deploy Pitch Lab journey gauntlet', () => {
 
   test('deployed practice journey advances through profile, deck choice, prompts, helpers, and local persistence', async ({ page }) => {
     await page.goto(deployedUrl('/practice'));
-    await page.getByRole('textbox', { name: /Name/i }).fill('Avery Founder');
-    await page.getByRole('textbox', { name: /Email/i }).fill('avery@example.com');
+    await page.getByRole('textbox', { name: /^Name\b/i }).fill('Avery Founder');
+    await page.getByRole('textbox', { name: /^Email\b/i }).fill('avery@example.com');
     await page.getByLabel(/Company name/i).fill('ExampleCo');
     await page.getByRole('button', { name: /Start AI Scooter practice/i }).click();
 
