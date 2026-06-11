@@ -3,11 +3,16 @@
 // API keys, webhook secrets, and Cloudflare tokens must remain in env/vault only.
 
 export const SCOOTER_MEDIA_IDENTITY = Object.freeze({
-  version: 'phase9d-did-primary-heygen-secondary-media-identity-v1',
+  version: 'phase9e-uploaded-mp3-primary-did-audio-url-media-identity-v1',
   person: 'Scooter Taylor',
   approvedPhotoAsset: '/assets/avatar/scooter-avatar-source.png',
   approvedDrivingVideoAsset: '/assets/avatar/scooter-driving-video-source.mp4',
-  voiceProvider: 'did_or_heygen_provider_voice',
+  approvedVoiceAudioAsset: '/assets/avatar/scooter-voice-only.mp3',
+  approvedVoiceAudioBackupAsset: '/assets/avatar/scooter-voice-only.m4a',
+  fixedClipVoiceProvider: 'uploaded_scooter_mp3_to_did_audio_url',
+  dynamicVoiceProvider: 'fish_audio_optional_for_dynamic_custom_speech',
+  fallbackVoiceProvider: 'elevenlabs',
+  voiceProvider: 'uploaded_scooter_mp3_primary_for_fixed_did_audio_url',
   avatarProvider: 'did',
   fallbackAvatarProviders: Object.freeze(['heygen']),
   elevenLabsVoiceId: 'hANI1GBmIHJmKw4YnaGO',
@@ -29,6 +34,10 @@ export const SCOOTER_MEDIA_IDENTITY = Object.freeze({
   rules: Object.freeze({
     voiceIdIsSecret: false,
     providerIdsAreSecrets: false,
+    uploadedScooterMp3IsCanonicalFixedClipVoice: true,
+    didAudioUrlIsPrimaryFixedClipPath: true,
+    fishAudioIsDynamicSpeechOnly: true,
+    elevenLabsIsFallbackOnly: true,
     apiKeysRemainEnvOnly: true,
     founderUiMayRequestPaidMedia: false,
     talkingScooterIsCoreExperience: true,

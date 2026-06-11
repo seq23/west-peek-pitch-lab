@@ -40,6 +40,12 @@ if (!avatar.includes('AVATAR_MAX_VIDEO_SECONDS') || !avatar.includes('AVATAR_MAX
 if (!avatar.includes('AVATAR_DYNAMIC_GENERATION_ENABLED')) failures.push('Avatar service must respect dynamic generation flag.');
 if (keys.has('ELEVENLABS_VOICE_ID') || keys.has('MAKEUGC_AVATAR_ID') || keys.has('MAKEUGC_VOICE_ID')) failures.push('Provider identity IDs must not be env vars unless the selected provider requires account-scoped avatar IDs.');
 if (!voice.includes('ELEVENLABS_API_KEY') || !avatar.includes('DID_API_KEY') || !avatar.includes('HEYGEN_API_KEY') || !avatar.includes('MAKEUGC_API_KEY')) failures.push('Provider services must reference managed provider API keys server-side.');
+const mediaIdentity = read('src/server/media/scooterMediaIdentity.mjs');
+if (!mediaIdentity.includes('approvedVoiceAudioAsset') || !mediaIdentity.includes('scooter-voice-only.mp3')) failures.push('Media identity must commit uploaded Scooter MP3 as canonical fixed-clip voice asset.');
+if (!mediaIdentity.includes('didAudioUrlIsPrimaryFixedClipPath')) failures.push('Media identity must mark D-ID audio_url as primary fixed-clip path.');
+if (!mediaIdentity.includes('fishAudioIsDynamicSpeechOnly')) failures.push('Media identity must mark Fish Audio as dynamic speech only, not fixed-clip primary.');
+if (!mediaIdentity.includes('elevenLabsIsFallbackOnly')) failures.push('Media identity must mark ElevenLabs as fallback-only.');
+if (!avatar.includes('audio_url') || !avatar.includes('request.audioUrl')) failures.push('Avatar service must support uploaded/generated audioUrl handoff to D-ID/HeyGen.');
 if (!voice.includes('scooterMediaIdentity') || !avatar.includes('scooterMediaIdentity')) failures.push('Voice/avatar services must load non-secret Scooter media identity from repo asset module.');
 
 const manifest = JSON.parse(read('public/assets/avatar/clip-manifest.json') || '{}');
@@ -54,7 +60,7 @@ if (!build.includes("copyPublicAssetDir('assets/avatar')") && !build.includes('p
 if (fs.existsSync(path.join(root, 'src/runtime/mediaMomentsClient.mjs'))) failures.push('Public media request client must not exist in Phase 6; media is backend/provider wiring, not founder-facing request machinery.');
 if (appShell.includes('data-render-avatar') || appShell.includes('data-render-voice') || appShell.includes('Request limited avatar')) failures.push('Public UI must not expose media render/request buttons.');
 if (!avatar.includes('did') || !avatar.includes('heygen')) failures.push('Avatar service must support D-ID primary and HeyGen secondary talking-avatar provider posture.');
-if (!read('src/server/media/scooterMediaIdentity.mjs').includes('talkingScooterIsCoreExperience')) failures.push('Media identity must mark talking Scooter as core experience.');
+if (!mediaIdentity.includes('talkingScooterIsCoreExperience')) failures.push('Media identity must mark talking Scooter as core experience.');
 
 if (failures.length) {
   console.error('PHASE 6 VALIDATION FAILED');

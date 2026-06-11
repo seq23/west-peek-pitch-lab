@@ -29,6 +29,11 @@ assert.equal(SCOOTER_MEDIA_IDENTITY.rules.apiKeysRemainEnvOnly, true, 'media ide
 assert.equal(SCOOTER_MEDIA_IDENTITY.rules.talkingScooterIsCoreExperience, true, 'talking Scooter must be core to the intended MVP');
 assert.equal(SCOOTER_MEDIA_IDENTITY.rules.textOnlyIsDegradedMode, true, 'text-only/static mode is degraded fallback, not intended experience');
 assert.equal(SCOOTER_MEDIA_IDENTITY.approvedPhotoAsset, '/assets/avatar/scooter-avatar-source.png');
+assert.equal(SCOOTER_MEDIA_IDENTITY.approvedVoiceAudioAsset, '/assets/avatar/scooter-voice-only.mp3', 'uploaded Scooter MP3 is canonical fixed-clip voice source');
+assert.equal(SCOOTER_MEDIA_IDENTITY.approvedVoiceAudioBackupAsset, '/assets/avatar/scooter-voice-only.m4a', 'uploaded Scooter M4A is canonical backup voice source');
+assert.equal(SCOOTER_MEDIA_IDENTITY.rules.didAudioUrlIsPrimaryFixedClipPath, true, 'D-ID audio_url is primary fixed-clip voice/video path');
+assert.equal(SCOOTER_MEDIA_IDENTITY.rules.fishAudioIsDynamicSpeechOnly, true, 'Fish Audio is dynamic speech only, not fixed-clip primary');
+assert.equal(SCOOTER_MEDIA_IDENTITY.rules.elevenLabsIsFallbackOnly, true, 'ElevenLabs is fallback only');
 assert.equal(SCOOTER_MEDIA_IDENTITY.avatarProvider, 'did', 'D-ID is the primary avatar provider');
 assert.deepEqual([...SCOOTER_MEDIA_IDENTITY.fallbackAvatarProviders], ['heygen'], 'HeyGen is the secondary avatar provider');
 
@@ -71,6 +76,22 @@ result = await renderScooterAvatar({
 assert.equal(result.httpStatus, 202, 'configured D-ID provider should queue avatar render');
 assert.equal(result.body.provider, 'did');
 assert.equal(result.body.providerResponse.id, 'did-talk-id');
+
+result = await renderScooterAvatar({
+  env: { ...placeholderEnv, DID_API_KEY: 'base64-ish-key', DID_SOURCE_URL: 'https://example.com/scooter.png' },
+  identity: approvedIdentity,
+  body: { moment: 'welcome', audioUrl: 'https://example.com/assets/avatar/scooter-voice-only.mp3' },
+  fetchImpl: async (url, init) => {
+    assert.match(String(url), /api\.d-id\.com\/talks/);
+    const body = JSON.parse(init.body);
+    assert.equal(body.script.type, 'audio');
+    assert.equal(body.script.audio_url, 'https://example.com/assets/avatar/scooter-voice-only.mp3');
+    return new Response(JSON.stringify({ id: 'did-audio-talk-id', status: 'created' }), { status: 201, headers: { 'content-type': 'application/json' } });
+  }
+});
+assert.equal(result.httpStatus, 202, 'configured D-ID provider should queue uploaded-audio avatar render');
+assert.equal(result.body.provider, 'did');
+assert.equal(result.body.providerResponse.id, 'did-audio-talk-id');
 
 result = await renderScooterAvatar({
   env: { ...placeholderEnv, AVATAR_PROVIDER: 'did', DID_API_KEY: '', DID_SOURCE_URL: '', HEYGEN_API_KEY: 'heygen-key', HEYGEN_AVATAR_ID: 'heygen-avatar-id' },
