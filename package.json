@@ -67,7 +67,16 @@
     "validate:e2e-data-trace": "node scripts/run-e2e-data-trace.mjs --validate",
     "proof:llm": "node scripts/proof-llm-provider.mjs",
     "proof:llm:live": "PITCH_LAB_LIVE_LLM_PROOF=true node scripts/proof-llm-provider.mjs",
-    "proof:llm:live:browser": "PITCH_LAB_LIVE_LLM_E2E=true PLAYWRIGHT_SKIP_WEBSERVER=true npx playwright test tests/e2e/llm-live-response.spec.mjs --project=desktop-chromium"
+    "proof:llm:live:browser": "PITCH_LAB_LIVE_LLM_E2E=true PLAYWRIGHT_SKIP_WEBSERVER=true npx playwright test tests/e2e/llm-live-response.spec.mjs --project=desktop-chromium",
+    "env:remove": "node scripts/env/remove-local-env.mjs",
+    "env:remove:backup": "node scripts/env/remove-local-env.mjs --backup",
+    "validate:everything": "node scripts/run-test-operations-orchestrator.mjs",
+    "validate:everything:headed": "node scripts/run-test-operations-orchestrator.mjs --headed",
+    "validate:everything:install-browsers": "node scripts/run-test-operations-orchestrator.mjs --install-browsers",
+    "validate:everything:live": "node scripts/run-test-operations-orchestrator.mjs --live",
+    "validate:everything:live:headed": "node scripts/run-test-operations-orchestrator.mjs --live --headed",
+    "validate:everything:live:postdeploy": "node scripts/run-test-operations-orchestrator.mjs --live --postdeploy",
+    "validate:everything:live:postdeploy:headed": "node scripts/run-test-operations-orchestrator.mjs --live --postdeploy --headed"
   },
   "devDependencies": {
     "@playwright/test": "^1.60.0"

@@ -42,7 +42,14 @@
     "gauntlet:live:report",
     "gauntlet:live:report:headed",
     "proof:media",
-    "proof:media:live"
+    "proof:media:live",
+    "validate:everything",
+    "validate:everything:headed",
+    "validate:everything:install-browsers",
+    "validate:everything:live",
+    "validate:everything:live:headed",
+    "validate:everything:live:postdeploy",
+    "validate:everything:live:postdeploy:headed"
   ],
   "entries": [
     {
@@ -428,6 +435,83 @@
       "proves": "Deployed browser clicks Generate AI Pitch Story Card, calls the live route without route stubbing, renders AI Scooter response, and stores the card locally.",
       "doesNotProve": "Long-term provider quality, cost forecasting, all prompt variants, or future production secret rotation.",
       "failureHandling": "Fix env/provider/config/browser path. Do not mark AI Scooter live response as proven while this fails.",
+      "ownerDecisionNeeded": false
+    },
+    {
+      "script": "validate:everything",
+      "command": "node scripts/run-test-operations-orchestrator.mjs",
+      "category": "test operations orchestration",
+      "severity": "LOCAL_PROOF_ORCHESTRATOR",
+      "productionRisk": "Scattered validation/proof scripts can create operator confusion, missed proof lanes, and false completion claims.",
+      "proves": "Runs or classifies the canonical non-live all-tests orchestrator; produces a single PASS/WARN/FAIL/UNPROVEN report and separates Tier 1, Tier 2, Tier 3, and Tier 4 proof boundaries.",
+      "doesNotProve": "Does not guarantee live providers unless live mode and restored env succeed; does not prove human visual/media/business approval.",
+      "failureHandling": "Inspect tmp/test-operations/summary.md and the referenced per-step log; fix exact failing lane or accept clearly labeled unproven layer.",
+      "ownerDecisionNeeded": false
+    },
+    {
+      "script": "validate:everything:headed",
+      "command": "node scripts/run-test-operations-orchestrator.mjs --headed",
+      "category": "test operations orchestration",
+      "severity": "LOCAL_PROOF_ORCHESTRATOR",
+      "productionRisk": "Scattered validation/proof scripts can create operator confusion, missed proof lanes, and false completion claims.",
+      "proves": "Runs or classifies the canonical non-live headed all-tests orchestrator; produces a single PASS/WARN/FAIL/UNPROVEN report and separates Tier 1, Tier 2, Tier 3, and Tier 4 proof boundaries.",
+      "doesNotProve": "Does not guarantee live providers unless live mode and restored env succeed; does not prove human visual/media/business approval.",
+      "failureHandling": "Inspect tmp/test-operations/summary.md and the referenced per-step log; fix exact failing lane or accept clearly labeled unproven layer.",
+      "ownerDecisionNeeded": false
+    },
+    {
+      "script": "validate:everything:install-browsers",
+      "command": "node scripts/run-test-operations-orchestrator.mjs --install-browsers",
+      "category": "test operations orchestration",
+      "severity": "LOCAL_PROOF_ORCHESTRATOR",
+      "productionRisk": "Scattered validation/proof scripts can create operator confusion, missed proof lanes, and false completion claims.",
+      "proves": "Runs or classifies the canonical all-tests orchestrator with Playwright Chromium install; produces a single PASS/WARN/FAIL/UNPROVEN report and separates Tier 1, Tier 2, Tier 3, and Tier 4 proof boundaries.",
+      "doesNotProve": "Does not guarantee live providers unless live mode and restored env succeed; does not prove human visual/media/business approval.",
+      "failureHandling": "Inspect tmp/test-operations/summary.md and the referenced per-step log; fix exact failing lane or accept clearly labeled unproven layer.",
+      "ownerDecisionNeeded": false
+    },
+    {
+      "script": "validate:everything:live",
+      "command": "node scripts/run-test-operations-orchestrator.mjs --live",
+      "category": "test operations orchestration",
+      "severity": "LOCAL_PROOF_ORCHESTRATOR",
+      "productionRisk": "Scattered validation/proof scripts can create operator confusion, missed proof lanes, and false completion claims.",
+      "proves": "Runs or classifies the canonical live provider all-tests orchestrator; produces a single PASS/WARN/FAIL/UNPROVEN report and separates Tier 1, Tier 2, Tier 3, and Tier 4 proof boundaries.",
+      "doesNotProve": "Does not guarantee live providers unless live mode and restored env succeed; does not prove human visual/media/business approval.",
+      "failureHandling": "Inspect tmp/test-operations/summary.md and the referenced per-step log; fix exact failing lane or accept clearly labeled unproven layer.",
+      "ownerDecisionNeeded": false
+    },
+    {
+      "script": "validate:everything:live:headed",
+      "command": "node scripts/run-test-operations-orchestrator.mjs --live --headed",
+      "category": "test operations orchestration",
+      "severity": "LOCAL_PROOF_ORCHESTRATOR",
+      "productionRisk": "Scattered validation/proof scripts can create operator confusion, missed proof lanes, and false completion claims.",
+      "proves": "Runs or classifies the canonical live provider headed all-tests orchestrator; produces a single PASS/WARN/FAIL/UNPROVEN report and separates Tier 1, Tier 2, Tier 3, and Tier 4 proof boundaries.",
+      "doesNotProve": "Does not guarantee live providers unless live mode and restored env succeed; does not prove human visual/media/business approval.",
+      "failureHandling": "Inspect tmp/test-operations/summary.md and the referenced per-step log; fix exact failing lane or accept clearly labeled unproven layer.",
+      "ownerDecisionNeeded": false
+    },
+    {
+      "script": "validate:everything:live:postdeploy",
+      "command": "node scripts/run-test-operations-orchestrator.mjs --live --postdeploy",
+      "category": "test operations orchestration",
+      "severity": "LOCAL_PROOF_ORCHESTRATOR",
+      "productionRisk": "Scattered validation/proof scripts can create operator confusion, missed proof lanes, and false completion claims.",
+      "proves": "Runs or classifies the canonical live provider plus postdeploy all-tests orchestrator; produces a single PASS/WARN/FAIL/UNPROVEN report and separates Tier 1, Tier 2, Tier 3, and Tier 4 proof boundaries.",
+      "doesNotProve": "Does not guarantee live providers unless live mode and restored env succeed; does not prove human visual/media/business approval.",
+      "failureHandling": "Inspect tmp/test-operations/summary.md and the referenced per-step log; fix exact failing lane or accept clearly labeled unproven layer.",
+      "ownerDecisionNeeded": false
+    },
+    {
+      "script": "validate:everything:live:postdeploy:headed",
+      "command": "node scripts/run-test-operations-orchestrator.mjs --live --postdeploy --headed",
+      "category": "test operations orchestration",
+      "severity": "LOCAL_PROOF_ORCHESTRATOR",
+      "productionRisk": "Scattered validation/proof scripts can create operator confusion, missed proof lanes, and false completion claims.",
+      "proves": "Runs or classifies the canonical live provider plus postdeploy headed all-tests orchestrator; produces a single PASS/WARN/FAIL/UNPROVEN report and separates Tier 1, Tier 2, Tier 3, and Tier 4 proof boundaries.",
+      "doesNotProve": "Does not guarantee live providers unless live mode and restored env succeed; does not prove human visual/media/business approval.",
+      "failureHandling": "Inspect tmp/test-operations/summary.md and the referenced per-step log; fix exact failing lane or accept clearly labeled unproven layer.",
       "ownerDecisionNeeded": false
     }
   ],

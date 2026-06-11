@@ -268,3 +268,31 @@ Mobile/browser core surfaces...........PASS/FAIL/UNPROVEN
 If any line is not tested, it must be listed as `UNPROVEN`. It must not disappear from the gauntlet.
 
 Plain-language release rule: **AI Scooter talks back** only after both the direct live LLM provider proof and the deployed Playwright browser proof pass. Static copy, fixtures, fallback cards, and route existence do not satisfy this promise.
+
+## Canonical Test Operations Orchestrator — 06-11-26
+
+`docs/TEST_OPERATIONS_RUNBOOK.md` is now the authority for local validation, live-provider proof, deployed proof, and new-chat continuity.
+
+The previous scattered test model is superseded by one canonical runner:
+
+```bash
+npm run validate:everything
+```
+
+The runner classifies proof into tiers:
+
+- Tier 1: ZIP delivery / assistant-pre-delivery validation
+- Tier 2: local automated browser validation
+- Tier 3: live provider and deployed validation
+- Tier 4: human approval
+
+Admitted orchestration scripts:
+
+| Validator / Test | Command | Category | Severity | Production Risk | What It Proves | What It Does Not Prove | Failure Handling | Owner Decision Needed? |
+|---|---|---|---|---|---|---|---|---|
+| Canonical test orchestrator | `npm run validate:everything` | test operations orchestration | LOCAL PROOF ORCHESTRATOR | Scattered proof scripts can create missed lanes and false completion claims. | Runs or classifies static validation plus local browser lanes and emits PASS/WARN/FAIL/UNPROVEN. | Does not prove live providers unless live mode is used; does not prove human approval. | Read `tmp/test-operations/summary.md` and fix exact failing lane. | No |
+| Canonical headed orchestrator | `npm run validate:everything:headed` | test operations orchestration | LOCAL PROOF ORCHESTRATOR | Headless-only success can hide visible-browser friction. | Same as canonical orchestrator with headed browser where applicable. | Does not prove live providers unless live mode is used; does not prove human approval. | Read report logs and inspect visible-browser failures. | No |
+| Canonical live orchestrator | `npm run validate:everything:live` | test operations orchestration | LOCAL LIVE PROVIDER ORCHESTRATOR | Live provider tests require env restore/removal and should not be run manually out of sequence. | Restores env from vault for live lanes, runs live provider proofs, removes `.env.local`, and emits a single report. | Does not prove deployed behavior unless deploy URL is supplied; does not prove subjective quality. | Fix vault/env/provider lane named in report. | No |
+| Canonical live postdeploy orchestrator | `PITCH_LAB_DEPLOY_URL="https://<deployed-url>" npm run validate:everything:live:postdeploy` | test operations orchestration | LOCAL LIVE + DEPLOYED ORCHESTRATOR | Local provider proof is insufficient if deployed runtime breaks. | Runs live provider proof plus deployed browser/function lanes against explicit deployed URL. | Does not prove human visual/media/business approval. | Fix deployed env, route, provider, or browser lane named in report. | No |
+
+Generated reports live under `tmp/test-operations/` and must not be committed.

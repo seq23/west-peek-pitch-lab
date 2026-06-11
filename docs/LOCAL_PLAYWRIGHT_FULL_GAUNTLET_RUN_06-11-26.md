@@ -1,61 +1,56 @@
 # Local Playwright Full Gauntlet Run — 06-11-26
 
-## Purpose
+Status: SUPERSEDED BY CANONICAL TEST OPERATIONS RUNBOOK
 
-This note records the local-validation boundary for the West Peek Pitch Lab full browser gauntlet.
+Use this document only as historical context for why the browser preflight was added.
 
-The repo contains a full Playwright E2E suite for the current Pitch Lab product. The suite is intended to be run on the local machine after the baseline ZIP is applied with the repo updater.
+Canonical authority now lives at:
 
-## Full local command sequence
+```text
+docs/TEST_OPERATIONS_RUNBOOK.md
+```
 
-From the repo root:
+Canonical local command:
 
-1. Install dependencies:
+```bash
+npm run validate:everything
+```
 
-   npm ci
+Canonical command that installs Playwright Chromium first:
 
-2. Install Playwright Chromium if it is not already installed:
+```bash
+npm run validate:everything:install-browsers
+```
 
-   npx playwright install chromium
+Canonical live-provider command:
 
-3. Run structural validation:
+```bash
+npm run validate:everything:live
+```
 
-   npm run validate:all
+Canonical live-provider + deployed proof command:
 
-4. Run the full Playwright gauntlet:
+```bash
+PITCH_LAB_DEPLOY_URL="https://<deployed-url>" npm run validate:everything:live:postdeploy
+```
 
-   npm run gauntlet
+## Historical note
 
-5. Optional headed proof:
+The original sandbox result on 06-11-26 was:
 
-   npm run gauntlet:headed
+- `npm ci` — PASSED
+- `npm run validate:all` — PASSED
+- `npm run validate:e2e-data-trace` — PASSED as part of `validate:all`, 69 pass / 0 warn / 0 fail
 
-## Live LLM browser proof
-
-The live deployed LLM browser proof is intentionally separate from the local static gauntlet. It requires a deployed URL and live provider env.
-
-Required command pattern:
-
-PITCH_LAB_DEPLOY_URL="https://<deployed-url>" npm run proof:llm:live:browser
-
-## Sandbox result on 06-11-26
-
-Static/local non-browser validation passed in the sandbox:
-
-- npm ci — PASSED
-- npm run validate:all — PASSED
-- npm run validate:e2e-data-trace — PASSED as part of validate:all, 69 pass / 0 warn / 0 fail
-
-Full Playwright browser execution did not complete in the sandbox because the Playwright Chromium binary was missing and the sandbox could not resolve cdn.playwright.dev to download it.
+Full Playwright browser execution did not complete in the sandbox because the Playwright Chromium binary was missing and the sandbox could not resolve `cdn.playwright.dev` to download it.
 
 Observed blocker:
 
-- Missing executable: chromium_headless_shell
-- Download failure: getaddrinfo EAI_AGAIN cdn.playwright.dev
+- Missing executable: `chromium_headless_shell`
+- Download failure: `getaddrinfo EAI_AGAIN cdn.playwright.dev`
 
-This is an environment prerequisite failure, not product-journey proof.
+That was an environment prerequisite failure, not product-journey proof.
 
-## Harness hardening added
+## Harness hardening retained
 
-`scripts/run-master-gauntlet.mjs` now performs a browser-binary preflight before launching the suite. If Chromium is missing, it exits with a clear instruction instead of producing dozens of noisy browser-launch failures.
-
+`scripts/run-master-gauntlet.mjs` still performs a browser-binary preflight before launching the suite. If Chromium is missing, it exits with a clear instruction instead of producing dozens of noisy browser-launch failures.

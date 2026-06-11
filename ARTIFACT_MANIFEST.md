@@ -241,3 +241,52 @@
 - Updated `scripts/validate-master-gauntlet.mjs` so the gauntlet runner must retain the browser preflight and local install/run instructions.
 - Static validation in this sandbox passed: `npm ci`, `npm run validate:all`, including E2E data trace 69 pass / 0 warn / 0 fail.
 - Full Playwright browser execution remains local-machine validation because sandbox browser installation failed on DNS resolution for `cdn.playwright.dev`.
+
+## 06-11-26 — Canonical Test Operations Orchestrator
+
+- Added `scripts/run-test-operations-orchestrator.mjs` as the single canonical all-tests runner.
+- Added `scripts/env/remove-local-env.mjs` and `npm run env:remove` so local secret env can be removed after live proofs.
+- Added canonical npm commands:
+  - `npm run validate:everything`
+  - `npm run validate:everything:headed`
+  - `npm run validate:everything:install-browsers`
+  - `npm run validate:everything:live`
+  - `npm run validate:everything:live:headed`
+  - `npm run validate:everything:live:postdeploy`
+  - `npm run validate:everything:live:postdeploy:headed`
+- Added `docs/TEST_OPERATIONS_RUNBOOK.md` as the authority document for what can be proven before ZIP delivery, what must run locally, what requires provider secrets, and what remains human approval.
+- Updated `docs/LOCAL_PLAYWRIGHT_FULL_GAUNTLET_RUN_06-11-26.md` to point to the new canonical test-operations runbook.
+- Updated `_repo_validation_matrix.json` to admit the new test-operations scripts and preserve the matrix admission rule.
+- Added `tmp/` to `.gitignore`; generated reports are not source-of-truth and must not be committed.
+- Structural validation passed in this build environment: `npm ci`, `npm run validate:all`, and `npm run validate:everything`.
+- Browser and live-provider proof remain local-only / secret-gated by design; the new orchestrator reports them as `UNPROVEN` instead of hiding or confusing the proof boundary.
+
+## Test Operations Documentation Update — 06-11-26
+
+Added/confirmed canonical testing operations layer:
+
+- `docs/TEST_OPERATIONS_RUNBOOK.md` is the authoritative test operations handoff.
+- `scripts/run-test-operations-orchestrator.mjs` is the canonical all-tests runner.
+- `scripts/env/remove-local-env.mjs` removes `.env.local` after live proof lanes.
+- `npm run validate:everything` runs Tier 1 + Tier 2 local proof.
+- `npm run validate:everything:live` restores env from vault, runs live provider proof, and removes env afterward.
+- `npm run validate:everything:live:postdeploy` adds deployed URL proof when `PITCH_LAB_DEPLOY_URL` is provided.
+
+Proof boundary remains explicit:
+
+- Tier 1 can be proven before ZIP delivery.
+- Tier 2 must run locally with Playwright Chromium.
+- Tier 3 must run locally with restored provider env and deployed URL when applicable.
+- Tier 4 requires human approval.
+
+## 06-11-26 — Test Operations Documentation Fix
+
+- Restored safe committed env scaffold files required by validators:
+  - `.env.example`
+  - `.env.local.example`
+- Preserved real secret exclusion: no `.env.local` or real env values are packaged.
+- Added canonical test operations documentation and orchestrator from prior test-ops pass.
+- Added env cleanup support via `scripts/env/remove-local-env.mjs`.
+- Confirmed `.gitignore` excludes generated `tmp/` reports while preserving safe env examples.
+- `npm run validate:all` passed after restoring env scaffold files.
+- Local browser/live provider proof remains local-only and must run after updater.
