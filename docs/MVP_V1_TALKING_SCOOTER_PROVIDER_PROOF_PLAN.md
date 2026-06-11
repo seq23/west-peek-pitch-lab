@@ -22,9 +22,9 @@ Therefore, `elevenlabs_video` remains proof-gated. It must not mark itself confi
 ## Required proof
 
 1. Confirm the selected provider can create the required talking-photo/video output from the approved Scooter source asset.
-2. Generate and play the cached welcome clip.
-3. Generate and play the cached or lightly dynamic share-close clip.
-4. Generate and play the dynamic final Story Card summary clip from an LLM-produced script.
+2. Generate or retrieve the cached reusable welcome clip; a committed file is optional if runtime generation/cache policy is complete.
+3. Generate or retrieve the generic cached share-close clip, or generate a contextual variant scoped by session/content hash.
+4. Generate the dynamic final Story Card summary clip from an LLM-produced script and cache it only for the same session/content hash.
 5. Return or store a playable media URL without exposing provider internals to founders.
 6. Keep the Story Card text-first; video must follow asynchronously and never block copy/share utility.
 7. Confirm provider failure degrades honestly without fake success.
@@ -67,8 +67,18 @@ Required proof variables:
 
 ## Completion standard
 
-Complete only when a founder can load the app, see the cached welcome talking Scooter moment, generate a Story Card, receive text immediately, and then receive a real playable Scooter final summary clip.
+Complete only when a founder can load the app, receive the reusable welcome media through cache/generation, generate a Story Card, receive text immediately, and then receive a real playable Scooter final summary generated for that session/content hash.
 
 Until then, status is:
 
 **MEDIA JOURNEY LOCKED — TALKING AVATAR PROVIDER PROOF REQUIRED.**
+
+
+## Runtime cache contract
+
+Required media moments do not need committed video files in the repo before the app can operate. The manifest must instead prove one of two acceptable states:
+
+1. A committed, approved playable `src` exists; or
+2. A complete runtime generation/cache contract exists with `generationMode`, `cacheStrategy`, `cacheKey`, `generationPath`, and fallback behavior.
+
+Reusable moments such as `welcome` can use stable cache keys only when they contain no founder-specific content. Dynamic moments such as `final_summary` must use session/content-hash cache keys and must not be globally reused.

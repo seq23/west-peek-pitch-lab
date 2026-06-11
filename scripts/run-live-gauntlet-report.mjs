@@ -62,7 +62,7 @@ function inferBlocker(text) {
   if (lower.includes('env_vault_passphrase is required')) return 'Missing ENV_VAULT_PASSPHRASE.';
   if (lower.includes('missing') && lower.includes('api')) return 'Missing provider env/API configuration.';
   if (lower.includes('camera') || lower.includes('permission')) return 'Browser camera/device permission or headed browser issue.';
-  if (lower.includes('clip not yet rendered') || lower.includes('no playable src')) return 'Playable committed media clips are not yet present in clip-manifest.';
+  if (lower.includes('clip not yet rendered') || lower.includes('no playable src')) return 'Runtime media generation/cache policy is missing or provider proof did not complete.';
   if (lower.includes('timeout')) return 'Timeout waiting for browser/provider/network.';
   return 'See log for exact failure.';
 }
@@ -168,7 +168,7 @@ const steps = [
     env: { MEDIA_PROOF_RUN_LIVE: 'true', ...deployEnv },
     log: 'proof-media-live.log',
     warnOnIncomplete: true,
-    note: 'Expected WARN until playable rendered clips are committed into clip-manifest.'
+    note: 'WARN only when runtime media cache contract or live provider proof is incomplete.'
   },
   {
     id: 'postdeploy-functions',
@@ -213,7 +213,7 @@ const steps = [
     log: 'media-browser-proof.log',
     allowFailure: true,
     warnOnIncomplete: true,
-    note: 'Expected WARN until playable rendered clips are committed into clip-manifest.'
+    note: 'WARN only when runtime media cache contract or live provider proof is incomplete.'
   }
 ];
 

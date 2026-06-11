@@ -1,8 +1,21 @@
 #!/usr/bin/env node
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
 import { getVoiceStatus, renderScooterVoice } from '../../src/server/voice/voiceService.mjs';
 import { getAvatarStatus, renderScooterAvatar, validateAvatarRequest } from '../../src/server/avatar/avatarService.mjs';
 import { SCOOTER_MEDIA_IDENTITY } from '../../src/server/media/scooterMediaIdentity.mjs';
+
+
+const manifest = JSON.parse(fs.readFileSync('public/assets/avatar/clip-manifest.json', 'utf8'));
+assert.equal(manifest.runtimeMediaCacheContract.version, 'runtime-media-cache-v1', 'manifest must declare runtime generated media cache contract');
+const clipsByMoment = new Map(manifest.clips.map((clip) => [clip.moment, clip]));
+assert.equal(clipsByMoment.get('welcome').generationMode, 'reusable_static', 'welcome is a reusable runtime-generated/cached clip');
+assert.equal(clipsByMoment.get('welcome').reuseAllowed, true, 'welcome may be reused globally only because it has no founder-specific content');
+assert.equal(clipsByMoment.get('welcome').dynamicContentAllowed, false, 'welcome must not include dynamic founder content if globally reused');
+assert.equal(clipsByMoment.get('final_summary').generationMode, 'dynamic_session', 'final summary is generated per founder/session');
+assert.equal(clipsByMoment.get('final_summary').reuseAllowed, false, 'final summary must not be globally reusable');
+assert.equal(clipsByMoment.get('final_summary').cacheStrategy, 'session_or_content_hash', 'dynamic final summary cache must be session/content scoped');
+assert.ok(clipsByMoment.get('share_cta').cacheStrategy.includes('stable_asset_cache_key'), 'share CTA can use stable reusable cache only when generic');
 
 const placeholderEnv = {
   VOICE_PROVIDER: 'fish_audio',
@@ -41,6 +54,8 @@ assert.equal(SCOOTER_MEDIA_IDENTITY.rules.uploadedScooterMp3IsNotFinishedWelcome
 assert.equal(SCOOTER_MEDIA_IDENTITY.rules.didAudioUrlRequiresShortGeneratedOrApprovedAudio, true, 'D-ID audio_url requires short generated or approved clip audio');
 assert.equal(SCOOTER_MEDIA_IDENTITY.rules.fishOrDidCloneUsesUploadedSampleForDynamicSpeech, true, 'Fish/D-ID clone uses uploaded sample for dynamic speech');
 assert.equal(SCOOTER_MEDIA_IDENTITY.rules.elevenLabsIsFallbackOnly, true, 'ElevenLabs is fallback only');
+assert.equal(SCOOTER_MEDIA_IDENTITY.rules.runtimeGeneratedMediaCacheContract, true, 'runtime generated media cache contract is required clip model');
+assert.equal(SCOOTER_MEDIA_IDENTITY.rules.dynamicMomentsRequireSessionOrContentHashCache, true, 'dynamic moments require session/content-hash cache scope');
 assert.equal(SCOOTER_MEDIA_IDENTITY.avatarProvider, 'did', 'D-ID is the primary avatar provider');
 assert.deepEqual([...SCOOTER_MEDIA_IDENTITY.fallbackAvatarProviders], ['heygen'], 'HeyGen is the secondary avatar provider');
 
@@ -105,16 +120,16 @@ assert.equal(result.body.providerResponse.id, 'did-talk-id');
 result = await renderScooterAvatar({
   env: { ...placeholderEnv, DID_API_KEY: 'base64-ish-key', DID_SOURCE_URL: 'https://example.com/scooter.png' },
   identity: approvedIdentity,
-  body: { moment: 'welcome', audioUrl: 'https://example.com/assets/avatar/scooter-voice-only.mp3' },
+  body: { moment: 'welcome', audioUrl: 'https://example.com/generated/scooter-welcome-short.mp3' },
   fetchImpl: async (url, init) => {
     assert.match(String(url), /api\.d-id\.com\/talks/);
     const body = JSON.parse(init.body);
     assert.equal(body.script.type, 'audio');
-    assert.equal(body.script.audio_url, 'https://example.com/assets/avatar/scooter-voice-only.mp3');
+    assert.equal(body.script.audio_url, 'https://example.com/generated/scooter-welcome-short.mp3');
     return new Response(JSON.stringify({ id: 'did-audio-talk-id', status: 'created' }), { status: 201, headers: { 'content-type': 'application/json' } });
   }
 });
-assert.equal(result.httpStatus, 202, 'configured D-ID provider should queue uploaded-audio avatar render');
+assert.equal(result.httpStatus, 202, 'configured D-ID provider should queue generated/approved short-audio avatar render');
 assert.equal(result.body.provider, 'did');
 assert.equal(result.body.providerResponse.id, 'did-audio-talk-id');
 

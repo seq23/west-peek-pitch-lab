@@ -52,8 +52,38 @@ if (!voice.includes('scooterMediaIdentity') || !avatar.includes('scooterMediaIde
 
 const manifest = JSON.parse(read('public/assets/avatar/clip-manifest.json') || '{}');
 if (!Array.isArray(manifest.clips) || manifest.clips.length < 4) failures.push('Avatar clip manifest must include reusable limited-video moments.');
+const cacheContract = manifest.runtimeMediaCacheContract || {};
+if (cacheContract.version !== 'runtime-media-cache-v1') failures.push('Avatar clip manifest must declare runtimeMediaCacheContract.version=runtime-media-cache-v1.');
+for (const key of ['cacheKeyRule','reuseRule','dynamicPrivacyRule','textFirstRule','fallbackRule','committedAssetRule']) {
+  if (!cacheContract[key]) failures.push(`Runtime media cache contract missing ${key}.`);
+}
+const requiredMomentPolicies = {
+  welcome: { reusable: true, dynamic: false },
+  final_summary: { reusable: false, dynamic: true },
+  share_cta: { reusable: 'conditional', dynamic: 'conditional' }
+};
+for (const [moment, policy] of Object.entries(requiredMomentPolicies)) {
+  const clip = (manifest.clips || []).find((item) => item.moment === moment);
+  if (!clip) {
+    failures.push(`Avatar clip manifest missing required runtime moment: ${moment}`);
+    continue;
+  }
+  if (clip.status !== 'runtime_generation_cache_ready' && !clip.src) failures.push(`Clip ${moment} must either have a playable src or declare runtime_generation_cache_ready.`);
+  for (const field of ['generationMode','cacheStrategy','cacheKey','generationPath','fallback']) {
+    if (!clip[field]) failures.push(`Clip ${moment} missing runtime cache field: ${field}`);
+  }
+  if (policy.reusable === true && clip.reuseAllowed !== true) failures.push('Welcome clip must be explicitly reusable because it contains no founder-specific content.');
+  if (policy.dynamic === false && clip.dynamicContentAllowed !== false) failures.push('Welcome clip must disallow founder-specific dynamic content for global reuse.');
+  if (policy.reusable === false && clip.reuseAllowed !== false) failures.push('Final summary clip must not be globally reusable.');
+  if (policy.dynamic === true && clip.dynamicContentAllowed !== true) failures.push('Final summary clip must allow dynamic founder/session content.');
+}
 for (const clip of manifest.clips || []) {
-  if (!['not_rendered','source_ready_not_rendered'].includes(clip.status)) failures.push(`Phase 6/9D clip ${clip.id || '(unknown)'} must not claim rendered media without asset proof.`);
+  if (clip.status === 'rendered' && !clip.src) failures.push(`Clip ${clip.id || '(unknown)'} cannot claim rendered without a playable src.`);
+  if (clip.src) {
+    const isRemote = /^https?:\/\//i.test(String(clip.src));
+    const local = String(clip.src).replace(/^\//, 'public/');
+    if (!isRemote && !fs.existsSync(path.join(root, local))) failures.push(`Clip ${clip.id || '(unknown)'} src points to missing local file: ${clip.src}`);
+  }
 }
 
 const build = read('scripts/build-static-app.mjs');
@@ -63,6 +93,7 @@ if (fs.existsSync(path.join(root, 'src/runtime/mediaMomentsClient.mjs'))) failur
 if (appShell.includes('data-render-avatar') || appShell.includes('data-render-voice') || appShell.includes('Request limited avatar')) failures.push('Public UI must not expose media render/request buttons.');
 if (!avatar.includes('did') || !avatar.includes('heygen')) failures.push('Avatar service must support D-ID primary and HeyGen secondary talking-avatar provider posture.');
 if (!mediaIdentity.includes('talkingScooterIsCoreExperience')) failures.push('Media identity must mark talking Scooter as core experience.');
+if (!mediaIdentity.includes('runtimeGeneratedMediaCacheContract')) failures.push('Media identity must mark runtime generated media cache contract as the required clip model.');
 
 if (failures.length) {
   console.error('PHASE 6 VALIDATION FAILED');

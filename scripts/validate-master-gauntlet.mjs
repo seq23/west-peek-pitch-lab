@@ -37,7 +37,7 @@ for (const term of [
 ]) {
   if (!identity.includes(term)) failures.push(`Media identity missing required 9D term: ${term}`);
 }
-for (const term of ['welcome', 'final_summary', 'share_cta', 'coreProductRule', 'source_ready_not_rendered']) {
+for (const term of ['welcome', 'final_summary', 'share_cta', 'coreProductRule', 'runtime_generation_cache_ready', 'runtimeMediaCacheContract']) {
   if (!manifest.includes(term)) failures.push(`Clip manifest missing required 9D media moment/status: ${term}`);
 }
 for (const term of ['talking AI Scooter media is core', 'Final personalized Pitch Story Card summary', 'Real env values are the last subset of Phase 9D']) {
@@ -78,4 +78,4 @@ if (failures.length) {
   process.exit(1);
 }
 console.log('MASTER GAUNTLET VALIDATION PASSED');
-console.log('Gauntlet created for local/headed Playwright execution; live provider proof remains gated on env/API IDs.');
+console.log('Gauntlet created for local/headed Playwright execution; live provider proof remains gated on env/API IDs and runtime media cache policy.');

@@ -48,6 +48,10 @@ export const SCOOTER_MEDIA_IDENTITY = Object.freeze({
     finalSummaryTextMustAppearBeforeVideo: true,
     costControlMeansCachingDurationAndMomentSelection: true,
     shareCloseCanBeCachedOrLightlyDynamic: true,
+    runtimeGeneratedMediaCacheContract: true,
+    reusableMomentsMayUseStableCacheKeys: true,
+    dynamicMomentsRequireSessionOrContentHashCache: true,
+    committedPlayableClipsAreOptionalFallbacksNotHardRequirement: true,
     everyIntendedJourneyNeedsTalkingScooterAtKeyMoments: true
   })
 });

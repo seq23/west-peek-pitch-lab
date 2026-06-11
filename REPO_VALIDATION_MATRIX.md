@@ -224,3 +224,8 @@ Phase 9D full product completion still requires the local/headed gauntlet run an
 | Master Gauntlet wiring | `npm run validate:master-gauntlet` | master gauntlet / E2E proof harness | HARD FAIL CURRENT | Pitch Lab is Level 5 and cannot claim complete product proof without a capstone journey harness. | Gauntlet docs, Playwright config, spec, fixtures, official Scooter photo, ElevenLabs-first provider posture, required media moments, and no-theater assertions exist. | Does not prove headed browser execution, live ElevenLabs provider success, deployed Cloudflare runtime, or live Network OS persistence. | Restore missing gauntlet/provider/media proof harness before packaging. | No |
 
 Phase 9D full product completion still requires the local/headed gauntlet run and live provider/env subset when keys/assets are available.
+
+
+## Live gauntlet report runner
+
+`gauntlet:live:report` and `gauntlet:live:report:headed` are admitted as warning/reporting commands, not `validate:all` hard-fails. They run real provider/browser/post-deploy lanes, redact secret-shaped output, and write one repair report under `tmp/live-gauntlet-report/`. Media proof accepts either an approved playable asset or a complete runtime generation/cache contract; committed clip files are optional fallbacks for reusable moments, not the only valid product state.

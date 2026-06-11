@@ -163,4 +163,4 @@ MVP v1 should include an optional final prompt: “Anything else AI Scooter shou
 
 ## MVP v1 Blocker: Talking Scooter Provider Proof
 
-The MVP media journey is product-locked, but it should not be called media-complete until the talking-avatar provider path is proven end to end. Required proof includes cached welcome clip, dynamic final summary clip, cached/light share close clip, playable media output, honest provider failure, and text-first/non-blocking Story Card behavior.
+The MVP media journey is product-locked, but it should not be called media-complete until the talking-avatar provider path is proven end to end. Required proof includes reusable welcome cache policy, dynamic final summary session/content-hash cache policy, generic/contextual share close policy, playable provider output when generated, honest provider failure, and text-first/non-blocking Story Card behavior.

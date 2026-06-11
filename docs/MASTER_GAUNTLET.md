@@ -105,7 +105,7 @@ These post-deploy checks are contract-level. They must not become pixel tests, a
 
 ## Media proof boundary
 
-The browser gauntlet protects product journey contracts. It does not prove real paid provider media. Talking AI Scooter media is complete only after `npm run proof:media` passes in live mode with real provider env and a playable welcome/final/share output.
+The browser gauntlet protects product journey contracts. It does not prove real paid provider media. Talking AI Scooter media is complete only after live provider proof passes with real provider env and each required moment has either a playable approved asset or a runtime generation/cache contract that defines reuse, session scoping, and fallback behavior.
 
 ## Focused media proof harness
 

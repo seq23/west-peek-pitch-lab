@@ -1,7 +1,7 @@
 {
-  "version": "phase9d-elevenlabs-first-ai-scooter-media-v1",
-  "providerPolicy": "ElevenLabs first for MVP voice + talking-photo/video. HeyGen and MakeUGC are fallback/research lanes only after MVP proof.",
-  "coreProductRule": "Talking AI Scooter appears at required MVP moments for every intended founder journey; text-only/static mode is degraded fallback, not the product concept. Cost is controlled by caching, duration guidance, selected dynamic moments, and render caps.",
+  "version": "phase9f-runtime-generated-media-cache-contract-v1",
+  "providerPolicy": "Fish Audio is the primary Scooter voice clone source; D-ID is the primary talking-avatar renderer; HeyGen is secondary avatar fallback; ElevenLabs is fallback-only voice. Uploaded Scooter audio is a voice sample/clone source, not a finished clip.",
+  "coreProductRule": "Talking AI Scooter appears at required MVP moments through runtime generation and cache policy. Reusable generic moments are cached by stable asset key; dynamic founder-specific moments are generated per session/content hash. Text/static mode is degraded fallback, not the intended product concept.",
   "sourcePhoto": "/assets/avatar/scooter-avatar-source.png",
   "drivingVideoReservedPath": "/assets/avatar/scooter-driving-video-source.mp4",
   "clips": [
@@ -9,13 +9,21 @@
       "id": "welcome",
       "moment": "welcome",
       "requiredForMvp": true,
-      "dynamic": "cached_or_prerendered",
-      "status": "source_ready_not_rendered",
+      "dynamic": "reusable_static_runtime_generated",
+      "status": "runtime_generation_cache_ready",
       "src": "",
       "fallback": "static_scooter_avatar_degraded_mode",
       "maxSeconds": 35,
       "sourceProof": "source_photo_and_driving_video_ready",
-      "targetSeconds": "15-25"
+      "targetSeconds": "15-25",
+      "generationMode": "reusable_static",
+      "cacheStrategy": "stable_asset_cache_key",
+      "cacheKey": "scooter_welcome_v1",
+      "reuseAllowed": true,
+      "dynamicContentAllowed": false,
+      "generationPath": "fish_voice_clone_to_did_talking_avatar",
+      "approvedWhen": "generated once, reviewed, cached, and optionally committed as fallbackSrc",
+      "fallbackSrc": ""
     },
     {
       "id": "midpoint-checkin",
@@ -26,35 +34,56 @@
       "src": "",
       "fallback": "text_coaching",
       "maxSeconds": 35,
-      "targetSeconds": "15-25"
+      "targetSeconds": "15-25",
+      "generationMode": "optional_dynamic_or_reusable_later",
+      "cacheStrategy": "not_required_for_mvp",
+      "reuseAllowed": "future_policy_required_before_enablement",
+      "dynamicContentAllowed": "future_policy_required_before_enablement",
+      "generationPath": "not_required_for_mvp"
     },
     {
       "id": "final-summary",
       "moment": "final_summary",
       "requiredForMvp": true,
-      "dynamic": "dynamic_personalized",
-      "status": "source_ready_not_rendered",
+      "dynamic": "dynamic_session_runtime_generated",
+      "status": "runtime_generation_cache_ready",
       "src": "",
       "fallback": "text_summary_degraded_mode",
       "maxSeconds": 65,
       "sourceProof": "source_photo_and_driving_video_ready",
       "targetSeconds": "30-50",
       "comfortRangeWords": "100-165",
-      "editorialReviewAboveWords": 220
+      "editorialReviewAboveWords": 220,
+      "generationMode": "dynamic_session",
+      "cacheStrategy": "session_or_content_hash",
+      "cacheKey": "session_or_content_hash_final_summary",
+      "reuseAllowed": false,
+      "dynamicContentAllowed": true,
+      "generationPath": "founder_story_script_to_fish_voice_clone_to_did_talking_avatar",
+      "approvedWhen": "generated per session after Story Card text is available; cached only for same session/content hash",
+      "fallbackSrc": ""
     },
     {
       "id": "share-cta",
       "moment": "share_cta",
       "requiredForMvp": true,
-      "dynamic": "cached_or_lightly_dynamic",
-      "status": "source_ready_not_rendered",
+      "dynamic": "reusable_static_or_light_context_runtime_generated",
+      "status": "runtime_generation_cache_ready",
       "src": "",
       "fallback": "text_share_boundary_degraded_mode",
       "maxSeconds": 30,
       "sourceProof": "source_photo_and_driving_video_ready",
       "targetSeconds": "12-22",
       "comfortRangeWords": "45-85",
-      "editorialReviewAboveWords": 115
+      "editorialReviewAboveWords": 115,
+      "generationMode": "reusable_static_or_contextual",
+      "cacheStrategy": "stable_asset_cache_key_unless_contextual",
+      "cacheKey": "scooter_share_cta_v1",
+      "reuseAllowed": "only_when_generic_no_founder_specific_content",
+      "dynamicContentAllowed": "light_context_only_with_content_hash_cache",
+      "generationPath": "fish_voice_clone_to_did_talking_avatar",
+      "approvedWhen": "generic version can be generated once/reused; contextual version must be session/content scoped",
+      "fallbackSrc": ""
     }
   ],
   "drivingVideoStatus": "uploaded_and_committed",
@@ -62,5 +91,15 @@
   "drivingVideoBytes": 27347394,
   "drivingVideoSha256": "c46759420f2721b6270b89dcabb4f95e395fd15ba84595b166a5a15d0847fcec",
   "experienceContract": "docs/MVP_V1_AI_SCOOTER_EXPERIENCE_CONTRACT.md",
-  "speakingCostContract": "docs/MVP_V1_SCOOTER_SPEAKING_AND_COST_DISCIPLINE.md"
+  "speakingCostContract": "docs/MVP_V1_SCOOTER_SPEAKING_AND_COST_DISCIPLINE.md",
+  "runtimeMediaCacheContract": {
+    "version": "runtime-media-cache-v1",
+    "cacheAuthority": "server_provider_result_store_or_edge_object_storage",
+    "cacheKeyRule": "reusable moments use stable approved cache keys; dynamic moments use session/content hash keys and must not be globally reused",
+    "reuseRule": "reuse only when moment is generic and contains no founder/company/session-specific content",
+    "dynamicPrivacyRule": "personalized final_summary media is session/content scoped and must never be served as a generic clip",
+    "textFirstRule": "Story Card text must render before video; media generation is asynchronous and non-blocking",
+    "fallbackRule": "if runtime media generation/cache retrieval fails, show text/static Scooter fallback honestly",
+    "committedAssetRule": "committed src is optional for reusable seed/demo clips; runtime generation path plus cache policy is sufficient for product proof until a clip is approved and stored"
+  }
 }

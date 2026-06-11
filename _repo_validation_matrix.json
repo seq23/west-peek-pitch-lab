@@ -37,7 +37,11 @@
     "smoke:visual",
     "env:create-local",
     "env:local:from-vault",
-    "env:cloudflare:plan"
+    "env:cloudflare:plan",
+    "gauntlet:live:report",
+    "gauntlet:live:report:headed",
+    "proof:media",
+    "proof:media:live"
   ],
   "entries": [
     {
@@ -335,6 +339,50 @@
       "proves": "Master Gauntlet docs, Playwright config, e2e spec, fixtures, official Scooter photo asset, ElevenLabs-first provider posture, and required media moments exist and are wired for local/headed execution.",
       "doesNotProve": "Headed browser execution, real ElevenLabs provider success, Cloudflare deployment, or live Network OS persistence. Those require the gauntlet run and real env/provider inputs.",
       "failureHandling": "Restore missing gauntlet files, official media assets, provider posture, or no-theater assertions before packaging.",
+      "ownerDecisionNeeded": false
+    },
+    {
+      "script": "gauntlet:live:report",
+      "command": "node scripts/run-live-gauntlet-report.mjs --live",
+      "category": "live proof/reporting",
+      "severity": "WARNING",
+      "productionRisk": "Live provider/browser tests can fail from env, network, provider quota, or missing runtime media assets and should produce a repair report rather than block structural iteration.",
+      "proves": "Runs the consolidated live gauntlet report across validation, env vault proof, live voice, media provider proof, post-deploy functions, journey, browser, camera, and media browser lanes.",
+      "doesNotProve": "Provider availability forever, Cloudflare dashboard configuration, or that cached/generated media will stay playable after provider URL expiry.",
+      "failureHandling": "Read tmp/live-gauntlet-report/summary.md and logs; fix real failures while preserving secret redaction and .env.local handling.",
+      "ownerDecisionNeeded": false
+    },
+    {
+      "script": "gauntlet:live:report:headed",
+      "command": "node scripts/run-live-gauntlet-report.mjs --live --headed",
+      "category": "live proof/reporting",
+      "severity": "WARNING",
+      "productionRisk": "Headed browser proof can be blocked by local device permissions, camera availability, or operator interaction requirements.",
+      "proves": "Runs the consolidated live gauntlet in headed mode for browser/device-visible proof.",
+      "doesNotProve": "Noninteractive CI compatibility or permanent camera permissions on every machine.",
+      "failureHandling": "Use the consolidated report logs and screenshots; treat device-permission failures separately from product code failures.",
+      "ownerDecisionNeeded": false
+    },
+    {
+      "script": "proof:media",
+      "command": "node scripts/proof-scooter-media-provider.mjs",
+      "category": "media/provider proof",
+      "severity": "WARNING",
+      "productionRisk": "Media proof depends on runtime cache policy and provider env; false hard-fails can block normal iteration when product fallback remains honest.",
+      "proves": "Manifest source assets, runtime generation/cache contract, voice/avatar provider status, and dry-run no-fake media behavior.",
+      "doesNotProve": "Live paid provider render or committed reusable media assets.",
+      "failureHandling": "Fix missing manifest/cache/provider contract fields or run live mode with provider env for live proof.",
+      "ownerDecisionNeeded": false
+    },
+    {
+      "script": "proof:media:live",
+      "command": "MEDIA_PROOF_RUN_LIVE=true node scripts/proof-scooter-media-provider.mjs",
+      "category": "media/provider proof",
+      "severity": "WARNING",
+      "productionRisk": "Paid provider render proof can fail from quota, env, network, provider status, or unapproved runtime media assets.",
+      "proves": "Live voice/avatar provider request path plus runtime media cache contract without requiring committed static clip files.",
+      "doesNotProve": "That every future dynamic final-summary clip is approved or reusable across sessions.",
+      "failureHandling": "Inspect provider-safe proof report; fix env/provider wiring or cache contract, not by hardcoding provider result URLs.",
       "ownerDecisionNeeded": false
     }
   ],

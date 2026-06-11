@@ -11,3 +11,14 @@ Canonical public-safe media assets for West Peek Pitch Lab.
 The uploaded Scooter audio is a voice sample / clone source. Do not pass the full sample into D-ID as a finished welcome/share clip. D-ID `audio_url` should receive short generated or explicitly approved clip audio. Fish Audio or D-ID voice clone may generate that short audio. ElevenLabs remains fallback-only.
 
 API keys and provider secrets never live here.
+
+
+## Runtime generated media cache contract
+
+`clip-manifest.json` does not require every MVP moment to have a committed video file. The real product path is runtime generation plus cache policy:
+
+- `welcome` is reusable static media: generate once, review, cache by `scooter_welcome_v1`, and optionally commit as a fallback asset later.
+- `final_summary` is dynamic session media: generate from the founder's Story Card script and cache only by session/content hash.
+- `share_cta` may reuse a generic approved clip only when it contains no founder-specific content; contextual variants must use session/content-hash cache scope.
+
+Committed `src` files are allowed as approved fallbacks, but no validator should require a committed video for a moment that has a complete runtime generation path and cache strategy.
