@@ -58,7 +58,9 @@
     "proof:voice:live": "MEDIA_PROOF_RUN_LIVE=true node scripts/proof-voice-provider.mjs",
     "env:proof": "node scripts/env/proof-env-vault.mjs",
     "proof:journey": "node scripts/run-real-journey-proof.mjs",
-    "proof:journey:headed": "node scripts/run-real-journey-proof.mjs --headed"
+    "proof:journey:headed": "node scripts/run-real-journey-proof.mjs --headed",
+    "env:vault:upsert-providers": "node scripts/env/upsert-provider-env-vault.mjs",
+    "proof:media:live": "MEDIA_PROOF_RUN_LIVE=true node scripts/proof-scooter-media-provider.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.60.0"

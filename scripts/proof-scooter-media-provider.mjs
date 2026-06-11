@@ -6,7 +6,6 @@ import { getAvatarStatus, renderScooterAvatar } from '../src/server/avatar/avata
 import { SCOOTER_MEDIA_IDENTITY } from '../src/server/media/scooterMediaIdentity.mjs';
 
 const root = process.cwd();
-
 function parseEnvFile(file) {
   if (!fs.existsSync(file)) return {};
   const parsed = {};
@@ -22,7 +21,6 @@ function parseEnvFile(file) {
   }
   return parsed;
 }
-
 const env = { ...parseEnvFile(path.join(root, '.env')), ...parseEnvFile(path.join(root, '.env.local')), ...process.env };
 const live = ['true','1','yes','on'].includes(String(env.MEDIA_PROOF_RUN_LIVE || '').toLowerCase());
 const failures = [];
@@ -64,17 +62,17 @@ for (const moment of required) {
 
 const voiceStatus = getVoiceStatus(env, SCOOTER_MEDIA_IDENTITY);
 const avatarStatus = getAvatarStatus(env, SCOOTER_MEDIA_IDENTITY);
-add('ElevenLabs voice status is honest', voiceStatus.configured ? 'pass' : 'warn', {
+add('voice status is honest', voiceStatus.configured ? 'pass' : 'warn', {
   configured: voiceStatus.configured,
   enabled: voiceStatus.enabled,
   provider: voiceStatus.provider,
-  reason: voiceStatus.configured ? undefined : 'voice API not configured in this environment'
+  reason: voiceStatus.configured ? undefined : 'voice provider is not configured in this environment'
 });
 add('talking-avatar status is proof-gated', avatarStatus.configured ? 'pass' : 'warn', {
   configured: avatarStatus.configured,
   provider: avatarStatus.provider,
   providerProofRequired: avatarStatus.providerProofRequired,
-  reason: avatarStatus.configured ? undefined : 'talking-photo/video endpoint or provider asset IDs are not live-proven in this environment'
+  reason: avatarStatus.configured ? undefined : 'D-ID primary / HeyGen secondary provider env is not fully configured in this environment'
 });
 
 if (live) {
@@ -82,13 +80,13 @@ if (live) {
     env,
     body: { moment: 'welcome', text: 'Welcome to West Peek Pitch Lab. Good products need good stories. Tell me what you are building, and let us sharpen the story.' }
   });
-  add('live ElevenLabs voice render', voice.ok ? 'pass' : 'fail', { httpStatus: voice.httpStatus, status: voice.body?.status, reason: voice.body?.reason });
+  add('live voice render', voice.ok ? 'pass' : 'fail', { httpStatus: voice.httpStatus, status: voice.body?.status, reason: voice.body?.reason });
 
   const avatar = await renderScooterAvatar({
     env,
     body: { moment: 'final_summary', text: 'Here is what I am hearing. The story has shape, but the proof needs to get sharper before you share it. Add one concrete traction point so the next person can believe the momentum quickly.' }
   });
-  add('live talking-avatar render request', avatar.ok ? 'pass' : 'fail', { httpStatus: avatar.httpStatus, status: avatar.body?.status, reason: avatar.body?.reason, providerError: avatar.body?.providerError });
+  add('live talking-avatar render request', avatar.ok ? 'pass' : 'fail', { httpStatus: avatar.httpStatus, status: avatar.body?.status, reason: avatar.body?.reason, provider: avatar.body?.provider, providerErrors: avatar.body?.providerErrors, providerError: avatar.body?.providerError });
 } else {
   add('live provider call intentionally skipped', 'warn', { reason: 'set MEDIA_PROOF_RUN_LIVE=true with real provider env to run paid live proof' });
 }

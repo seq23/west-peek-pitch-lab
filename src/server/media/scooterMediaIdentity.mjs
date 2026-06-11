@@ -3,16 +3,16 @@
 // API keys, webhook secrets, and Cloudflare tokens must remain in env/vault only.
 
 export const SCOOTER_MEDIA_IDENTITY = Object.freeze({
-  version: 'phase9d-elevenlabs-first-media-identity-v1',
+  version: 'phase9d-did-primary-heygen-secondary-media-identity-v1',
   person: 'Scooter Taylor',
   approvedPhotoAsset: '/assets/avatar/scooter-avatar-source.png',
   approvedDrivingVideoAsset: '/assets/avatar/scooter-driving-video-source.mp4',
-  voiceProvider: 'elevenlabs',
-  avatarProvider: 'elevenlabs_video',
-  fallbackAvatarProviders: Object.freeze(['heygen', 'makeugc']),
+  voiceProvider: 'did_or_heygen_provider_voice',
+  avatarProvider: 'did',
+  fallbackAvatarProviders: Object.freeze(['heygen']),
   elevenLabsVoiceId: 'hANI1GBmIHJmKw4YnaGO',
-  elevenLabsAvatarId: 'TO_BE_SET_AFTER_ELEVENLABS_VIDEO_ASSET_CREATION_IF_REQUIRED',
-  heygenAvatarId: 'DISABLED_UNLESS_PROVIDER_SELECTED',
+  elevenLabsAvatarId: 'UNSUPPORTED_FOR_TALKING_PHOTO_VIDEO_API',
+  heygenAvatarId: 'SET_IN_ENV_HEYGEN_AVATAR_ID_IF_PROVIDER_SELECTED',
   makeugcAvatarId: 'DISABLED_UNLESS_PROVIDER_SELECTED',
   makeugcVoiceId: 'DISABLED_UNLESS_PROVIDER_SELECTED',
   requiredMediaMoments: Object.freeze(['welcome', 'final_summary', 'share_cta']),

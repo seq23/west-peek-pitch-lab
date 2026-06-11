@@ -33,24 +33,25 @@ for (const term of [
   'textOnlyIsDegradedMode',
   'approvedPhotoAsset',
   '/assets/avatar/scooter-avatar-source.png',
-  'elevenlabs_video'
+  'avatarProvider'
 ]) {
   if (!identity.includes(term)) failures.push(`Media identity missing required 9D term: ${term}`);
 }
 for (const term of ['welcome', 'final_summary', 'share_cta', 'coreProductRule', 'source_ready_not_rendered']) {
   if (!manifest.includes(term)) failures.push(`Clip manifest missing required 9D media moment/status: ${term}`);
 }
-for (const term of ['ElevenLabs is the first MVP provider', 'talking AI Scooter media is core', 'Final personalized Pitch Story Card summary', 'Real env values are the last subset of Phase 9D']) {
+for (const term of ['talking AI Scooter media is core', 'Final personalized Pitch Story Card summary', 'Real env values are the last subset of Phase 9D']) {
   if (!doc.includes(term)) failures.push(`9D docs missing anchor: ${term}`);
 }
 for (const term of ['Good people should meet good people.', 'Good products need good stories.', 'Copy Pitch Story Card', 'does not guarantee', 'hostile max-depth', 'Network OS failure keeps the founder in honest non-submitted state', 'Scooter media lane is visibly core']) {
   if (!spec.includes(term)) failures.push(`Master gauntlet spec missing journey assertion: ${term}`);
 }
 if (registry?.rules?.currentImplementedPhase !== 'phase9d') failures.push('Env registry currentImplementedPhase must be phase9d for 9D patch.');
-if (!keys.has('ELEVENLABS_API_KEY')) failures.push('Env registry missing ElevenLabs API key.');
+if (!keys.has('DID_API_KEY')) failures.push('Env registry missing D-ID API key.');
+if (!keys.has('HEYGEN_API_KEY')) failures.push('Env registry missing HeyGen API key.');
 if (!keys.has('AVATAR_PROVIDER')) failures.push('Env registry missing AVATAR_PROVIDER.');
 const avatarProvider = (registry.variables || []).find((v) => v.key === 'AVATAR_PROVIDER');
-if (avatarProvider?.placeholder !== 'elevenlabs_video') failures.push('AVATAR_PROVIDER placeholder must be elevenlabs_video for 9D MVP.');
+if (avatarProvider?.placeholder !== 'did') failures.push('AVATAR_PROVIDER placeholder must be did for D-ID primary MVP.');
 
 const forbidden = ['fundability score', 'Scooter reviewed this', 'meeting guaranteed', 'Email me my card'];
 const runtimeFiles = [

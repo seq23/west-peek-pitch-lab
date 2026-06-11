@@ -10,7 +10,7 @@ for (const file of forbiddenFiles) {
 }
 
 const textExtensions = new Set(['.md', '.ts', '.js', '.json', '.example', '.txt', '.toml', '.yml', '.yaml']);
-const secretPattern = /(sk-[A-Za-z0-9_-]{20,}|AKIA[0-9A-Z]{16}|-----BEGIN (RSA|OPENSSH|PRIVATE) KEY-----|AIza[0-9A-Za-z_-]{20,})/;
+const secretPattern = /(sk[-_][A-Za-z0-9_-]{20,}|AKIA[0-9A-Z]{16}|-----BEGIN (RSA|OPENSSH|PRIVATE) KEY-----|AIza[0-9A-Za-z_-]{20,}|[A-Za-z0-9+/=]{20,}:[A-Za-z0-9_-]{20,})/;
 
 function walk(dir) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {

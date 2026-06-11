@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 const baseURL = process.env.PITCH_LAB_DEPLOY_URL;
 test.skip(!baseURL, 'PITCH_LAB_DEPLOY_URL is required.');
 
-const SECRET_OR_INTERNAL_RE = /OPENAI_API_KEY|GEMINI_API_KEY|NETWORK_OS_SHARED_SECRET|ELEVENLABS_API_KEY|HEYGEN_API_KEY|MAKEUGC_API_KEY|wrangler|stack trace|src\/server|process\.env/i;
+const SECRET_OR_INTERNAL_RE = /OPENAI_API_KEY|GEMINI_API_KEY|NETWORK_OS_SHARED_SECRET|ELEVENLABS_API_KEY|DID_API_KEY|HEYGEN_API_KEY|MAKEUGC_API_KEY|wrangler|stack trace|src\/server|process\.env/i;
 const FAKE_SUCCESS_RE = /avatarReady\s*[:=]\s*true|voiceReady\s*[:=]\s*true|guaranteed funding|guaranteed meeting|guaranteed intro|guaranteed investment review/i;
 
 async function requestJson(request, path, options = {}) {
