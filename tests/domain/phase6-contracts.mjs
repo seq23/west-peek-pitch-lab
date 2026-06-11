@@ -7,14 +7,14 @@ import { SCOOTER_MEDIA_IDENTITY } from '../../src/server/media/scooterMediaIdent
 const placeholderEnv = {
   VOICE_PROVIDER: 'elevenlabs',
   VOICE_DYNAMIC_GENERATION_ENABLED: 'true',
-  VOICE_MAX_CHARS: '1200',
+  VOICE_MAX_CHARS: '1400',
   ELEVENLABS_API_KEY: 'REPLACE_WITH_LOCAL_ELEVENLABS_API_KEY',
   ELEVENLABS_MODEL: 'eleven_multilingual_v2',
   AVATAR_PROVIDER: 'elevenlabs_video',
   AVATAR_DYNAMIC_GENERATION_ENABLED: 'true',
   AVATAR_RENDER_FINAL_SUMMARY_ONLY: 'false',
-  AVATAR_MAX_SCRIPT_CHARS: '700',
-  AVATAR_MAX_VIDEO_SECONDS: '40',
+  AVATAR_MAX_SCRIPT_CHARS: '1200',
+  AVATAR_MAX_VIDEO_SECONDS: '65',
   COST_GUARD_ENABLED: 'true',
   HEYGEN_API_KEY: 'DISABLED_UNLESS_PROVIDER_SELECTED',
   HEYGEN_API_BASE_URL: 'https://api.heygen.com'
@@ -45,7 +45,7 @@ assert.equal(result.httpStatus, 503, 'unconfigured avatar render must fail safel
 assert.equal(result.body.staticFallback, true);
 assert.equal(result.body.degradedMode, true);
 
-const invalidAvatar = validateAvatarRequest({ moment: 'final_summary', text: 'x'.repeat(701) }, placeholderEnv);
+const invalidAvatar = validateAvatarRequest({ moment: 'final_summary', text: 'x'.repeat(1201) }, placeholderEnv);
 assert.equal(invalidAvatar.ok, false, 'avatar script length cap must block oversize scripts');
 
 result = await renderScooterAvatar({

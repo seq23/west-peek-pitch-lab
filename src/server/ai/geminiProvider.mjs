@@ -39,7 +39,7 @@ export async function callGeminiStoryCard({ env, answers, fetchImpl = fetch }) {
         generationConfig: {
           responseMimeType: 'application/json',
           temperature: 0.35,
-          maxOutputTokens: Number(getEnv(env, 'LLM_MAX_OUTPUT_TOKENS', '2500')) || 2500
+          maxOutputTokens: Number(getEnv(env, 'LLM_MAX_OUTPUT_TOKENS', '2200')) || 2500
         }
       })
     });

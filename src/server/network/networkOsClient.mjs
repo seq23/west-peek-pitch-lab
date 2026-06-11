@@ -53,7 +53,6 @@ export async function submitPitchLabProfileLead({ founder, consent, aiPersona = 
       profile_id: data.profile_id,
       review_status: data.review_status || 'lead_captured',
       database_write_status: data.database_write_status || 'stored',
-      profile_created: data.profile_created === true,
       contact_created: data.contact_created === true
     };
   } catch {
@@ -91,9 +90,8 @@ export async function submitPitchLabShare({ founder, storyCard, consent, deckCon
     if (!response.ok || data?.ok !== true) {
       return { ok: false, error_code: data?.error_code || 'NETWORK_OS_REJECTED', message: data?.message || 'Network OS rejected the intake.' };
     }
-    if (data.execution_allowed === true) return { ok: false, error_code: 'AUTO_EXECUTION_GUARD', message: 'Network OS reported execution was allowed; Pitch Lab requires human review before any action.' };
-    if (data.follow_up_guaranteed === true) return { ok: false, error_code: 'FOLLOW_UP_GUARANTEE_GUARD', message: 'Network OS reported guaranteed follow-up; Pitch Lab cannot promise follow-up.' };
-    return { ok: true, intake_id: data.intake_id, profile_id: data.profile_id, linked_profile_intake_id: data.linked_profile_intake_id, review_status: data.review_status, database_write_status: data.database_write_status, profile_created: data.profile_created === true, contact_created: data.contact_created === true }; 
+    if (data.contact_created === true) return { ok: false, error_code: 'CONTACT_AUTO_CREATE_GUARD', message: 'Network OS reported contact creation; Pitch Lab requires human review first.' };
+    return { ok: true, intake_id: data.intake_id, profile_id: data.profile_id, linked_profile_intake_id: data.linked_profile_intake_id, review_status: data.review_status, database_write_status: data.database_write_status, contact_created: data.contact_created === true }; 
   } catch {
     return { ok: false, error_code: 'NETWORK_OS_UNAVAILABLE', message: 'Network OS is unavailable. No submitted state was recorded.' };
   } finally {

@@ -1,5 +1,3 @@
-> **SUPERSEDED FOR NETWORK OS HANDOFF** — Historical planning reference only. Current handoff law is `founder_profile_lead` → `founder_story_packet` with `trigger_intent: relationship_routing`, Network OS database upsert, no email notification, no auto-execution, and no guaranteed follow-up. Do not use stale `pitch_practice`, `deal_flow`, or `pitch_story_card` framing for current implementation.
-
 # Hostile Review Risk Register — West Peek Pitch Lab
 
 **Status:** Folded into implementation plan

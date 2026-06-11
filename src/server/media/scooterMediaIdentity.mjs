@@ -17,10 +17,14 @@ export const SCOOTER_MEDIA_IDENTITY = Object.freeze({
   makeugcVoiceId: 'DISABLED_UNLESS_PROVIDER_SELECTED',
   requiredMediaMoments: Object.freeze(['welcome', 'final_summary', 'share_cta']),
   recommendedScriptSeconds: Object.freeze({
-    welcome: 20,
-    midpoint: 15,
-    final_summary: 40,
-    share_cta: 15
+    welcomeTarget: '15-25',
+    welcomeHardMax: 35,
+    midpointTarget: '15-25',
+    midpointHardMax: 35,
+    finalSummaryTarget: '30-50',
+    finalSummaryHardMax: 65,
+    shareCloseTarget: '12-22',
+    shareCloseHardMax: 30
   }),
   rules: Object.freeze({
     voiceIdIsSecret: false,
@@ -31,6 +35,8 @@ export const SCOOTER_MEDIA_IDENTITY = Object.freeze({
     textOnlyIsDegradedMode: true,
     welcomeClipCanBeCached: true,
     finalSummaryShouldBeDynamic: true,
+    finalSummaryTextMustAppearBeforeVideo: true,
+    costControlMeansCachingDurationAndMomentSelection: true,
     shareCloseCanBeCachedOrLightlyDynamic: true,
     everyIntendedJourneyNeedsTalkingScooterAtKeyMoments: true
   })

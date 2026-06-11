@@ -1,7 +1,7 @@
 {
   "version": "phase9d-elevenlabs-first-ai-scooter-media-v1",
   "providerPolicy": "ElevenLabs first for MVP voice + talking-photo/video. HeyGen and MakeUGC are fallback/research lanes only after MVP proof.",
-  "coreProductRule": "Talking AI Scooter appears at key moments for every intended founder journey; text-only is degraded mode, not the product concept.",
+  "coreProductRule": "Talking AI Scooter appears at required MVP moments for every intended founder journey; text-only/static mode is degraded fallback, not the product concept. Cost is controlled by caching, duration guidance, selected dynamic moments, and render caps.",
   "sourcePhoto": "/assets/avatar/scooter-avatar-source.png",
   "drivingVideoReservedPath": "/assets/avatar/scooter-driving-video-source.mp4",
   "clips": [
@@ -13,8 +13,9 @@
       "status": "source_ready_not_rendered",
       "src": "",
       "fallback": "static_scooter_avatar_degraded_mode",
-      "maxSeconds": 20,
-      "sourceProof": "source_photo_and_driving_video_ready"
+      "maxSeconds": 35,
+      "sourceProof": "source_photo_and_driving_video_ready",
+      "targetSeconds": "15-25"
     },
     {
       "id": "midpoint-checkin",
@@ -24,7 +25,8 @@
       "status": "not_rendered",
       "src": "",
       "fallback": "text_coaching",
-      "maxSeconds": 15
+      "maxSeconds": 35,
+      "targetSeconds": "15-25"
     },
     {
       "id": "final-summary",
@@ -34,8 +36,11 @@
       "status": "source_ready_not_rendered",
       "src": "",
       "fallback": "text_summary_degraded_mode",
-      "maxSeconds": 40,
-      "sourceProof": "source_photo_and_driving_video_ready"
+      "maxSeconds": 65,
+      "sourceProof": "source_photo_and_driving_video_ready",
+      "targetSeconds": "30-50",
+      "comfortRangeWords": "100-165",
+      "editorialReviewAboveWords": 220
     },
     {
       "id": "share-cta",
@@ -45,12 +50,17 @@
       "status": "source_ready_not_rendered",
       "src": "",
       "fallback": "text_share_boundary_degraded_mode",
-      "maxSeconds": 15,
-      "sourceProof": "source_photo_and_driving_video_ready"
+      "maxSeconds": 30,
+      "sourceProof": "source_photo_and_driving_video_ready",
+      "targetSeconds": "12-22",
+      "comfortRangeWords": "45-85",
+      "editorialReviewAboveWords": 115
     }
   ],
   "drivingVideoStatus": "uploaded_and_committed",
   "drivingVideoSource": "/assets/avatar/scooter-driving-video-source.mp4",
   "drivingVideoBytes": 27347394,
-  "drivingVideoSha256": "c46759420f2721b6270b89dcabb4f95e395fd15ba84595b166a5a15d0847fcec"
+  "drivingVideoSha256": "c46759420f2721b6270b89dcabb4f95e395fd15ba84595b166a5a15d0847fcec",
+  "experienceContract": "docs/MVP_V1_AI_SCOOTER_EXPERIENCE_CONTRACT.md",
+  "speakingCostContract": "docs/MVP_V1_SCOOTER_SPEAKING_AND_COST_DISCIPLINE.md"
 }

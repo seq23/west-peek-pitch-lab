@@ -16,7 +16,6 @@ Pitch Lab sends a Founder Story Packet to Network OS only after explicit founder
   "execution_allowed": false,
   "review_status": "pending_network_review",
   "investment_decision": false,
-  "profile_created": false,
   "contact_created": false,
   "follow_up_guaranteed": false,
   "ai_persona": "AI Scooter",
@@ -63,8 +62,7 @@ Pitch Lab sends a Founder Story Packet to Network OS only after explicit founder
 
 ## Required guards
 
-- Network OS may create or update a database-backed profile from self-submitted founder information.
-- Network OS must not treat profile/database upsert as outreach, CRM conversion, investment review, acceptance, funding, or guaranteed follow-up.
+- Network OS must not auto-create contacts for Pitch Lab submissions.
 - Network OS must not mark the packet as accepted, funded, invested, reviewed, or routed.
 - Network OS must preserve `execution_allowed: false` until a human chooses otherwise outside Pitch Lab.
 - Deck files and practice videos are not included without separate consent.

@@ -118,20 +118,54 @@
 - Fixed localStorage test seeding so share-status receipts are not wiped on navigation to thank-you.
 - Maintains 13 behavioral tests across desktop and mobile.
 
-## Network Sync Semantics Patch — 06-10-26
+## v2 Real-Time Coaching Room Vision Doc — 06-10-26
 
-- Reframed Pitch Lab handoff guard from stale “no contact auto-create” semantics to current “profile/database upsert allowed; auto-execution/follow-up promise forbidden” semantics.
-- Updated Network OS handoff contract docs to allow database-backed profile upsert while preserving no outreach, no intro, no investment review, and no guaranteed follow-up.
-- Added superseded headers to stale historical docs that still mention old `pitch_practice`, `deal_flow`, or `pitch_story_card` handoff framing.
-- Updated share and thank-you UI copy to show database write status instead of contact-creation status.
-- Updated hostile Master Gauntlet copy expectations.
+- Added v2 vision document: `docs/PITCH_LAB_V2_REALTIME_COACHING_ROOM.md`.
+- Captures the product direction for a premium virtual coaching room where AI Scooter is a persistent coaching presence, not a static page image.
+- Documents the infrastructure distinction between async Cloudflare Pages-compatible coaching UI and fuller real-time/near-real-time voice, transcription, WebSocket/WebRTC, avatar, and long-running media orchestration needs.
+- Explicitly records that founder-facing UI must not expose internal language such as Network OS, Legacy trust anchor, Phase 3, handoff, or unearned success state.
 
-Validation run before package:
+## Hostile Design / UX / UI Overhaul — 06-10-26
 
-- `npm run validate:all` — PASSED
+- Rebuilt the public product shell around the correct metaphor: AI Scooter as the persistent coach in a premium virtual coaching room.
+- Overhauled `/practice` into a sticky/compact coach presence + session workbench + live Founder Story Packet preview.
+- Reframed `/story-card` as a review studio and `/share` as a founder-controlled consent checkpoint.
+- Reworked trust boundary and footer into professional founder-facing UI while preserving hidden contract anchors for validators.
+- Removed visible internal product/infrastructure language from runtime-facing copy.
+- Added design audit note: `docs/HOSTILE_DESIGN_UX_OVERHAUL_06-10-26.md`.
+- `npm run validate:all` passed in the build environment.
+- Browser gauntlet remains local-machine validation because sandbox Playwright browser binaries are unavailable.
 
-Not proven:
+## 06-10-26 — MVP v1 rehearsal journey implementation
 
-- Browser Playwright execution.
-- Live deployed Network OS handoff.
-- Postdeploy functions/E2E.
+- Added `docs/MVP_V1_REHEARSAL_JOURNEY_IMPLEMENTATION_06-10-26.md`.
+- Upgraded Practice Out Loud into an MVP v1 current-stack rehearsal journey: camera room, countdown, local recording, playback, transcript/self-review, best-take selection, consent gate, and share packet rehearsal context.
+- Updated How It Works to explain the complete founder journey and current storage boundaries.
+- Preserved current Cloudflare Pages setup; no WebRTC/storage-bucket/provider dependency added in this pass.
+
+## 06-10-26 — MVP v1 AI Scooter media journey lock
+
+- Added `docs/MVP_V1_AI_SCOOTER_EXPERIENCE_CONTRACT.md` as the current source of truth for the MVP v1 founder experience.
+- Added `docs/MVP_V1_SCOOTER_SPEAKING_AND_COST_DISCIPLINE.md` to govern when Scooter speaks, when text is enough, and how media cost is controlled without muting the coach.
+- Added `docs/README.md` to simplify docs hierarchy and mark older phase docs as supporting/historical when they conflict with the current contract.
+- Updated runtime media model so welcome, final summary, and share close are required talking-Scooter moments in the product contract.
+- Updated Story Card UI copy to text-first / Scooter-video-follows and removed language that made talking Scooter sound optional as a product concept.
+- Relaxed speaking guidance from brittle word caps to duration targets plus hard ceilings for safety.
+- Kept validation common-sense aligned with `docs/VALIDATION_SIMPLIFICATION_MATRIX.md`; no new petty hard-fail validators were added.
+
+- Added hostile review note: `docs/MVP_V1_MEDIA_JOURNEY_HOSTILE_REVIEW_06-10-26.md`.
+
+## 06-10-26 — MVP v1 journey guidance + speaking-length refinement
+
+- Added `docs/MVP_V1_E2E_USER_JOURNEY_GUIDANCE_TRACE_06-10-26.md` to trace the founder journey end to end and document helper states, hints, next-step cues, attention cues, and privacy/consent explanations.
+- Added visible guidance layers across profile start, deck context, practice questions, Story Card generation, Practice Out Loud, and share consent.
+- Added question-level hints, examples, and “avoid” guidance so founders know how to answer without needing a separate tutorial.
+- Added restrained attention states so active next actions can glow when ready; no modal tutorial, no new hard-fail visual validator, and no validation overengineering.
+- Reframed script length governance away from hard word caps and toward comfort ranges plus editorial review thresholds; duration ceilings remain the provider/cost safety rail.
+- `npm run validate:all` passed in the build environment.
+
+## 06-10-26 — MVP v1 Playwright E2E hostile review patch
+
+- Added `docs/MVP_V1_PLAYWRIGHT_E2E_HOSTILE_REVIEW_06-10-26.md`.
+- Expanded `tests/e2e/master-gauntlet.spec.mjs` with contract-level coverage for guidance, next-step cues, Practice Out Loud surface states, selected rehearsal persistence, consented rehearsal payload behavior, and required AI Scooter speaking moments.
+- Preserved validation-simplification posture: no hard-fail visual polish assertions, no live camera requirement in CI, no live provider spend by default, and no Network OS repo changes.

@@ -39,7 +39,7 @@ export async function callOpenAiStoryCard({ env, answers, fetchImpl = fetch }) {
       body: JSON.stringify({
         model,
         temperature: 0.35,
-        max_tokens: Number(getEnv(env, 'OPENAI_MAX_OUTPUT_TOKENS', getEnv(env, 'LLM_MAX_OUTPUT_TOKENS', '2500'))) || 2500,
+        max_tokens: Number(getEnv(env, 'OPENAI_MAX_OUTPUT_TOKENS', getEnv(env, 'LLM_MAX_OUTPUT_TOKENS', '2200'))) || 2500,
         response_format: { type: 'json_object' },
         messages: [
           { role: 'system', content: prompt.system },

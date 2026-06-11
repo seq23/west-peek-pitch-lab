@@ -1,11 +1,17 @@
+import { SCOOTER_MVP_V1_MEDIA_CONTRACT } from './scooterMediaContract.mjs';
+
 export const SCOOTER_JOURNEY_RULES = {
   textFirstVideoFollows: true,
+  lockedExperienceContract: 'docs/MVP_V1_AI_SCOOTER_EXPERIENCE_CONTRACT.md',
+  speakingCostContract: 'docs/MVP_V1_SCOOTER_SPEAKING_AND_COST_DISCIPLINE.md',
   videoNeverBlocksStoryCard: true,
   noFakeMediaSuccess: true,
   companionPersistent: true,
   mobileCompanionCompact: true,
   conversationalUiStructuredEngine: true,
   cameraLocalFirst: true,
+  talkingScooterRequiredAtKeyMoments: true,
+  costControlIsDurationCachingAndMomentSelection: true,
   founderStoryPacketForRelationshipRouting: true
 };
 
@@ -18,7 +24,7 @@ export const SCOOTER_COMPANION_STATES = {
   midpoint_checkin_ready: 'The story is taking shape. Now sharpen the pain, proof, and next relationship.',
   story_reviewing: 'AI Scooter is reviewing your story.',
   story_text_ready: 'Your Pitch Story Card is ready before any video dependency.',
-  final_video_pending: 'AI Scooter video is pending only when provider configuration exists.',
+  final_video_pending: 'AI Scooter final coaching video is preparing after the text Story Card.',
   final_video_ready: 'AI Scooter video is ready.',
   final_video_unavailable: 'AI Scooter video is unavailable. The text coaching remains usable.',
   practice_out_loud_ready: 'Practice this out loud locally before sharing.',
@@ -34,19 +40,20 @@ export const SCOOTER_MEDIA_MOMENTS = {
     label: 'Welcome',
     route: '/',
     script: 'Welcome to West Peek Pitch Lab. Good products need good stories. Tell me what you’re building, and let’s sharpen the story.',
-    kind: 'cached_or_static',
+    kind: 'cached_or_prerendered_required',
     posterPath: '/assets/avatar/scooter-avatar-source.png',
     videoPath: '/assets/avatar/scooter-welcome.mp4',
     fallbackCopy: 'AI Scooter welcome note',
     providerRequired: false,
-    durationCapSeconds: 20,
+    targetSeconds: '15-25',
+    durationCapSeconds: SCOOTER_MVP_V1_MEDIA_CONTRACT.durationGuidance.welcome.hardMaxSeconds,
     blocksJourney: false
   },
   practice_idle: {
     label: 'Listening',
     route: '/practice',
     script: 'I’m listening for the customer, the pain, the proof, and the next useful relationship.',
-    kind: 'static_text',
+    kind: 'persistent_listening_presence',
     posterPath: '/assets/avatar/scooter-avatar-source.png',
     providerRequired: false,
     durationCapSeconds: 10,
@@ -59,7 +66,8 @@ export const SCOOTER_MEDIA_MOMENTS = {
     kind: 'static_text',
     posterPath: '/assets/avatar/scooter-avatar-source.png',
     providerRequired: false,
-    durationCapSeconds: 12,
+    targetSeconds: '6-12',
+    durationCapSeconds: SCOOTER_MVP_V1_MEDIA_CONTRACT.durationGuidance.section_encouragement.hardMaxSeconds,
     blocksJourney: false
   },
   midpoint_checkin: {
@@ -69,7 +77,8 @@ export const SCOOTER_MEDIA_MOMENTS = {
     kind: 'static_text',
     posterPath: '/assets/avatar/scooter-avatar-source.png',
     providerRequired: false,
-    durationCapSeconds: 15,
+    targetSeconds: '15-25',
+    durationCapSeconds: SCOOTER_MVP_V1_MEDIA_CONTRACT.durationGuidance.midpoint_checkin.hardMaxSeconds,
     blocksJourney: false
   },
   final_summary_dynamic: {
@@ -79,17 +88,25 @@ export const SCOOTER_MEDIA_MOMENTS = {
     kind: 'dynamic_ready',
     posterPath: '/assets/avatar/scooter-avatar-source.png',
     providerRequired: true,
-    durationCapSeconds: 40,
+    targetSeconds: '30-50',
+    durationCapSeconds: SCOOTER_MVP_V1_MEDIA_CONTRACT.durationGuidance.final_summary.hardMaxSeconds,
+    comfortRangeWords: SCOOTER_MVP_V1_MEDIA_CONTRACT.scriptGuidance.final_summary.comfortRangeWords,
+    reviewAboveWords: SCOOTER_MVP_V1_MEDIA_CONTRACT.scriptGuidance.final_summary.reviewAboveWords,
     blocksJourney: false
   },
   share_close_cached: {
     label: 'Share close',
     route: '/share',
     script: 'You can keep practicing privately, or share this with West Peek for network review. No guarantees — just a chance to start the right conversation.',
-    kind: 'cached_or_static',
+    kind: 'cached_or_light_dynamic_required',
     posterPath: '/assets/avatar/scooter-avatar-source.png',
+    videoPath: '/assets/avatar/scooter-share-close.mp4',
+    fallbackCopy: 'AI Scooter share close',
     providerRequired: false,
-    durationCapSeconds: 15,
+    targetSeconds: '12-22',
+    durationCapSeconds: SCOOTER_MVP_V1_MEDIA_CONTRACT.durationGuidance.share_cta.hardMaxSeconds,
+    comfortRangeWords: SCOOTER_MVP_V1_MEDIA_CONTRACT.scriptGuidance.share_cta.comfortRangeWords,
+    reviewAboveWords: SCOOTER_MVP_V1_MEDIA_CONTRACT.scriptGuidance.share_cta.reviewAboveWords,
     blocksJourney: false
   },
   practice_out_loud_prompt: {

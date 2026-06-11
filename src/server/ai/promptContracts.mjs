@@ -1,4 +1,5 @@
 import { PHASE_4_AI_DISCLOSURE } from './aiSchema.mjs';
+import { SCOOTER_MVP_V1_MEDIA_CONTRACT } from '../../runtime/scooterMediaContract.mjs';
 import { buildAiScooterSystemPrompt } from './aiScooterSystemPrompt.mjs';
 
 export const SYSTEM_PROMPT = `${buildAiScooterSystemPrompt()}\n\nReturn strict JSON only. No markdown.`;
@@ -33,7 +34,7 @@ export function buildStoryCardPrompt(answers) {
     "nextSteps": "..."
   },
   "finalScooterSummary": {
-    "script": "25-90 word AI Scooter final coaching summary for optional video follow-up. No guarantee language."
+    "script": "AI Scooter final coaching summary for the required MVP talking-avatar moment. Comfort range ${SCOOTER_MVP_V1_MEDIA_CONTRACT.scriptGuidance.final_summary.comfortRangeWords} words; review above ${SCOOTER_MVP_V1_MEDIA_CONTRACT.scriptGuidance.final_summary.reviewAboveWords} words. Specific, warm, direct, no guarantee language."
   },
   "storyStrengthSignals": [
     { "category": "Clarity", "signal": "Strong|Developing|Needs Sharpening", "guidance": "..." },
@@ -55,6 +56,6 @@ Founder answers:
 6. Proof or traction? ${answers.proof_traction}
 7. Needed help/relationships? ${answers.help_needed}
 
-Write in warm, direct founder-coach language. Be useful, not hypey. Keep every field concise. Preserve uncertainty where proof is thin. Do not assign numeric scores or fundability ratings. Use Story Strength Signals only as qualitative coaching labels. Use relationship-routing language, not investment-review language.`
+Stay strictly inside the Pitch Lab subject matter: pitch clarity, customer/problem/solution, traction/proof, founder edge, why now, ask/relationship routing, rehearsal feedback, and Founder Story Packet readiness. Redirect unrelated topics instead of answering them. Write in warm, direct founder-coach language. Be useful, not hypey. Keep fields concise without sounding clipped. Preserve uncertainty where proof is thin. Do not assign numeric scores or fundability ratings. Use Story Strength Signals only as qualitative coaching labels. Use relationship-routing language, not investment-review language. The finalScooterSummary is a speaking script: 2–5 short sentences, no full essay unless the founder context genuinely requires one extra sentence, no filler, no "as an AI", no legal/tax/securities/investment advice, and no promises of funding, review, meetings, introductions, acceptance, response, or follow-up.`
   };
 }

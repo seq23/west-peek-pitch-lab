@@ -1,3 +1,5 @@
+> **Current source-of-truth note:** For MVP v1 founder experience, `docs/MVP_V1_AI_SCOOTER_EXPERIENCE_CONTRACT.md` and `docs/MVP_V1_SCOOTER_SPEAKING_AND_COST_DISCIPLINE.md` control. Older language about optional media means degraded fallback only; it does not make talking Scooter optional at the required MVP moments.
+
 # Avatar + Voice Provider Plan — AI Scooter
 
 **Status:** Phase 1 contract — updated after provider decision  
@@ -103,8 +105,8 @@ Future provider abstractions should support:
 - static image URL;
 - reusable intro video URL;
 - approved clip manifest;
-- optional text-to-speech render;
-- optional video render;
+- required MVP speaking moments: cached welcome, dynamic final summary, cached/light share close;
+- optional expansion moments such as midpoint check-in or section encouragement;
 - render cost guard checks;
 - safe failure response;
 - no secret exposure to client.

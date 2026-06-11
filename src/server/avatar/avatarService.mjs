@@ -1,4 +1,5 @@
 import { SCOOTER_MEDIA_IDENTITY, isPlaceholderMediaId } from '../media/scooterMediaIdentity.mjs';
+import { SCOOTER_MVP_V1_MEDIA_CONTRACT } from '../../runtime/scooterMediaContract.mjs';
 const PLACEHOLDER_RE = /^(REPLACE_WITH_|DISABLED|__SET|placeholder)/i;
 const ALLOWED_MOMENTS = new Set(['welcome','story_transition','midpoint_checkin','final_summary','share_cta']);
 
@@ -15,8 +16,10 @@ export function validateAvatarRequest(body = {}, env = {}) {
   const text = String(body.text ?? '').trim();
   const moment = String(body.moment ?? '').trim();
   const audioUrl = String(body.audioUrl ?? '').trim();
-  const maxChars = Number(getEnv(env, 'AVATAR_MAX_SCRIPT_CHARS', '900')) || 900;
-  const maxSeconds = Number(getEnv(env, 'AVATAR_MAX_VIDEO_SECONDS', '45')) || 45;
+  const maxChars = Number(getEnv(env, 'AVATAR_MAX_SCRIPT_CHARS', '1200')) || 1200;
+  const globalMaxSeconds = Number(getEnv(env, 'AVATAR_MAX_VIDEO_SECONDS', '65')) || 65;
+  const momentMaxSeconds = SCOOTER_MVP_V1_MEDIA_CONTRACT.durationGuidance[moment]?.hardMaxSeconds || globalMaxSeconds;
+  const maxSeconds = Math.min(globalMaxSeconds, momentMaxSeconds);
   const errors = {};
   if (!ALLOWED_MOMENTS.has(moment)) errors.moment = `moment must be one of: ${Array.from(ALLOWED_MOMENTS).join(', ')}`;
   if (!text) errors.text = 'text is required.';
@@ -47,9 +50,9 @@ export function getAvatarStatus(env = {}, identity = SCOOTER_MEDIA_IDENTITY) {
     mediaIdentitySource: 'src/server/media/scooterMediaIdentity.mjs',
     requestLevelCostGuard: {
       enabled: boolEnv(env, 'COST_GUARD_ENABLED', true),
-      maxScriptChars: Number(getEnv(env, 'AVATAR_MAX_SCRIPT_CHARS', '900')) || 900,
-      maxVideoSeconds: Number(getEnv(env, 'AVATAR_MAX_VIDEO_SECONDS', '45')) || 45,
-      renderFinalSummaryOnly: boolEnv(env, 'AVATAR_RENDER_FINAL_SUMMARY_ONLY', true),
+      maxScriptChars: Number(getEnv(env, 'AVATAR_MAX_SCRIPT_CHARS', '1200')) || 1200,
+      maxVideoSeconds: Number(getEnv(env, 'AVATAR_MAX_VIDEO_SECONDS', '65')) || 65,
+      renderFinalSummaryOnly: boolEnv(env, 'AVATAR_RENDER_FINAL_SUMMARY_ONLY', false),
       dailyMaxRenders: Number(getEnv(env, 'AVATAR_DAILY_MAX_RENDERS', '5')) || 5,
       monthlyMaxRenders: Number(getEnv(env, 'AVATAR_MONTHLY_MAX_RENDERS', '50')) || 50,
       persistentQuotaStore: false
@@ -101,7 +104,7 @@ export async function renderScooterAvatar({ env = {}, body = {}, fetchImpl = fet
   if (!status.enabled) return unavailable('Talking AI Scooter media generation is disabled in this environment. This is a degraded mode, not the intended MVP experience.', { provider: status.provider, staticFallback: true, degradedMode: true });
   if (!status.configured) return unavailable('ElevenLabs-first talking-photo provider is not configured. No fake avatar video was generated.', { provider: status.provider, staticFallback: true, degradedMode: true });
   if (status.requestLevelCostGuard.renderFinalSummaryOnly && validation.value.moment !== 'final_summary') {
-    return { ok: false, httpStatus: 429, body: { status: 'avatar_blocked_by_cost_guard', avatarReady: false, reason: 'Avatar render is restricted to final_summary by cost guard.', staticFallback: true } };
+    return { ok: false, httpStatus: 429, body: { status: 'avatar_blocked_by_cost_guard', avatarReady: false, reason: 'Dynamic avatar render is restricted to final_summary by cost guard. Cached welcome/share clips should be used for those moments.', staticFallback: true } };
   }
   try {
     const raw = status.provider === 'elevenlabs_video'

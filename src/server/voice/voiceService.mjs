@@ -18,7 +18,7 @@ function unavailable(reason, extra = {}) {
 export function validateVoiceRequest(body = {}, env = {}) {
   const text = String(body.text ?? '').trim();
   const moment = String(body.moment ?? '').trim();
-  const maxChars = Number(getEnv(env, 'VOICE_MAX_CHARS', '1200')) || 1200;
+  const maxChars = Number(getEnv(env, 'VOICE_MAX_CHARS', '1400')) || 1200;
   const errors = {};
   if (!ALLOWED_MOMENTS.has(moment)) errors.moment = `moment must be one of: ${Array.from(ALLOWED_MOMENTS).join(', ')}`;
   if (!text) errors.text = 'text is required.';
@@ -39,7 +39,7 @@ export function getVoiceStatus(env = {}, identity = SCOOTER_MEDIA_IDENTITY) {
     configured,
     model: getEnv(env, 'ELEVENLABS_MODEL', 'eleven_multilingual_v2'),
     cacheEnabled: boolEnv(env, 'VOICE_CACHE_ENABLED', true),
-    maxChars: Number(getEnv(env, 'VOICE_MAX_CHARS', '1200')) || 1200,
+    maxChars: Number(getEnv(env, 'VOICE_MAX_CHARS', '1400')) || 1200,
     voiceIdSource: 'src/server/media/scooterMediaIdentity.mjs',
     disclosure: 'Voice is AI-generated with the committed Scooter voice identity only when ElevenLabs is configured. Text coaching remains available without voice.'
   };

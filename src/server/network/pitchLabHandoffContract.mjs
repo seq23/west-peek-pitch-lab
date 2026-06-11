@@ -43,7 +43,7 @@ export function validateStoryCardForShare(storyCard) {
   return { ok: Object.keys(errors).length === 0, errors, storyCard: normalized };
 }
 
-export function buildPitchLabNetworkPayload({ founder, storyCard, consent, deckContext = {}, profileCapture = {}, aiPersona = 'AI Scooter', submittedAt = new Date().toISOString() }) {
+export function buildPitchLabNetworkPayload({ founder, storyCard, consent, deckContext = {}, profileCapture = {}, practiceRehearsal = null, aiPersona = 'AI Scooter', submittedAt = new Date().toISOString() }) {
   const founderResult = validateFounderContact(founder);
   const consentResult = validateShareConsent(consent);
   const cardResult = validateStoryCardForShare(storyCard);
@@ -88,7 +88,15 @@ export function buildPitchLabNetworkPayload({ founder, storyCard, consent, deckC
       deck_context_used: deckContext?.deck_context_used === true,
       deck_filename: normalizeText(deckContext?.filename, 240),
       deck_included_with_consent: consentResult.consent.includeDeckFile === true,
-      practice_video_included_with_consent: consentResult.consent.includePracticeVideo === true
+      practice_video_included_with_consent: consentResult.consent.includePracticeVideo === true,
+      practice_rehearsal: practiceRehearsal && consentResult.consent.includePracticeVideo === true ? {
+        selected_take_id: normalizeText(practiceRehearsal.selected_take_id, 180),
+        recorded_at: normalizeText(practiceRehearsal.recorded_at, 80),
+        duration_seconds: Number(practiceRehearsal.duration_seconds || 0),
+        transcript: normalizeText(practiceRehearsal.transcript, 2200),
+        local_video_only: practiceRehearsal.local_video_only === true,
+        upload_storage_enabled: practiceRehearsal.upload_storage_enabled === true
+      } : null
     },
     consent: {
       founder_story_packet_shared: true,

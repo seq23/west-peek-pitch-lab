@@ -2,6 +2,7 @@ import { createLocalDraftStoryCard } from './storyCard.mjs';
 import { copyTextToClipboard, formatStoryCardForClipboard } from './clipboard.mjs';
 import { DISCLOSURE_COPY } from './disclaimerModel.mjs';
 import { SCOOTER_COMPANION_STATES, SCOOTER_MEDIA_MOMENTS } from './scooterJourneyModel.mjs';
+import { SCOOTER_MVP_V1_MEDIA_CONTRACT } from './scooterMediaContract.mjs';
 
 const answersKey = 'west-peek-pitch-lab.phase3.answers.v1';
 const aiCardKey = 'west-peek-pitch-lab.phase4.ai-story-card.v1';
@@ -24,19 +25,19 @@ function renderAiCard(result) {
   const rows = [
     ['One-line pitch', card.oneLinePitch], ['Company summary', card.companySummary], ['Customer', card.customer], ['Problem', card.problem], ['Solution', card.solution], ['Proof / traction', card.proofTraction], ['Founder edge', card.founderEdge], ['Why now', card.whyNow], ['Biggest story gap', card.biggestStoryGap], ['Biggest objection', card.biggestObjection], ['Suggested next relationships', card.suggestedNextRelationships], ['Next steps', card.nextSteps]
   ];
-  return `<div class="card-status" data-ai-enhanced="true">AI-enhanced Pitch Story Card · text-first artifact ready</div><p class="phase-note">${escapeHtml(result.disclosure || DISCLOSURE_COPY.storyCard)}</p>${renderStoryStrengthSignals(result.storyStrengthSignals)}<div class="ai-scooter-final-summary" data-final-scooter-summary><h3>AI Scooter final summary</h3><p>${escapeHtml(finalSummary)}</p><p class="phase-note">Video follows only if provider configuration is available. Copy/share remain available without video.</p></div><div data-avatar-lane class="boundary-card"><h3>AI Scooter video lane</h3><p data-avatar-status>Video not requested yet. Text coaching is ready.</p></div><div class="actions"><button type="button" class="button secondary" data-copy-ai-card>Copy Pitch Story Card</button><a class="button primary" href="/share">Preview Founder Story Packet</a><span class="copy-status" data-ai-copy-status></span></div><div class="critique-panel"><h3>AI Scooter critique</h3><ul><li><strong>Clear:</strong> ${escapeHtml(result.critique.whatIsClear)}</li><li><strong>Confusing:</strong> ${escapeHtml(result.critique.whatIsConfusing)}</li><li><strong>Generic:</strong> ${escapeHtml(result.critique.whatSoundsGeneric)}</li><li><strong>Proof:</strong> ${escapeHtml(result.critique.needsStrongerProof)}</li><li><strong>Likely objection:</strong> ${escapeHtml(result.critique.likelyObjection)}</li><li><strong>Better story angle:</strong> ${escapeHtml(result.critique.betterStoryAngle)}</li><li><strong>Next question:</strong> ${escapeHtml(result.critique.suggestedNextQuestion)}</li></ul></div><div class="story-card-grid">${rows.map(([label,value])=>`<article class="story-card-section"><h3>${escapeHtml(label)}</h3><p>${escapeHtml(value)}</p></article>`).join('')}</div>`;
+  return `<div class="card-status" data-ai-enhanced="true">AI-enhanced Pitch Story Card · text-first artifact ready</div><p class="phase-note">${escapeHtml(result.disclosure || DISCLOSURE_COPY.storyCard)}</p>${renderStoryStrengthSignals(result.storyStrengthSignals)}<div class="ai-scooter-final-summary" data-final-scooter-summary><h3>AI Scooter final summary</h3><p>${escapeHtml(finalSummary)}</p><p class="phase-note">Text is ready first. Scooter’s talking summary is the required coaching moment and follows asynchronously; copy/share do not wait on media rendering.</p></div><div data-avatar-lane class="boundary-card media-runway-card"><h3>AI Scooter final talking summary</h3><p data-avatar-status>Text coaching is ready. Scooter’s short personalized media summary is preparing as the non-blocking coaching moment.</p><p class="phase-note">Target ${SCOOTER_MVP_V1_MEDIA_CONTRACT.durationGuidance.final_summary.targetSeconds} seconds. Hard ceiling ${SCOOTER_MVP_V1_MEDIA_CONTRACT.durationGuidance.final_summary.hardMaxSeconds} seconds.</p></div><div class="actions"><button type="button" class="button secondary" data-copy-ai-card>Copy Pitch Story Card</button><a class="button primary" href="/share">Preview Founder Story Packet</a><span class="copy-status" data-ai-copy-status></span></div><div class="critique-panel"><h3>AI Scooter critique</h3><ul><li><strong>Clear:</strong> ${escapeHtml(result.critique.whatIsClear)}</li><li><strong>Confusing:</strong> ${escapeHtml(result.critique.whatIsConfusing)}</li><li><strong>Generic:</strong> ${escapeHtml(result.critique.whatSoundsGeneric)}</li><li><strong>Proof:</strong> ${escapeHtml(result.critique.needsStrongerProof)}</li><li><strong>Likely objection:</strong> ${escapeHtml(result.critique.likelyObjection)}</li><li><strong>Better story angle:</strong> ${escapeHtml(result.critique.betterStoryAngle)}</li><li><strong>Next question:</strong> ${escapeHtml(result.critique.suggestedNextQuestion)}</li></ul></div><div class="story-card-grid">${rows.map(([label,value])=>`<article class="story-card-section"><h3>${escapeHtml(label)}</h3><p>${escapeHtml(value)}</p></article>`).join('')}</div>`;
 }
 
 async function requestAvatarLane(target, text) {
   const status = target.querySelector('[data-avatar-status]');
   if (!status) return;
-  status.textContent = 'Checking AI Scooter video availability…';
+  status.textContent = 'Preparing Scooter’s final talking summary…';
   try {
     const response = await fetch('/api/avatar/render', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ moment: 'final_summary', text }) });
     const body = await response.json();
-    if (response.status === 202 || body.status === 'avatar_render_queued') status.textContent = 'AI Scooter video queued. The text card remains usable now.';
-    else status.textContent = body.reason || body.message || 'AI Scooter video unavailable. This is an honest static fallback.';
-  } catch { status.textContent = 'AI Scooter video unavailable. This is an honest static fallback.'; }
+    if (response.status === 202 || body.status === 'avatar_render_queued') status.textContent = 'Scooter’s final talking summary is queued. The text card remains usable now.';
+    else status.textContent = body.reason || body.message || 'Scooter media is unavailable right now. The text coaching remains ready.';
+  } catch { status.textContent = 'Scooter media is unavailable right now. The text coaching remains ready.'; }
 }
 
 export function attachAiStoryCardControls() {
@@ -44,14 +45,14 @@ export function attachAiStoryCardControls() {
   button.addEventListener('click', async () => {
     const answers = readAnswers(); const localCard = createLocalDraftStoryCard(answers);
     if (localCard.validation && !localCard.validation.ok) { target.innerHTML = `<div class="boundary-card"><h3>Finish the local practice flow first.</h3><p>AI generation requires all seven founder answers to pass validation.</p></div>`; return; }
-    updateScooter(SCOOTER_COMPANION_STATES.story_reviewing, 'AI Scooter is reviewing your story. Text appears before video.');
-    target.innerHTML = '<p class="phase-note">AI Scooter is reviewing your story…</p>';
+    updateScooter(SCOOTER_COMPANION_STATES.story_reviewing, 'AI Scooter is sharpening your story. Text appears first; the talking summary follows.');
+    target.innerHTML = '<p class="phase-note">AI Scooter is sharpening your story…</p>';
     try {
       const response = await fetch('/api/pitch/story-card', { method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify({ answers }) });
       const data = await response.json();
       if(!response.ok || data.status === 'ai_unavailable') { target.innerHTML = `<div class="boundary-card"><h3>AI coaching is unavailable.</h3><p>${escapeHtml(data.reason || 'Provider is unavailable or not configured.')}</p><p>No fake AI output was generated.</p></div>`; updateScooter(SCOOTER_COMPANION_STATES.final_video_unavailable, 'AI coaching is unavailable. No fake output was generated.'); return; }
       const finalScript = data.finalScooterSummary?.script || deriveFinalSummary(data);
-      data.finalScooterSummary = { script: finalScript, moment: SCOOTER_MEDIA_MOMENTS.final_summary_dynamic.label, maxWords: 90 };
+      data.finalScooterSummary = { script: finalScript, moment: SCOOTER_MEDIA_MOMENTS.final_summary_dynamic.label, comfortRangeWords: SCOOTER_MVP_V1_MEDIA_CONTRACT.scriptGuidance.final_summary.comfortRangeWords, reviewAboveWords: SCOOTER_MVP_V1_MEDIA_CONTRACT.scriptGuidance.final_summary.reviewAboveWords };
       localStorage.setItem(aiCardKey, JSON.stringify(data));
       target.innerHTML = renderAiCard(data);
       updateScooter(SCOOTER_COMPANION_STATES.story_text_ready, finalScript);

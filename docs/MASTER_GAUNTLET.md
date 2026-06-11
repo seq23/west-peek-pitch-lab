@@ -1,5 +1,3 @@
-> **SUPERSEDED FOR NETWORK OS HANDOFF** — Historical planning reference only. Current handoff law is `founder_profile_lead` → `founder_story_packet` with `trigger_intent: relationship_routing`, Network OS database upsert, no email notification, no auto-execution, and no guaranteed follow-up. Do not use stale `pitch_practice`, `deal_flow`, or `pitch_story_card` framing for current implementation.
-
 # West Peek Pitch Lab — Master Gauntlet
 
 ## Scope
@@ -74,3 +72,17 @@ If Playwright is unavailable in this artifact environment, the honest status is:
 - Fixed hostile gauntlet false-positive promise detection so explicit negative boundary copy is allowed.
 - Fixed localStorage test seeding so share-status receipts are not wiped on navigation to thank-you.
 - Maintains 13 behavioral tests across desktop and mobile.
+
+## 06-10-26 MVP v1 Journey Guidance + Rehearsal Coverage Patch
+
+The master gauntlet now includes additional contract-level E2E coverage for the MVP v1 founder experience:
+
+- practice guidance and next-action cues;
+- question-level why/hint/example/avoid helpers;
+- Practice Out Loud camera-room surface states;
+- selected take persistence into share preview;
+- consented rehearsal transcript/status payload behavior;
+- required Scooter speaking moments at welcome, final summary, and share close;
+- text-first Story Card behavior before media completion.
+
+These are intentionally contract-level checks. They do not hard-fail subjective design polish such as exact glow strength, animation timing, or every tooltip phrase.

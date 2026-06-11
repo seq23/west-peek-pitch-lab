@@ -5,6 +5,8 @@ const STORAGE_AI_CARD_KEY = 'west-peek-pitch-lab.phase4.ai-story-card.v1';
 const STORAGE_SHARE_STATUS_KEY = 'west-peek-pitch-lab.phase7.share-status.v1';
 const STORAGE_PROFILE_KEY = 'west-peek-pitch-lab.founder-profile.v1';
 const STORAGE_DECK_CONTEXT_KEY = 'west-peek-pitch-lab.deck-context.v1';
+const STORAGE_REHEARSAL_TAKES_KEY = 'west-peek-pitch-lab.practice-out-loud.takes.v2';
+const STORAGE_SELECTED_REHEARSAL_KEY = 'west-peek-pitch-lab.practice-out-loud.selected.v2';
 
 // Required validation anchor: does not guarantee
 const founderAnswers = {
@@ -58,6 +60,19 @@ const fakeShareSuccess = {
   intake_id: 'test-intake-001'
 };
 
+const fakeSelectedRehearsalTake = {
+  id: 'take-gauntlet-001',
+  durationSeconds: 58,
+  mimeType: 'video/webm',
+  transcript: 'We help founders turn scattered context into a clear pitch story, prove the painful problem, explain founder edge, and name the next useful customer or investor relationship.',
+  createdAt: '2026-06-10T20:00:00.000Z',
+  createdAtLabel: 'Jun 10, 2026, 8:00 PM',
+  coachingSignals: [
+    { category: 'Plain-English opening', signal: 'Present', guidance: 'The pitch has enough material to review.' },
+    { category: 'Proof or traction', signal: 'Add proof', guidance: 'Give one concrete proof point before sharing.' }
+  ]
+};
+
 function forbiddenPromisePatterns() {
   return [
     /Scooter reviewed this/i,
@@ -95,6 +110,18 @@ async function seedAiCard(page) {
     window.localStorage.setItem(profileKey, JSON.stringify({ name: 'Avery Founder', email: 'avery@example.com', companyName: 'ExampleCo', website: 'https://example.com' }));
     window.localStorage.setItem(deckKey, JSON.stringify({ deck_provided: false, deck_context_used: false }));
   }, { answersKey: STORAGE_ANSWERS_KEY, aiKey: STORAGE_AI_CARD_KEY, profileKey: STORAGE_PROFILE_KEY, deckKey: STORAGE_DECK_CONTEXT_KEY, answers: founderAnswers, aiCard: fakeAiResponse });
+}
+
+async function seedSelectedRehearsal(page, { consented = true } = {}) {
+  await page.addInitScript(({ takesKey, selectedKey, take, consented }) => {
+    window.localStorage.setItem(takesKey, JSON.stringify({ takes: [take] }));
+    window.localStorage.setItem(selectedKey, JSON.stringify({
+      id: take.id,
+      selectedAt: '2026-06-10T20:01:00.000Z',
+      selectedWithConsent: consented,
+      consentedAt: consented ? '2026-06-10T20:02:00.000Z' : null
+    }));
+  }, { takesKey: STORAGE_REHEARSAL_TAKES_KEY, selectedKey: STORAGE_SELECTED_REHEARSAL_KEY, take: fakeSelectedRehearsalTake, consented });
 }
 
 function liveEnvEnabled(name) {
@@ -162,9 +189,67 @@ test.describe('West Peek Pitch Lab Master Gauntlet — hostile max-depth', () =>
       await page.getByRole('button', { name: /next question|create local draft card/i }).click();
     }
 
-    await expect(page.locator('body')).toContainText('Your local Pitch Story Card shell is ready.');
+    await expect(page.locator('body')).toContainText('Your Pitch Story Card draft is ready.');
     const saved = await page.evaluate((key) => JSON.parse(localStorage.getItem(key) || '{}'), STORAGE_ANSWERS_KEY);
     expect(saved).toMatchObject(founderAnswers);
+    await expectNoForbiddenPromises(page);
+  });
+
+
+  test('practice guidance makes the next step obvious without modal tutorial or visual hard-fail theater', async ({ page }) => {
+    await page.goto('/practice');
+    await expect(page.locator('body')).toContainText('Start here');
+    await expect(page.locator('body')).toContainText('Use the name West Peek should recognize');
+    await expect(page.locator('body')).toContainText('this creates the private session context');
+    await page.getByRole('textbox', { name: 'Name', exact: true }).fill('Avery Founder');
+    await page.getByRole('textbox', { name: 'Email', exact: true }).fill('avery@example.com');
+    await page.getByLabel('Company name').fill('ExampleCo');
+    await page.getByRole('button', { name: /Start AI Scooter practice/i }).click();
+
+    await expect(page.locator('body')).toContainText('Optional deck-as-context');
+    await expect(page.locator('body')).toContainText('skip the deck and answer from scratch');
+    await expect(page.getByRole('button', { name: /No deck/i })).toHaveClass(/attention-ready/);
+    await page.getByRole('button', { name: /No deck/i }).click();
+
+    await expect(page.locator('[data-next-step-card]')).toContainText('Next:');
+    await expect(page.locator('.answer-helper-panel')).toContainText('Why Scooter asks');
+    await expect(page.locator('.answer-helper-panel')).toContainText('Strong answer hint');
+    await expect(page.locator('.answer-helper-panel')).toContainText('Example');
+    await expect(page.locator('.answer-helper-panel')).toContainText('Avoid');
+    await expect(page.locator('textarea')).toHaveAttribute('title', /live draft updates/i);
+
+    await page.locator('textarea').first().fill(founderAnswers.what_building);
+    await expect(page.locator('[data-next-step-card]')).toHaveClass(/attention-ready/);
+    await expect(page.getByRole('button', { name: /Next question/i })).toHaveClass(/attention-ready/);
+    await expectNoForbiddenPromises(page);
+  });
+
+  test('Practice Out Loud journey surfaces camera, countdown, playback, transcript, best-take, and consent states without uploading video', async ({ page }) => {
+    await seedCompleteAnswers(page);
+    await page.goto('/story-card');
+    await expect(page.locator('body')).toContainText('Practice Out Loud');
+    await expect(page.locator('.camera-practice')).toContainText('Camera Room Opens');
+    await expect(page.locator('.camera-practice')).toContainText('AI Scooter remains visible. Your camera appears here. Countdown starts when you are ready.');
+    await expect(page.locator('.camera-practice')).toContainText('Record');
+    await expect(page.locator('.camera-practice')).toContainText('Playback');
+    await expect(page.locator('.camera-practice')).toContainText('Choose');
+    await expect(page.locator('.camera-practice')).toContainText('Consent');
+    await expect(page.locator('[data-camera-status]')).toContainText('No video uploads from this screen');
+    await expect(page.locator('[data-take-list]')).toContainText('No takes recorded yet');
+    await page.locator('[data-consent-selected-take]').click({ force: true });
+    await expect(page.locator('[data-rehearsal-consent-status]')).toContainText('Choose a best take before attaching rehearsal context');
+    await expectNoForbiddenPromises(page);
+  });
+
+  test('selected rehearsal take persists into share preview only after explicit rehearsal consent', async ({ page }) => {
+    await seedAiCard(page);
+    await seedSelectedRehearsal(page, { consented: true });
+    await page.goto('/share');
+    await expect(page.locator('.founder-story-packet')).toContainText('Practice Out Loud');
+    await expect(page.locator('.founder-story-packet')).toContainText('Best take selected');
+    await expect(page.locator('.founder-story-packet')).toContainText('Transcript saved: Yes');
+    await expect(page.locator('.founder-story-packet')).toContainText('Packet inclusion consent: Yes');
+    await expect(page.getByLabel(/Include my selected Practice Out Loud take/i)).toBeChecked();
     await expectNoForbiddenPromises(page);
   });
 
@@ -254,7 +339,7 @@ test.describe('West Peek Pitch Lab Master Gauntlet — hostile max-depth', () =>
     await page.getByLabel(/I consent to share/i).check();
     await page.getByRole('button', { name: /Share Founder Story Packet with West Peek/i }).click();
     await expect(page.locator('[data-share-result]')).toContainText('Submission was not completed');
-    await expect(page.locator('[data-share-result]')).toContainText('No submitted state was recorded');
+    await expect(page.locator('[data-share-result]')).toContainText('Nothing was shared');
     const shareStatus = await page.evaluate((key) => localStorage.getItem(key), STORAGE_SHARE_STATUS_KEY);
     expect(shareStatus).toBeNull();
     await expectNoForbiddenPromises(page);
@@ -273,11 +358,11 @@ test.describe('West Peek Pitch Lab Master Gauntlet — hostile max-depth', () =>
     await page.getByLabel(/I consent to share/i).check();
     await page.getByRole('button', { name: /Share Founder Story Packet with West Peek/i }).click();
     await expect(page.locator('[data-share-result]')).toContainText('Founder Story Packet shared with West Peek for network review');
-    await expect(page.locator('[data-share-result]')).toContainText('Database write:');
+    await expect(page.locator('[data-share-result]')).toContainText('Contact created: No');
 
     await page.getByRole('link', { name: /Continue/i }).click();
     await expect(page.locator('body')).toContainText('pending_network_review');
-    await expect(page.locator('body')).toContainText('No outreach, intro, investment review, or follow-up is automatic.');
+    await expect(page.locator('body')).toContainText('Contact created automatically: No');
     await expectNoForbiddenPromises(page);
   });
 
@@ -312,7 +397,7 @@ test.describe('West Peek Pitch Lab Master Gauntlet — hostile max-depth', () =>
   test('thank-you page refuses to claim success without a confirmed local submission receipt', async ({ page }) => {
     await page.goto('/thank-you');
     await expect(page.locator('body')).toContainText('No confirmed submission found');
-    await expect(page.locator('body')).toContainText('only claims success after Network OS confirms');
+    await expect(page.locator('body')).toContainText('only confirms a share after the app receives a confirmed receipt');
     await expectNoForbiddenPromises(page);
   });
 
@@ -331,6 +416,56 @@ test.describe('West Peek Pitch Lab Master Gauntlet — hostile max-depth', () =>
         expect(JSON.stringify(body)).not.toMatch(/fake|placeholder success|generated/i);
       }
     }
+    await expectNoForbiddenPromises(page);
+  });
+
+
+  test('Scooter speaking journey protects required moments while keeping text-first output non-blocking', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.locator('[data-required-speaking-moment]').first()).toContainText('Required talking Scooter moment');
+    await expect(page.locator('[data-scooter-companion]').first()).toHaveAttribute('data-scooter-moment', /Welcome/);
+
+    await seedCompleteAnswers(page);
+    await page.route('**/api/pitch/story-card', async (route) => {
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(fakeAiResponse) });
+    });
+    await page.goto('/story-card');
+    await page.getByRole('button', { name: /Generate AI Pitch Story Card/i }).click();
+    await expect(page.locator('[data-ai-story-card-root]')).toContainText('AI-enhanced Pitch Story Card');
+    await expect(page.locator('[data-final-scooter-summary]')).toContainText('AI Scooter final summary');
+    await expect(page.locator('[data-avatar-lane]')).toContainText('Scooter’s short personalized media summary is preparing');
+    await expect(page.locator('[data-avatar-lane]')).toContainText('Hard ceiling 65 seconds');
+    await expect(page.getByRole('link', { name: /Preview Founder Story Packet/i })).toBeVisible();
+
+    await seedAiCard(page);
+    await page.goto('/share');
+    await expect(page.locator('.share-close-moment')).toContainText('AI Scooter close');
+    await expect(page.locator('.share-close-moment')).toContainText('Required talking Scooter close');
+    await expectNoForbiddenPromises(page);
+  });
+
+  test('share transaction includes consented rehearsal transcript/status and keeps local video file out of payload', async ({ page }) => {
+    await seedAiCard(page);
+    await seedSelectedRehearsal(page, { consented: true });
+    let observedPayload = null;
+    await page.route('**/api/pitch/share', async (route) => {
+      observedPayload = route.request().postDataJSON();
+      expect(observedPayload.consent.shareWithWestPeek).toBe(true);
+      expect(observedPayload.consent.includePracticeVideo).toBe(true);
+      expect(observedPayload.practiceRehearsal.selected_take_id).toBe(fakeSelectedRehearsalTake.id);
+      expect(observedPayload.practiceRehearsal.transcript).toContain('turn scattered context into a clear pitch story');
+      expect(observedPayload.practiceRehearsal.local_video_only).toBe(true);
+      expect(observedPayload.practiceRehearsal.upload_storage_enabled).toBe(false);
+      expect(JSON.stringify(observedPayload.practiceRehearsal)).not.toMatch(/blob:|data:video|webm;base64|ArrayBuffer/i);
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(fakeShareSuccess) });
+    });
+
+    await page.goto('/share');
+    await page.getByLabel(/I consent to share my Founder Story Packet/i).check();
+    await expect(page.getByLabel(/Include my selected Practice Out Loud take/i)).toBeChecked();
+    await page.getByRole('button', { name: /Share Founder Story Packet with West Peek/i }).click();
+    await expect(page.locator('[data-share-result]')).toContainText('Founder Story Packet shared with West Peek for network review');
+    expect(observedPayload).not.toBeNull();
     await expectNoForbiddenPromises(page);
   });
 
@@ -357,7 +492,7 @@ test.describe('West Peek Pitch Lab Master Gauntlet — hostile max-depth', () =>
     await seedAiCard(page);
     await page.goto('/share');
     await page.getByLabel('Founder name').fill('Gauntlet Live Founder');
-    await page.getByLabel('Email').fill('gauntlet-live-founder@example.com');
+    await page.getByRole('textbox', { name: 'Email', exact: true }).fill('gauntlet-live-founder@example.com');
     await page.getByLabel('Company name').fill('Gauntlet Live Company');
     await page.getByLabel(/I consent to share/i).check();
     await page.getByRole('button', { name: /Share Founder Story Packet with West Peek/i }).click();

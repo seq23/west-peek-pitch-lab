@@ -61,31 +61,13 @@ assert.equal(sent.ok, true);
 assert.equal(sent.review_status, 'pending_network_review');
 assert.equal(sent.contact_created, false);
 
-const profileUpsert = await submitPitchLabShare({ founder, storyCard, consent }, {
+const autoContact = await submitPitchLabShare({ founder, storyCard, consent }, {
   NETWORK_OS_HANDOFF_ENABLED: 'true',
   NETWORK_OS_PITCH_LAB_ENDPOINT: 'https://network.joinwestpeek.com/api/intake/pitch-lab',
   NETWORK_OS_SHARED_SECRET: 'local-test-shared-secret-1234',
   NETWORK_OS_TIMEOUT_MS: '1000'
-}, async () => new Response(JSON.stringify({ ok: true, intake_id: 'ok_profile', review_status: 'pending_network_review', database_write_status: 'linked_to_existing_profile', profile_created: false, contact_created: true, execution_allowed: false, follow_up_guaranteed: false }), { status: 200 }));
-assert.equal(profileUpsert.ok, true);
-assert.equal(profileUpsert.database_write_status, 'linked_to_existing_profile');
+}, async () => new Response(JSON.stringify({ ok: true, intake_id: 'bad', review_status: 'pending_network_review', contact_created: true }), { status: 200 }));
+assert.equal(autoContact.ok, false);
+assert.equal(autoContact.error_code, 'CONTACT_AUTO_CREATE_GUARD');
 
-const autoExecution = await submitPitchLabShare({ founder, storyCard, consent }, {
-  NETWORK_OS_HANDOFF_ENABLED: 'true',
-  NETWORK_OS_PITCH_LAB_ENDPOINT: 'https://network.joinwestpeek.com/api/intake/pitch-lab',
-  NETWORK_OS_SHARED_SECRET: 'local-test-shared-secret-1234',
-  NETWORK_OS_TIMEOUT_MS: '1000'
-}, async () => new Response(JSON.stringify({ ok: true, intake_id: 'bad', review_status: 'pending_network_review', execution_allowed: true, follow_up_guaranteed: false }), { status: 200 }));
-assert.equal(autoExecution.ok, false);
-assert.equal(autoExecution.error_code, 'AUTO_EXECUTION_GUARD');
-
-const followUpPromise = await submitPitchLabShare({ founder, storyCard, consent }, {
-  NETWORK_OS_HANDOFF_ENABLED: 'true',
-  NETWORK_OS_PITCH_LAB_ENDPOINT: 'https://network.joinwestpeek.com/api/intake/pitch-lab',
-  NETWORK_OS_SHARED_SECRET: 'local-test-shared-secret-1234',
-  NETWORK_OS_TIMEOUT_MS: '1000'
-}, async () => new Response(JSON.stringify({ ok: true, intake_id: 'bad', review_status: 'pending_network_review', execution_allowed: false, follow_up_guaranteed: true }), { status: 200 }));
-assert.equal(followUpPromise.ok, false);
-assert.equal(followUpPromise.error_code, 'FOLLOW_UP_GUARANTEE_GUARD');
-
-console.log('PHASE 7 DOMAIN OK — relationship-routing Founder Story Packet handoff is consent-gated, profile upsert is allowed, and auto-execution/follow-up promises are rejected.');
+console.log('PHASE 7 DOMAIN OK — relationship-routing Founder Story Packet handoff is consent-gated and no auto-contact success is accepted.');

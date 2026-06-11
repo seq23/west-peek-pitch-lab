@@ -1,3 +1,5 @@
+> **Current source-of-truth note:** For MVP v1 founder experience, `docs/MVP_V1_AI_SCOOTER_EXPERIENCE_CONTRACT.md` and `docs/MVP_V1_SCOOTER_SPEAKING_AND_COST_DISCIPLINE.md` control. Older language about optional media means degraded fallback only; it does not make talking Scooter optional at the required MVP moments.
+
 # Phase 9D — ElevenLabs-First Master Gauntlet Plan
 
 ## Status

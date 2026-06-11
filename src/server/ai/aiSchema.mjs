@@ -1,5 +1,6 @@
 import { PITCH_QUESTIONS, QUESTION_IDS, normalizeAnswer, validatePitchAnswers } from '../../runtime/pitchQuestions.mjs';
 import { STORY_STRENGTH_CATEGORIES, STORY_STRENGTH_LABELS, createStoryStrengthSignalsFromAnswers } from '../../runtime/storyCard.mjs';
+import { countWords, scriptNeedsEditorialReview, SCOOTER_MVP_V1_MEDIA_CONTRACT } from '../../runtime/scooterMediaContract.mjs';
 
 export const PHASE_4_AI_DISCLOSURE = 'AI Scooter is an AI pitch-practice coach. It is not the real Scooter, not a live human reviewer, not an investment committee, not an investment decision, and not a guarantee of funding, investment review, meetings, introductions, acceptance, or follow-up.';
 
@@ -141,7 +142,9 @@ export function validateAiResponseShape(raw, answers = {}) {
       critique: critiqueResult.critique,
       storyCard: cardResult.card,
       finalScooterSummary: {
-        script: clampText(raw?.finalScooterSummary?.script || `Here’s what I’m hearing. The strongest part of your story is ${cardResult.card.founderEdge}. The biggest gap is ${cardResult.card.biggestStoryGap}. Add one concrete proof point before sharing.`, 700)
+        script: clampText(raw?.finalScooterSummary?.script || `Here’s what I’m hearing. The strongest part of your story is ${cardResult.card.founderEdge}. The biggest gap is ${cardResult.card.biggestStoryGap}. Add one concrete proof point before sharing.`, 1500),
+        scriptWordCount: countWords(raw?.finalScooterSummary?.script || ''),
+        editorialReviewSuggested: scriptNeedsEditorialReview(raw?.finalScooterSummary?.script || '', SCOOTER_MVP_V1_MEDIA_CONTRACT.scriptGuidance.final_summary.reviewAboveWords)
       },
       storyStrengthSignals: strengthResult.signals,
       warnings
