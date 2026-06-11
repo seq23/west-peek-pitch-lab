@@ -77,7 +77,7 @@ export function getAvatarStatus(env = {}, identity = SCOOTER_MEDIA_IDENTITY) {
     mode: getEnv(env, 'AVATAR_MODE', 'did_primary_heygen_secondary_talking_avatar'),
     providerProofRequired: !configured,
     voiceMode: getEnv(env, 'AVATAR_VOICE_MODE', 'provider_text_voice'),
-    mediaIdentitySource: 'src/server/media/scooterMediaIdentity.mjs',
+    mediaIdentitySource: 'canonical_scooter_media_identity',
     providerReadiness: providerConfigured,
     requestLevelCostGuard: {
       enabled: boolEnv(env, 'COST_GUARD_ENABLED', true),
