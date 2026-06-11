@@ -41,9 +41,10 @@ if (!avatar.includes('AVATAR_DYNAMIC_GENERATION_ENABLED')) failures.push('Avatar
 if (keys.has('ELEVENLABS_VOICE_ID') || keys.has('MAKEUGC_AVATAR_ID') || keys.has('MAKEUGC_VOICE_ID')) failures.push('Provider identity IDs must not be env vars unless the selected provider requires account-scoped avatar IDs.');
 if (!voice.includes('ELEVENLABS_API_KEY') || !avatar.includes('DID_API_KEY') || !avatar.includes('HEYGEN_API_KEY') || !avatar.includes('MAKEUGC_API_KEY')) failures.push('Provider services must reference managed provider API keys server-side.');
 const mediaIdentity = read('src/server/media/scooterMediaIdentity.mjs');
-if (!mediaIdentity.includes('approvedVoiceAudioAsset') || !mediaIdentity.includes('scooter-voice-only.mp3')) failures.push('Media identity must commit uploaded Scooter MP3 as canonical fixed-clip voice asset.');
-if (!mediaIdentity.includes('didAudioUrlIsPrimaryFixedClipPath')) failures.push('Media identity must mark D-ID audio_url as primary fixed-clip path.');
-if (!mediaIdentity.includes('fishAudioIsDynamicSpeechOnly')) failures.push('Media identity must mark Fish Audio as dynamic speech only, not fixed-clip primary.');
+if (!mediaIdentity.includes('approvedVoiceSampleAsset') || !mediaIdentity.includes('scooter-voice-only.mp3')) failures.push('Media identity must commit uploaded Scooter MP3 as canonical voice sample / clone source.');
+if (!mediaIdentity.includes('uploadedScooterMp3IsNotFinishedWelcomeClip')) failures.push('Media identity must state uploaded Scooter MP3 is not a finished welcome/share clip.');
+if (!mediaIdentity.includes('didAudioUrlRequiresShortGeneratedOrApprovedAudio')) failures.push('Media identity must require short generated/approved audio before D-ID audio_url fixed-clip renders.');
+if (!mediaIdentity.includes('fishOrDidCloneUsesUploadedSampleForDynamicSpeech')) failures.push('Media identity must mark Fish/D-ID clone as generated speech path from uploaded sample.');
 if (!mediaIdentity.includes('elevenLabsIsFallbackOnly')) failures.push('Media identity must mark ElevenLabs as fallback-only.');
 if (!avatar.includes('audio_url') || !avatar.includes('request.audioUrl')) failures.push('Avatar service must support uploaded/generated audioUrl handoff to D-ID/HeyGen.');
 if (!voice.includes('scooterMediaIdentity') || !avatar.includes('scooterMediaIdentity')) failures.push('Voice/avatar services must load non-secret Scooter media identity from repo asset module.');

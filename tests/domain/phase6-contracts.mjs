@@ -29,10 +29,11 @@ assert.equal(SCOOTER_MEDIA_IDENTITY.rules.apiKeysRemainEnvOnly, true, 'media ide
 assert.equal(SCOOTER_MEDIA_IDENTITY.rules.talkingScooterIsCoreExperience, true, 'talking Scooter must be core to the intended MVP');
 assert.equal(SCOOTER_MEDIA_IDENTITY.rules.textOnlyIsDegradedMode, true, 'text-only/static mode is degraded fallback, not intended experience');
 assert.equal(SCOOTER_MEDIA_IDENTITY.approvedPhotoAsset, '/assets/avatar/scooter-avatar-source.png');
-assert.equal(SCOOTER_MEDIA_IDENTITY.approvedVoiceAudioAsset, '/assets/avatar/scooter-voice-only.mp3', 'uploaded Scooter MP3 is canonical fixed-clip voice source');
-assert.equal(SCOOTER_MEDIA_IDENTITY.approvedVoiceAudioBackupAsset, '/assets/avatar/scooter-voice-only.m4a', 'uploaded Scooter M4A is canonical backup voice source');
-assert.equal(SCOOTER_MEDIA_IDENTITY.rules.didAudioUrlIsPrimaryFixedClipPath, true, 'D-ID audio_url is primary fixed-clip voice/video path');
-assert.equal(SCOOTER_MEDIA_IDENTITY.rules.fishAudioIsDynamicSpeechOnly, true, 'Fish Audio is dynamic speech only, not fixed-clip primary');
+assert.equal(SCOOTER_MEDIA_IDENTITY.approvedVoiceSampleAsset, '/assets/avatar/scooter-voice-only.mp3', 'uploaded Scooter MP3 is canonical voice sample / clone source');
+assert.equal(SCOOTER_MEDIA_IDENTITY.approvedVoiceSampleBackupAsset, '/assets/avatar/scooter-voice-only.m4a', 'uploaded Scooter M4A is canonical backup voice sample');
+assert.equal(SCOOTER_MEDIA_IDENTITY.rules.uploadedScooterMp3IsNotFinishedWelcomeClip, true, 'uploaded Scooter MP3 is not a finished welcome/share clip');
+assert.equal(SCOOTER_MEDIA_IDENTITY.rules.didAudioUrlRequiresShortGeneratedOrApprovedAudio, true, 'D-ID audio_url requires short generated or approved clip audio');
+assert.equal(SCOOTER_MEDIA_IDENTITY.rules.fishOrDidCloneUsesUploadedSampleForDynamicSpeech, true, 'Fish/D-ID clone uses uploaded sample for dynamic speech');
 assert.equal(SCOOTER_MEDIA_IDENTITY.rules.elevenLabsIsFallbackOnly, true, 'ElevenLabs is fallback only');
 assert.equal(SCOOTER_MEDIA_IDENTITY.avatarProvider, 'did', 'D-ID is the primary avatar provider');
 assert.deepEqual([...SCOOTER_MEDIA_IDENTITY.fallbackAvatarProviders], ['heygen'], 'HeyGen is the secondary avatar provider');
