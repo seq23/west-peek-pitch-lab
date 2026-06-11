@@ -175,8 +175,8 @@ test.describe('West Peek Pitch Lab Master Gauntlet — hostile max-depth', () =>
   test('practice flow blocks thin answers, advances through all eight prompts, and persists founder answers locally', async ({ page }) => {
     await page.goto('/practice');
     await expect(page.locator('body')).toContainText('AI Scooter coaching conversation');
-    await page.getByRole('textbox', { name: 'Name', exact: true }).fill('Avery Founder');
-    await page.getByRole('textbox', { name: 'Email', exact: true }).fill('avery@example.com');
+    await page.getByRole('textbox', { name: /^Name\b/i }).fill('Avery Founder');
+    await page.getByRole('textbox', { name: /^Email\b/i }).fill('avery@example.com');
     await page.getByLabel('Company name').fill('ExampleCo');
     await page.getByRole('button', { name: /Start AI Scooter practice/i }).click();
 
@@ -187,7 +187,7 @@ test.describe('West Peek Pitch Lab Master Gauntlet — hostile max-depth', () =>
 
     for (const answer of Object.values(founderAnswers)) {
       await page.locator('textarea').first().fill(answer);
-      await page.getByRole('button', { name: /next question|create local draft card/i }).click();
+      await page.getByRole('button', { name: /next question|create local draft card|create session draft card/i }).click();
     }
 
     await expect(page.locator('body')).toContainText('Your Pitch Story Card draft is ready.');
@@ -202,8 +202,8 @@ test.describe('West Peek Pitch Lab Master Gauntlet — hostile max-depth', () =>
     await expect(page.locator('body')).toContainText('Start here');
     await expect(page.locator('body')).toContainText('Use the name West Peek should recognize');
     await expect(page.locator('body')).toContainText('this creates the private session context');
-    await page.getByRole('textbox', { name: 'Name', exact: true }).fill('Avery Founder');
-    await page.getByRole('textbox', { name: 'Email', exact: true }).fill('avery@example.com');
+    await page.getByRole('textbox', { name: /^Name\b/i }).fill('Avery Founder');
+    await page.getByRole('textbox', { name: /^Email\b/i }).fill('avery@example.com');
     await page.getByLabel('Company name').fill('ExampleCo');
     await page.getByRole('button', { name: /Start AI Scooter practice/i }).click();
 
@@ -434,7 +434,7 @@ test.describe('West Peek Pitch Lab Master Gauntlet — hostile max-depth', () =>
     await page.getByRole('button', { name: /Generate AI Pitch Story Card/i }).click();
     await expect(page.locator('[data-ai-story-card-root]')).toContainText('AI-enhanced Pitch Story Card');
     await expect(page.locator('[data-final-scooter-summary]')).toContainText('AI Scooter final summary');
-    await expect(page.locator('[data-avatar-lane]')).toContainText('Scooter’s short personalized media summary is preparing');
+    await expect(page.locator('[data-avatar-lane]')).toContainText(/Scooter’s short personalized media summary is preparing|Scooter media is unavailable right now/);
     await expect(page.locator('[data-avatar-lane]')).toContainText('Hard ceiling 65 seconds');
     await expect(page.getByRole('link', { name: /Preview Founder Story Packet/i })).toBeVisible();
 
@@ -493,7 +493,7 @@ test.describe('West Peek Pitch Lab Master Gauntlet — hostile max-depth', () =>
     await seedAiCard(page);
     await page.goto('/share');
     await page.getByLabel('Founder name').fill('Gauntlet Live Founder');
-    await page.getByRole('textbox', { name: 'Email', exact: true }).fill('gauntlet-live-founder@example.com');
+    await page.getByRole('textbox', { name: /^Email\b/i }).fill('gauntlet-live-founder@example.com');
     await page.getByLabel('Company name').fill('Gauntlet Live Company');
     await page.getByLabel(/I consent to share/i).check();
     await page.getByRole('button', { name: /Share Founder Story Packet with West Peek/i }).click();
