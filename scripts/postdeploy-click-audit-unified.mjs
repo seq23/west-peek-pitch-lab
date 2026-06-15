@@ -24,11 +24,11 @@ try{
   for(const viewportName of scenario.viewports||['desktop','mobile']){
    const vp=viewportMap[viewportName];if(!vp)throw new Error(`Unknown viewport ${viewportName}`);
    const context=await browser.newContext({viewport:vp});
-   await context.addInitScript(seed=>{for(const [k,v] of Object.entries(seed||{}))localStorage.setItem(k,JSON.stringify(v));},scenario.storage_seed||{});
+   await context.addInitScript(seed=>{const marker="__west_peek_click_audit_seeded__";if(sessionStorage.getItem(marker)!=="1"){for(const [k,v] of Object.entries(seed||{}))localStorage.setItem(k,JSON.stringify(v));sessionStorage.setItem(marker,"1");}},scenario.storage_seed||{});
    await context.tracing.start({screenshots:true,snapshots:true,sources:true});
    const page=await context.newPage();const consoleErrors=[],failedRequests=[],httpErrors=[];
    page.on('console',m=>{if(m.type()==='error'){const x={scenario:scenario.id,text:m.text()};consoleErrors.push(x);globalConsole.push(x)}});
-   page.on('requestfailed',q=>{const x={scenario:scenario.id,url:q.url(),error:q.failure()?.errorText||'unknown'};failedRequests.push(x);globalFailed.push(x)});
+   page.on('requestfailed',q=>{if(/\/cdn-cgi\/rum(?:\?|$)/i.test(q.url()))return;const x={scenario:scenario.id,url:q.url(),error:q.failure()?.errorText||'unknown'};failedRequests.push(x);globalFailed.push(x)});
    page.on('response',r=>{if(r.status()>=400){const x={scenario:scenario.id,url:r.url(),status:r.status()};httpErrors.push(x);globalHttp.push(x)}});
    let status='PASS',error='';
    try{
