@@ -492,9 +492,6 @@ test.describe('West Peek Pitch Lab Master Gauntlet — hostile max-depth', () =>
     test.skip(!liveEnvEnabled('PITCH_LAB_LIVE_NETWORK_OS_E2E'), 'Set PITCH_LAB_LIVE_NETWORK_OS_E2E=true only when live Network OS env is configured.');
     await seedAiCard(page);
     await page.goto('/share');
-    await page.getByLabel('Founder name').fill('Gauntlet Live Founder');
-    await page.getByRole('textbox', { name: /^Email\b/i }).fill('gauntlet-live-founder@example.com');
-    await page.getByLabel('Company name').fill('Gauntlet Live Company');
     await page.getByLabel(/I consent to share/i).check();
     await page.getByRole('button', { name: /Share Founder Story Packet with West Peek/i }).click();
     await expect(page.locator('[data-share-result]')).toContainText('Founder Story Packet shared with West Peek for network review');
