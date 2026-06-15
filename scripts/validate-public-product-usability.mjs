@@ -1,0 +1,6 @@
+import fs from 'node:fs';
+const required=['PUBLIC_PRODUCT_AUDIT.md','PUBLIC_ROUTE_MANIFEST.md','ENTITY_LIFECYCLE_MATRIX.md','VISIBLE_CONTROL_INVENTORY.md','PRODUCTION_SHAPED_FIXTURES.md','DISPLAY_NORMALIZATION_CONTRACT.md','MAINTENANCE_SCALE_AND_PLATFORM_LIMITS.md','HALLMARK_ROUTE_COVERAGE.md','FINAL_PROOF_COVERAGE_MATRIX.md','TESTING_ARCHITECTURE.md','TEST_FIXTURE_LIFECYCLE.md','SECRETS_AND_VAULT_ARCHITECTURE.md','REAL_RUNTIME_PROOF_MATRIX.md','PREDEPLOY_POSTDEPLOY_RUNBOOK.md','MASTER_GAUNTLET.md','DIAGNOSTICS_STANDARD.md','_repo_update_contract.json','REPO_MASTER_CONTRACT_ADDENDUM_AUTHENTICATED_PRODUCT_USABILITY_2026-06-13.md'];
+const missing=required.filter(x=>!fs.existsSync(x));if(missing.length){console.error(missing);process.exit(1)}
+const c=JSON.parse(fs.readFileSync('_repo_update_contract.json','utf8'));if(c.repo_name!=='west-peek-pitch-lab'||c.node_heap_mb!==3072||!c.auth_not_applicable_reason)throw new Error('public update contract mismatch');
+const route=JSON.parse(fs.readFileSync('config/deployed-route-manifest.json','utf8'));if(route.routes.some(r=>r.authMode!=='public'))throw new Error('Pitch Lab route manifest must be public-only');
+console.log('Public product usability contract: PASS');

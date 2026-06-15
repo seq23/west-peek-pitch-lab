@@ -26,7 +26,7 @@ const combined = `${built}\n${styles}\n${appShell}`;
 for (const [label, terms] of [
   ['West Peek logo asset usage', ['west-peek-logo.jpg', 'west-peek-mark.png', 'West Peek Ventures']],
   ['locked brand/product mantras', ['Good people should meet good people.', 'Good products need good stories.']],
-  ['West Peek palette', ['--wp-black', '--wp-white', '--wp-orange', '#ff6a00']],
+  ['West Peek palette', ['--wp-black', '--wp-white', '--wp-orange', '#f05a1a']],
   ['premium founder-room layout', ['brand-band', 'avatar-card', 'story-card-stage']],
   ['readability preserved', ['Story Strength Snapshot', 'Copy Pitch Story Card', 'Trust boundary']],
   ['share consent still visible', ['explicit consent', 'does not guarantee funding', 'pending intake']]

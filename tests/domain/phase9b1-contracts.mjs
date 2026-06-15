@@ -12,7 +12,7 @@ assert.match(html, /Good people should meet good people\./);
 assert.match(html, /Good products need good stories\./);
 assert.match(html, /A private West Peek founder room/);
 assert.match(html, /Make the story easier to repeat\./);
-assert.match(css, /--wp-orange: #ff6a00/);
+assert.match(css, /--wp-orange: #f05a1a/);
 assert.match(css, /border-radius: 0/);
 assert.match(doc, /westpeek\.ventures/);
 assert.match(doc, /westpeek\.live/);

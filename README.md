@@ -1,3 +1,5 @@
+> **Repo update lifecycle:** Start with [`REPO_UPDATE_LIFECYCLE.md`](REPO_UPDATE_LIFECYCLE.md). The single postdeploy closure command is `npm run release:close-lifecycle`.
+
 # West Peek Pitch Lab
 
 **Good products need good stories.**  
@@ -184,3 +186,22 @@ Phase 9A hardens the founder journey before design overhaul: copy-card path, qua
 ## Phase 9B.1 — West Peek design parity
 
 Pitch Lab now uses the provided West Peek logo image as the canonical brand asset and aligns its visual direction to the preferred West Peek app-family references: `westpeek.ventures` and `westpeek.live`. The style direction is black / white with restrained orange, editorial founder-facing language, sharper app surfaces, and no generic SaaS-blue or fake AI-media controls.
+
+
+## Authenticated Product Usability Governance
+
+This repo adopts `REPO_MASTER_CONTRACT_ADDENDUM_AUTHENTICATED_PRODUCT_USABILITY_2026-06-13.md`. Route, lifecycle, control, hostile fixture, normalization, maintenance, Hallmark, and final-proof artifacts govern release closure.
+
+
+## Autonomous Engineering Lifecycle v5
+
+This repo implements the suite Revision 3 lifecycle: machine-readable route manifest, container validation, bounded strategy-rotating self-heal, mandatory predeploy Hallmark, applicable public/authenticated/role postdeploy audits, exact cleanup, rollback/containment, and final proof reporting.
+
+
+## Canonical West Peek brand authority
+
+- [`WEST_PEEK_BRAND_SYSTEM.md`](WEST_PEEK_BRAND_SYSTEM.md) — locked cross-suite visual system and Hallmark acceptance criteria.
+
+## Baseline ZIP preflight
+
+Before applying a baseline ZIP, use `docs/runbooks/PRE_UPDATER_BASELINE_CHECKLIST.md`. It is the canonical checklist for required root files, safe environment examples, forbidden generated artifacts, ZIP integrity, updater preflight, and localhost-before-push execution.

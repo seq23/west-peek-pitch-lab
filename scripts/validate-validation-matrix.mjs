@@ -40,16 +40,18 @@ if (matrix && pkg) {
     for (const field of ['script', 'command', 'category', 'severity', 'productionRisk', 'proves', 'doesNotProve', 'failureHandling']) {
       if (!entry[field]) failures.push(`Matrix entry ${entry.script || '<unknown>'} missing required field: ${field}`);
     }
-    if (entry.severity?.includes('HARD_FAIL') && String(entry.productionRisk || '').length < 20) {
+    if (entry.severity === 'HARD FAIL' && String(entry.productionRisk || '').length < 20) {
       failures.push(`Hard-fail entry lacks clear production risk: ${entry.script}`);
     }
-    if (entry.severity === 'WARNING' && (matrix.validateAllHardFailCommands || []).includes(entry.script)) {
+    if (entry.severity !== 'HARD FAIL' && (matrix.validateAllHardFailCommands || []).includes(entry.script)) {
       failures.push(`WARNING script cannot be in validateAllHardFailCommands: ${entry.script}`);
     }
   }
 
   const validateAll = scripts['validate:all'] || '';
   for (const required of matrix.validateAllHardFailCommands || []) {
+    const entry = entriesByScript.get(required);
+    if (entry?.deliveryGate === true) continue;
     if (!validateAll.includes(`npm run ${required}`) && required !== 'build' && required !== 'test:domain') {
       failures.push(`validate:all missing admitted hard-fail command: ${required}`);
     }

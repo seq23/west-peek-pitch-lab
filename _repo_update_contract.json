@@ -1,0 +1,70 @@
+{
+  "schema_version": "3.1",
+  "repo_name": "west-peek-pitch-lab",
+  "branch": "main",
+  "package_manager": "npm",
+  "secret_management": "vault_required",
+  "node_heap_mb": 3072,
+  "snapshot_mode": true,
+  "commands": {
+    "deep_validation": "npm run deep-validation",
+    "prepush": "npm run release:prepush",
+    "postpush": "npm run release:postpush",
+    "container_validation": "npm run release:validate:container",
+    "self_heal": "npm run release:self-heal",
+    "postdeploy_remediate": "npm run release:postdeploy-remediate",
+    "public_click_audit": "npm run postdeploy:public-click-audit",
+    "click_audit_all": "npm run postdeploy:click-audit:all",
+    "cleanup": "npm run release:cleanup",
+    "hallmark_predeploy": "npm run release:hallmark",
+    "final_report": "npm run release:report",
+    "close_lifecycle": "npm run release:close-lifecycle",
+    "close_lifecycle_dry_run": "npm run release:close-lifecycle:dry-run"
+  },
+  "artifacts": {
+    "exclude": [
+      "node_modules",
+      ".git",
+      ".next",
+      ".open-next",
+      "dist",
+      "build",
+      "coverage",
+      "playwright-report",
+      "test-results",
+      ".auth",
+      "artifacts/diagnostics",
+      "logs"
+    ]
+  },
+  "proof_boundaries": {
+    "local_does_not_prove_deployed": true,
+    "mock_does_not_prove_live_provider": true,
+    "screenshots_do_not_prove_expert_review": true
+  },
+  "autonomous_engineering": true,
+  "auth_not_applicable_reason": "Public no-auth product",
+  "deployment": {
+    "expected_hostname": "repo-defined Cloudflare Pages hostname",
+    "localhost_postdeploy_forbidden": true
+  },
+  "self_heal": {
+    "max_passes_per_strategy": 3,
+    "strategy_rotation_required": true,
+    "owner_interruption_budget": "credentials, material cost, destructive real-data action, legal/contractual/brand/business decision, or external platform block only"
+  },
+  "artifact_exclusions": [
+    "node_modules",
+    ".git",
+    ".next",
+    ".open-next",
+    "dist",
+    "build",
+    "coverage",
+    "playwright-report",
+    "test-results",
+    ".auth",
+    "artifacts/diagnostics",
+    "logs"
+  ]
+}

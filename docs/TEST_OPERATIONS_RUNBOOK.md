@@ -58,7 +58,7 @@ This runbook makes the system deterministic:
 1. assistant/container proof is Tier 1 only
 2. local browser proof is Tier 2
 3. live-provider/deployed proof is Tier 3
-4. human approval is Tier 4
+4. human approval is a non-tier overlay
 5. `.env.local` is restored only when needed and removed afterward
 6. generated reports stay under `tmp/` and must not be committed
 7. reports use `PASS`, `WARN`, `FAIL`, and `UNPROVEN`
@@ -363,7 +363,7 @@ Does not prove:
 - avatar/video quality approval
 - investor/founder business usefulness
 
-### Tier 4 — Human approval
+### Human approval overlay — not a validation tier
 
 No script can prove:
 
@@ -475,7 +475,7 @@ The runner restores .env.local from vault only for live lanes and removes .env.l
 Static ZIP delivery validation is Tier 1 only and cannot prove browser/live-provider behavior.
 Local Playwright is Tier 2.
 Live providers/deployed proof are Tier 3.
-Human visual/media/business approval is Tier 4.
+Human visual/media/business approval is a non-tier overlay.
 Generated reports live under tmp/test-operations and must not be committed.
 After push, run gh run list --limit 20 and inspect failures with gh run view <RUN_ID> --log-failed.
 Report only PASS / WARN / FAIL / UNPROVEN.

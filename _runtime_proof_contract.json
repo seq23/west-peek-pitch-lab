@@ -1,0 +1,129 @@
+{
+  "schema_version": "1.0",
+  "repo": "west-peek-pitch-lab",
+  "tier_model": {
+    "tier1": "source_container_artifact",
+    "tier2": "local_real_browser",
+    "tier3": "deployed_live_systems",
+    "tier4": "NOT_USED"
+  },
+  "proofs": [
+    {
+      "id": "PL-T1-001",
+      "tier": 1,
+      "journey": "source and contracts",
+      "command": "npm run release:prepush:container",
+      "mutation": "none",
+      "readback": "validators and build",
+      "refresh_reentry": false,
+      "mobile": false,
+      "provider": "none",
+      "cleanup": "none",
+      "blocks_completion": true
+    },
+    {
+      "id": "PL-T2-001",
+      "tier": 2,
+      "journey": "complete founder pitch",
+      "command": "npm run release:local-visual-proof",
+      "mutation": "browser local state",
+      "readback": "UI plus localStorage",
+      "refresh_reentry": true,
+      "mobile": true,
+      "provider": "controlled local adapters",
+      "cleanup": "browser context teardown",
+      "blocks_completion": true
+    },
+    {
+      "id": "PL-T2-002",
+      "tier": 2,
+      "journey": "delete my info",
+      "command": "npm run release:local-visual-proof",
+      "mutation": "clear all Pitch Lab local state",
+      "readback": "refresh and re-entry show no state",
+      "refresh_reentry": true,
+      "mobile": true,
+      "provider": "none",
+      "cleanup": "self-cleaning",
+      "blocks_completion": true
+    },
+    {
+      "id": "PL-T3-001",
+      "tier": 3,
+      "journey": "live LLM Story Card",
+      "command": "npm run proof:llm:live && npm run proof:llm:live:browser",
+      "mutation": "new provider request",
+      "readback": "normalized Story Card displayed",
+      "refresh_reentry": false,
+      "mobile": false,
+      "provider": "llm",
+      "cleanup": "provider-specific if applicable",
+      "blocks_completion": true
+    },
+    {
+      "id": "PL-T3-002",
+      "tier": 3,
+      "journey": "live voice",
+      "command": "npm run proof:voice:live",
+      "mutation": "new audio render",
+      "readback": "nonempty playable audio and provider id",
+      "refresh_reentry": false,
+      "mobile": false,
+      "provider": "voice",
+      "cleanup": "exact provider artifact when supported",
+      "blocks_completion": true
+    },
+    {
+      "id": "PL-T3-003",
+      "tier": 3,
+      "journey": "live avatar media",
+      "command": "npm run proof:media:live:headed",
+      "mutation": "new render job",
+      "readback": "job status and playable output",
+      "refresh_reentry": false,
+      "mobile": false,
+      "provider": "avatar_media",
+      "cleanup": "exact provider job/artifact",
+      "blocks_completion": true
+    },
+    {
+      "id": "PL-T3-004",
+      "tier": 3,
+      "journey": "signed Network OS handoff",
+      "command": "npm run validate:everything:live:postdeploy",
+      "mutation": "new signed intake",
+      "readback": "receipt id plus remote record readback",
+      "refresh_reentry": true,
+      "mobile": false,
+      "provider": "network_os",
+      "cleanup": "exact intake id",
+      "blocks_completion": true
+    },
+    {
+      "id": "PL-T3-005",
+      "tier": 3,
+      "journey": "populated public deployed click audit",
+      "command": "npm run postdeploy:public-click-audit",
+      "mutation": "controlled public proof fixtures",
+      "readback": "UI state transitions and reload persistence",
+      "refresh_reentry": true,
+      "mobile": true,
+      "provider": "cloudflare_runtime",
+      "cleanup": "fixture registry exact ids",
+      "blocks_completion": true
+    },
+    {
+      "id": "PL-T3-006",
+      "tier": 3,
+      "journey": "cleanup and integrity",
+      "command": "npm run release:cleanup && npm run postcleanup:integrity",
+      "mutation": "delete exact proof fixtures",
+      "readback": "remaining_total equals zero and public shell healthy",
+      "refresh_reentry": false,
+      "mobile": true,
+      "provider": "all applicable",
+      "cleanup": "self",
+      "blocks_completion": true
+    }
+  ]
+}

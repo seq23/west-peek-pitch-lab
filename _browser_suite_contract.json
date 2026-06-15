@@ -1,0 +1,73 @@
+{
+  "schema_version": "2.0",
+  "repo": "west-peek-pitch-lab",
+  "browser_suite": {
+    "command": "npm run release:local-visual-proof",
+    "playwright_command": "npx playwright test --headed",
+    "projects": [
+      "desktop-chromium",
+      "mobile-chromium"
+    ],
+    "required_failed": 0,
+    "registered_skips": [
+      {
+        "id": "live-llm-opt-in",
+        "file": "tests/e2e/llm-live-response.spec.mjs",
+        "reason_contains": "PITCH_LAB_LIVE_LLM_E2E=true"
+      },
+      {
+        "id": "live-llm-deploy-url",
+        "file": "tests/e2e/llm-live-response.spec.mjs",
+        "reason_contains": "PITCH_LAB_DEPLOY_URL is required"
+      },
+      {
+        "id": "postdeploy-functions-url",
+        "file": "tests/e2e/post-deploy-functions.spec.mjs",
+        "reason_contains": "PITCH_LAB_DEPLOY_URL is required"
+      },
+      {
+        "id": "postdeploy-journey-url",
+        "file": "tests/e2e/post-deploy-journey.spec.mjs",
+        "reason_contains": "PITCH_LAB_DEPLOY_URL is required"
+      },
+      {
+        "id": "live-network-os-opt-in",
+        "file": "tests/e2e/master-gauntlet.spec.mjs",
+        "reason_contains": "PITCH_LAB_LIVE_NETWORK_OS_E2E=true"
+      },
+      {
+        "id": "live-avatar-opt-in",
+        "file": "tests/e2e/master-gauntlet.spec.mjs",
+        "reason_contains": "PITCH_LAB_LIVE_AVATAR_E2E=true"
+      }
+    ],
+    "required_before_push": true,
+    "evidence_required": [
+      "screenshots",
+      "traces",
+      "playwright-report.json",
+      "summary.json",
+      "local-proof-manifest.json"
+    ],
+    "count_policy": {
+      "mode": "baseline_or_explicit_change",
+      "minimum_total": 20,
+      "minimum_per_project": 10,
+      "change_requires": [
+        "_browser_suite_contract.json",
+        "_repo_validation_matrix.json",
+        "ARCHITECTURAL_DECISIONS.md"
+      ],
+      "expected_total": 104,
+      "expected_per_project": {
+        "desktop-chromium": 52,
+        "mobile-chromium": 52
+      }
+    },
+    "expected_skipped_policy": "registered_only",
+    "required_viewports": [
+      "desktop",
+      "mobile"
+    ]
+  }
+}

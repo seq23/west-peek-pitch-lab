@@ -305,7 +305,8 @@ function renderRouteContent(route) {
   if (route === '/story-card') return `${shellHero(route)}${storyStudio()}${disclosurePanel(route)}`;
   if (route === '/share') return `${shellHero(route)}${shareStudio()}${disclosurePanel(route)}`;
   if (route === '/thank-you') return `${shellHero(route)}${thankYouStatus()}${disclosurePanel(route)}`;
-  if (['/privacy','/terms','/ai-disclosure','/founder-network-notice','/data-consent','/contact','/delete-my-info'].includes(route)) return `${policyPage(route)}${disclosurePanel(route)}`;
+  if (route === '/delete-my-info') return `${policyPage(route)}<div data-delete-my-info-root></div>${disclosurePanel(route)}`;
+  if (['/privacy','/terms','/ai-disclosure','/founder-network-notice','/data-consent','/contact'].includes(route)) return `${policyPage(route)}${disclosurePanel(route)}`;
   if (route === '/how-it-works') return `${shellHero(route)}${mediaJourneyRail()}${journeyAssistPanel()}${journeyMap()}${howItWorksCompleteGuide()}${outcomeGrid()}${disclosurePanel(route)}`;
   return `${shellHero('/')}${mediaJourneyRail()}${journeyAssistPanel()}${outcomeGrid()}${journeyMap()}${disclosurePanel('/')}`;
 }
@@ -344,6 +345,7 @@ export function renderPage(route) {
   <script type="module" src="/assets/practice-flow.js"></script>
   <script type="module" src="/assets/ai-story-card.js"></script>
   <script type="module" src="/assets/share-flow.js"></script>
+  <script type="module" src="/assets/delete-my-info.js"></script>
 </body>
 </html>`;
 }

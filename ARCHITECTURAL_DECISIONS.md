@@ -327,3 +327,34 @@ The Master Gauntlet must treat talking Scooter as a core intended lane and fallb
 
 ### Future Reversal Conditions
 If ElevenLabs cost/latency/API quality fails the gauntlet or account test, switch provider posture after updating docs, media identity, env registry, provider service, validators, and architectural decision ledger.
+
+### Decision ID: ADM-2026-06-15-01
+* **Date:** 2026-06-15
+* **Status:** Accepted
+* **Context:** Pitch Lab had conflicting tier language, a local prepush path that did not execute Playwright, stale browser project identity, unregistered conditional skips, and no single runtime-proof contract.
+* **Decision:** Adopt the repo-specific three-tier model; enforce 52 desktop and 52 mobile Playwright tests before commit/push; add durable local proof evidence, populated public postdeploy scenarios, exact local deletion proof, and explicit public-only N/A lanes.
+* **Alternatives Considered:** Retaining generic Tier 3A/3B/Tier 4 language; leaving Playwright as a separate optional command.
+* **Reasoning:** The selected model matches Pitch Lab’s public, consent-sensitive, provider-backed runtime and the Master Contract lifecycle without importing irrelevant auth machinery.
+* **Tradeoffs:** Exact browser counts require deliberate contract updates when tests change.
+* **Risks Accepted:** Live provider and deployed proof remain environment-bound until local updater and deployed lifecycle execution.
+* **Validation Impact:** Tier 1 container proof now validates governance; Tier 2 local browser proof blocks commit/push; Tier 3 closure blocks COMPLETE.
+* **Future Reversal Conditions:** Product authentication, roles, tenants, or persistence architecture materially changes.
+### Decision ID: ADM-2026-06-15-02
+*   **Date:** 2026-06-15
+*   **Status:** Accepted
+*   **Context:** Local Chromium proof exposed that the static HTML rendered while all interactive routes remained unhydrated because the build copied browser entry files but omitted shared sibling ESM dependencies.
+*   **Decision:** Package every `src/runtime/*.mjs` module into `dist/assets`, retain stable browser entry aliases, and hard-fail builds through `validate:browser-runtime-bundle` when any reachable relative import is missing. Restore `.nvmrc` as explicit Node authority.
+*   **Alternatives Considered:** Manually maintain a partial dependency list; weaken or update Playwright assertions; bypass the local browser gate. All were rejected because they preserve a fragile build or manufacture green.
+*   **Reasoning:** Complete runtime copying is deterministic, low-cost, framework-appropriate, and prevents the exact static-shell/runtime-dead failure that Tier 1 previously missed.
+*   **Tradeoffs:** A few additional small runtime modules are shipped even when a route does not use them directly.
+*   **Risks Accepted:** The validator proves module presence, not execution; real local Chromium remains mandatory before commit.
+*   **Validation Impact:** Tier 1 build/import-graph validation plus full Tier 2 desktop and mobile Playwright on the operator machine.
+*   **Future Reversal Conditions:** Replace only when a bundler or import-map pipeline provides equal or stronger graph resolution and artifact proof.
+## ADM-2026-06-15-03 — One-time browser fixture seeding
+
+**Decision:** Playwright persistence fixtures must seed local storage once per browser session, guarded by a non-product `sessionStorage` marker. They must never reseed on reload or route navigation.
+
+**Reason:** `page.addInitScript()` runs for every document. An unguarded fixture resurrected the seven Pitch Lab keys immediately after the Delete My Info flow correctly removed them, producing a false product failure.
+
+**Enforcement:** `tests/e2e/persistence-and-deletion-proof.spec.mjs` uses `west-peek-pitch-lab-proof-seeded` as a session-only marker, and the fixture is included in critical source-to-artifact parity.
+

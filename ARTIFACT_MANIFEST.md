@@ -290,3 +290,23 @@ Proof boundary remains explicit:
 - Confirmed `.gitignore` excludes generated `tmp/` reports while preserving safe env examples.
 - `npm run validate:all` passed after restoring env scaffold files.
 - Local browser/live provider proof remains local-only and must run after updater.
+
+## 2026-06-11 Tier / Network OS Contract Alignment Patch
+
+- Confirmed sender runtime already uses `x-pitch-lab-submitted-at`, `x-pitch-lab-signature`, base64url HMAC, and `${submittedAt}.${rawBody}` signing through `src/server/network/networkOsClient.mjs` and `src/server/network/pitchLabHandoffContract.mjs`.
+- Added `TIER_VALIDATION_MODEL.md`.
+- Added `NETWORK_OS_CONTRACT_ALIGNMENT.md`.
+- Updated `scripts/run-test-operations-orchestrator.mjs` so Tier 3 is described as the ultimate deployed + real-provider release gate, not a gateway to a Tier 4 validation layer.
+- Added explicit Tier 3 live deployed Network OS handoff step to the test operations orchestrator.
+- Added explicit tier metadata to `_repo_validation_matrix.json` entries.
+
+Validation run after patch:
+
+- `npm run validate:matrix` — PASS
+- `npm run validate:phase1` — PASS
+- `npm run build` — PASS
+- `npm run test:domain` — PASS after build
+
+Unproven:
+
+- Live deployed Network OS handoff proof still requires `PITCH_LAB_DEPLOY_URL`, restored live env, `NETWORK_OS_HANDOFF_ENABLED=true`, and matching shared secret in both repos.

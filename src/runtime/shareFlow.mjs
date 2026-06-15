@@ -1,3 +1,4 @@
+import { normalizeDisplayValue } from './normalizeDisplayValue.mjs';
 import { DISCLOSURE_COPY, DISCLAIMER_ACKNOWLEDGEMENTS } from './disclaimerModel.mjs';
 
 const aiCardKey = 'west-peek-pitch-lab.phase4.ai-story-card.v1';
@@ -8,7 +9,7 @@ const profileCaptureStatusKey = 'west-peek-pitch-lab.profile-capture-status.v1';
 const rehearsalTakesKey = 'west-peek-pitch-lab.practice-out-loud.takes.v2';
 const selectedRehearsalKey = 'west-peek-pitch-lab.practice-out-loud.selected.v2';
 
-function escapeHtml(value) { return String(value ?? '').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;'); }
+function escapeHtml(value) { return normalizeDisplayValue(value, { maxLength: 2000 }).summary.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('\"','&quot;').replaceAll("'",'&#039;'); }
 function readJson(key, fallback=null) { try { const parsed = JSON.parse(localStorage.getItem(key) || 'null'); return parsed || fallback; } catch { return fallback; } }
 function readAiStoryCard() { const parsed = readJson(aiCardKey); return parsed?.storyCard ? parsed.storyCard : null; }
 function readProfile() { return readJson(profileKey, {}); }

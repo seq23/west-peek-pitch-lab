@@ -1,0 +1,63 @@
+{
+  "schema_version": "3.0",
+  "repo": "west-peek-pitch-lab",
+  "product_profile": "public consent-sensitive founder pitch coaching application",
+  "browser_surface": true,
+  "public_routes": "APPLICABLE",
+  "authentication": {
+    "status": "NOT_APPLICABLE",
+    "reason": "Public no-auth product"
+  },
+  "role_specific_states": {
+    "status": "NOT_APPLICABLE",
+    "reason": "No role model"
+  },
+  "tenant_isolation": {
+    "status": "NOT_APPLICABLE",
+    "reason": "No tenant model"
+  },
+  "auth_vault": {
+    "status": "NOT_APPLICABLE",
+    "reason": "No authenticated browser state"
+  },
+  "persistence_profile": "browser-local founder state plus confirmed server receipt",
+  "provider_lanes": [
+    "llm",
+    "voice",
+    "avatar_media",
+    "signed_network_os_handoff",
+    "cloudflare_runtime"
+  ],
+  "container_prepush": "npm run release:prepush:container",
+  "local_prepush": "npm run release:prepush:local",
+  "prepush_router": "npm run release:prepush",
+  "local_browser_proof": "npm run release:local-visual-proof",
+  "postpush": "npm run release:postpush",
+  "live_proof": "npm run release:live-proof",
+  "populated_click_audits": [
+    "npm run postdeploy:public-click-audit"
+  ],
+  "cleanup": "npm run release:cleanup",
+  "postcleanup_integrity": "npm run postcleanup:integrity",
+  "report": "npm run release:report",
+  "close_lifecycle": "npm run release:close-lifecycle",
+  "evidence_root": "~/repo-validation-evidence/west-peek-pitch-lab/<run-id>/",
+  "completion_requirements": [
+    "tier1_source_pass",
+    "tier1_reopened_artifact_pass",
+    "artifact_source_parity_pass",
+    "tier2_desktop_pass",
+    "tier2_mobile_pass",
+    "browser_count_and_skip_integrity_pass",
+    "hallmark_pass",
+    "github_actions_pass",
+    "cloudflare_deployment_pass",
+    "llm_live_pass",
+    "voice_live_pass",
+    "avatar_media_live_pass",
+    "network_os_mutation_readback_pass",
+    "populated_public_click_audit_pass",
+    "cleanup_pass",
+    "postcleanup_integrity_pass"
+  ]
+}

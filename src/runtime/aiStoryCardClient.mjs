@@ -1,3 +1,4 @@
+import { normalizeDisplayValue } from './normalizeDisplayValue.mjs';
 import { createLocalDraftStoryCard } from './storyCard.mjs';
 import { copyTextToClipboard, formatStoryCardForClipboard } from './clipboard.mjs';
 import { DISCLOSURE_COPY } from './disclaimerModel.mjs';
@@ -7,7 +8,7 @@ import { SCOOTER_MVP_V1_MEDIA_CONTRACT } from './scooterMediaContract.mjs';
 const answersKey = 'west-peek-pitch-lab.phase3.answers.v1';
 const aiCardKey = 'west-peek-pitch-lab.phase4.ai-story-card.v1';
 
-function escapeHtml(value) { return String(value ?? '').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;'); }
+function escapeHtml(value) { return normalizeDisplayValue(value, { maxLength: 2000 }).summary.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('\"','&quot;').replaceAll("'",'&#039;'); }
 function readAnswers() { try { return JSON.parse(localStorage.getItem(answersKey) || '{}'); } catch { return {}; } }
 function updateScooter(status, script) { const s=document.querySelector('[data-scooter-companion-status]'); const c=document.querySelector('[data-scooter-companion-script]'); if(s) s.textContent=status; if(c&&script) c.textContent=script; }
 function renderStoryStrengthSignals(signals=[]) { if(!Array.isArray(signals)||!signals.length) return ''; return `<div class="strength-panel" aria-label="Story Strength Snapshot"><h3>Story Strength Snapshot</h3><p class="phase-note">Qualitative coaching signals only. This is not a funding prediction, investment rating, or West Peek investment decision.</p><div class="strength-grid">${signals.map((item)=>`<article class="strength-item"><h4>${escapeHtml(item.category)}</h4><span>${escapeHtml(item.signal)}</span><p>${escapeHtml(item.guidance)}</p></article>`).join('')}</div></div>`; }

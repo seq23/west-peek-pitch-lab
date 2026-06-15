@@ -1,0 +1,113 @@
+{
+  "schema_version": "1.0",
+  "repo": "west-peek-pitch-lab",
+  "lane": "public",
+  "scenarios": [
+    {
+      "id": "fresh-home",
+      "path": "/",
+      "viewports": [
+        "desktop",
+        "mobile"
+      ],
+      "expected": {
+        "heading": "West Peek Pitch Lab"
+      },
+      "actions": [
+        {
+          "type": "clickLink",
+          "name": "Practice"
+        }
+      ],
+      "final_path": "/practice"
+    },
+    {
+      "id": "seeded-story-card",
+      "path": "/story-card",
+      "viewports": [
+        "desktop",
+        "mobile"
+      ],
+      "storage_seed": {
+        "west-peek-pitch-lab.founder-profile.v1": {
+          "name": "Deploy Proof Founder",
+          "email": "deploy-proof@example.com",
+          "companyName": "Deploy Proof Co"
+        },
+        "west-peek-pitch-lab.phase3.answers.v1": {
+          "what_building": "A populated deployed proof answer that is intentionally long enough for the Story Card route."
+        }
+      },
+      "expected": {
+        "heading": "Turn the session into a founder-ready story."
+      },
+      "actions": []
+    },
+    {
+      "id": "confirmed-receipt-reload",
+      "path": "/thank-you",
+      "viewports": [
+        "desktop",
+        "mobile"
+      ],
+      "storage_seed": {
+        "west-peek-pitch-lab.phase7.share-status.v1": {
+          "ok": true,
+          "reviewStatus": "pending_network_review",
+          "contactCreated": false,
+          "intakeId": "postdeploy-proof-intake"
+        }
+      },
+      "expected": {
+        "text": "pending_network_review"
+      },
+      "actions": [
+        {
+          "type": "reload"
+        }
+      ],
+      "final_path": "/thank-you"
+    },
+    {
+      "id": "delete-local-data",
+      "path": "/delete-my-info",
+      "viewports": [
+        "desktop",
+        "mobile"
+      ],
+      "storage_seed": {
+        "west-peek-pitch-lab.founder-profile.v1": {
+          "name": "Delete Proof",
+          "email": "delete-proof@example.com",
+          "companyName": "Delete Proof Co"
+        },
+        "west-peek-pitch-lab.phase7.share-status.v1": {
+          "ok": true,
+          "reviewStatus": "pending_network_review",
+          "intakeId": "delete-proof-intake"
+        }
+      },
+      "expected": {
+        "heading": "Delete or update my info"
+      },
+      "actions": [
+        {
+          "type": "clickButton",
+          "name": "Clear local Pitch Lab data"
+        },
+        {
+          "type": "assertText",
+          "value": "Local Pitch Lab data cleared"
+        },
+        {
+          "type": "reload"
+        },
+        {
+          "type": "assertText",
+          "value": "No Pitch Lab data is stored"
+        }
+      ],
+      "final_path": "/delete-my-info"
+    }
+  ]
+}

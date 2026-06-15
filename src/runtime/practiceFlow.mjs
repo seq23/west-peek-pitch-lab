@@ -1,3 +1,4 @@
+import { normalizeDisplayValue } from './normalizeDisplayValue.mjs';
 import { PITCH_QUESTIONS, validateAnswer, validatePitchAnswers, normalizeAnswer } from './pitchQuestions.mjs';
 import { createLocalDraftStoryCard } from './storyCard.mjs';
 import { copyTextToClipboard, formatStoryCardForClipboard } from './clipboard.mjs';
@@ -44,7 +45,7 @@ function loadAnswers() { return loadJson(STORAGE_ANSWERS_KEY, {}); }
 function saveAnswers(answers) { saveJson(STORAGE_ANSWERS_KEY, answers); }
 function loadProfile() { return loadJson(STORAGE_PROFILE_KEY, {}); }
 function profileComplete(profile = {}) { return String(profile.name || '').trim().length >= 2 && /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(profile.email || '').trim()) && String(profile.companyName || '').trim().length >= 2; }
-function escapeHtml(value) { return String(value ?? '').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;'); }
+function escapeHtml(value) { return normalizeDisplayValue(value, { maxLength: 2000 }).summary.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('\"','&quot;').replaceAll("'",'&#039;'); }
 function updateScooter(status, script) {
   const statusNode = document.querySelector('[data-scooter-companion-status]');
   const scriptNode = document.querySelector('[data-scooter-companion-script]');

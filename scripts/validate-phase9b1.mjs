@@ -54,7 +54,7 @@ for (const term of forbidden) {
   if (runtimeOnly.includes(term)) failures.push(`Forbidden 9B.1 term/asset reference found in runtime/built output: ${term}`);
 }
 
-if (!styles.includes('--wp-orange: #ff6a00')) failures.push('Orange accent token does not match 9B.1 restrained orange token.');
+if (!styles.includes('--wp-orange: #f05a1a')) failures.push('Orange accent token does not match 9B.1 restrained orange token.');
 if (!styles.includes('border-radius: 0')) failures.push('9B.1 should use sharper editorial/OS surfaces, not generic rounded SaaS cards.');
 if (!built.includes('A private West Peek founder room')) failures.push('Founder-room positioning missing from built HTML.');
 if (!built.includes('Make the story easier to repeat.')) failures.push('Ventures-style repeatable-story headline missing from built HTML.');

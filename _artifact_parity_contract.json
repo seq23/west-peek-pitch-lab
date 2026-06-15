@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0",
+  "repo": "west-peek-pitch-lab",
+  "critical_files": [
+    "package.json",
+    "_repo_lifecycle_profile.json",
+    "_browser_suite_contract.json",
+    "_ui_test_parity_contract.json",
+    "_repo_validation_matrix.json",
+    "_baseline_packaging_contract.json",
+    "scripts/release-prepush-router.mjs",
+    "scripts/validate-ui-test-parity.mjs",
+    "scripts/validate-browser-suite-contract.mjs",
+    "scripts/validate-artifact-source-parity.mjs",
+    "scripts/release-close-lifecycle.mjs",
+    "REPO_IDENTITY.md",
+    "TIER_VALIDATION_MODEL.md",
+    "TESTING_ARCHITECTURE.md",
+    "DIAGNOSTICS_STANDARD.md",
+    "REPO_VALIDATION_MATRIX.md",
+    "docs/TEST_OPERATIONS_RUNBOOK.md",
+    "DOCUMENTATION_AUTHORITY_INDEX.md",
+    "scripts/validate-suite-release-lifecycle-contract.mjs",
+    ".nvmrc",
+    "scripts/build-static-app.mjs",
+    "scripts/validate-browser-runtime-bundle.mjs",
+    "_validator_admission_register.json",
+    "tests/e2e/persistence-and-deletion-proof.spec.mjs"
+  ]
+}

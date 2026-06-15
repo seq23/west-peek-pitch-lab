@@ -1,0 +1,281 @@
+{
+  "schemaVersion": "west-peek-route-manifest-v1",
+  "repo": "west-peek-pitch-lab",
+  "generatedFrom": "source routes and repo product contracts",
+  "routes": [
+    {
+      "id": "home",
+      "path": "/",
+      "authMode": "public",
+      "persona": "founder",
+      "criticality": "critical",
+      "viewports": [
+        "desktop",
+        "mobile"
+      ],
+      "expectedIdentity": {
+        "type": "route",
+        "value": "/"
+      },
+      "safeActions": [
+        "navigate"
+      ],
+      "fixtureRequirements": [],
+      "persistenceRequired": false,
+      "cleanupPolicy": "none"
+    },
+    {
+      "id": "how-it-works",
+      "path": "/how-it-works",
+      "authMode": "public",
+      "persona": "founder",
+      "criticality": "standard",
+      "viewports": [
+        "desktop",
+        "mobile"
+      ],
+      "expectedIdentity": {
+        "type": "route",
+        "value": "/how-it-works"
+      },
+      "safeActions": [
+        "navigate"
+      ],
+      "fixtureRequirements": [],
+      "persistenceRequired": false,
+      "cleanupPolicy": "none"
+    },
+    {
+      "id": "practice",
+      "path": "/practice",
+      "authMode": "public",
+      "persona": "founder",
+      "criticality": "critical",
+      "viewports": [
+        "desktop",
+        "mobile"
+      ],
+      "expectedIdentity": {
+        "type": "route",
+        "value": "/practice"
+      },
+      "safeActions": [
+        "navigate"
+      ],
+      "fixtureRequirements": [],
+      "persistenceRequired": true,
+      "cleanupPolicy": "exact-run"
+    },
+    {
+      "id": "story-card",
+      "path": "/story-card",
+      "authMode": "public",
+      "persona": "founder",
+      "criticality": "critical",
+      "viewports": [
+        "desktop",
+        "mobile"
+      ],
+      "expectedIdentity": {
+        "type": "route",
+        "value": "/story-card"
+      },
+      "safeActions": [
+        "navigate"
+      ],
+      "fixtureRequirements": [],
+      "persistenceRequired": true,
+      "cleanupPolicy": "exact-run"
+    },
+    {
+      "id": "share",
+      "path": "/share",
+      "authMode": "public",
+      "persona": "founder",
+      "criticality": "critical",
+      "viewports": [
+        "desktop",
+        "mobile"
+      ],
+      "expectedIdentity": {
+        "type": "route",
+        "value": "/share"
+      },
+      "safeActions": [
+        "navigate"
+      ],
+      "fixtureRequirements": [],
+      "persistenceRequired": true,
+      "cleanupPolicy": "exact-run"
+    },
+    {
+      "id": "thank-you",
+      "path": "/thank-you",
+      "authMode": "public",
+      "persona": "founder",
+      "criticality": "standard",
+      "viewports": [
+        "desktop",
+        "mobile"
+      ],
+      "expectedIdentity": {
+        "type": "route",
+        "value": "/thank-you"
+      },
+      "safeActions": [
+        "navigate"
+      ],
+      "fixtureRequirements": [],
+      "persistenceRequired": false,
+      "cleanupPolicy": "none"
+    },
+    {
+      "id": "privacy",
+      "path": "/privacy",
+      "authMode": "public",
+      "persona": "founder",
+      "criticality": "standard",
+      "viewports": [
+        "desktop",
+        "mobile"
+      ],
+      "expectedIdentity": {
+        "type": "route",
+        "value": "/privacy"
+      },
+      "safeActions": [
+        "navigate"
+      ],
+      "fixtureRequirements": [],
+      "persistenceRequired": false,
+      "cleanupPolicy": "none"
+    },
+    {
+      "id": "terms",
+      "path": "/terms",
+      "authMode": "public",
+      "persona": "founder",
+      "criticality": "standard",
+      "viewports": [
+        "desktop",
+        "mobile"
+      ],
+      "expectedIdentity": {
+        "type": "route",
+        "value": "/terms"
+      },
+      "safeActions": [
+        "navigate"
+      ],
+      "fixtureRequirements": [],
+      "persistenceRequired": false,
+      "cleanupPolicy": "none"
+    },
+    {
+      "id": "ai-disclosure",
+      "path": "/ai-disclosure",
+      "authMode": "public",
+      "persona": "founder",
+      "criticality": "standard",
+      "viewports": [
+        "desktop",
+        "mobile"
+      ],
+      "expectedIdentity": {
+        "type": "route",
+        "value": "/ai-disclosure"
+      },
+      "safeActions": [
+        "navigate"
+      ],
+      "fixtureRequirements": [],
+      "persistenceRequired": false,
+      "cleanupPolicy": "none"
+    },
+    {
+      "id": "founder-network-notice",
+      "path": "/founder-network-notice",
+      "authMode": "public",
+      "persona": "founder",
+      "criticality": "standard",
+      "viewports": [
+        "desktop",
+        "mobile"
+      ],
+      "expectedIdentity": {
+        "type": "route",
+        "value": "/founder-network-notice"
+      },
+      "safeActions": [
+        "navigate"
+      ],
+      "fixtureRequirements": [],
+      "persistenceRequired": false,
+      "cleanupPolicy": "none"
+    },
+    {
+      "id": "data-consent",
+      "path": "/data-consent",
+      "authMode": "public",
+      "persona": "founder",
+      "criticality": "standard",
+      "viewports": [
+        "desktop",
+        "mobile"
+      ],
+      "expectedIdentity": {
+        "type": "route",
+        "value": "/data-consent"
+      },
+      "safeActions": [
+        "navigate"
+      ],
+      "fixtureRequirements": [],
+      "persistenceRequired": false,
+      "cleanupPolicy": "none"
+    },
+    {
+      "id": "contact",
+      "path": "/contact",
+      "authMode": "public",
+      "persona": "founder",
+      "criticality": "standard",
+      "viewports": [
+        "desktop",
+        "mobile"
+      ],
+      "expectedIdentity": {
+        "type": "route",
+        "value": "/contact"
+      },
+      "safeActions": [
+        "navigate"
+      ],
+      "fixtureRequirements": [],
+      "persistenceRequired": false,
+      "cleanupPolicy": "none"
+    },
+    {
+      "id": "delete-my-info",
+      "path": "/delete-my-info",
+      "authMode": "public",
+      "persona": "founder",
+      "criticality": "critical",
+      "viewports": [
+        "desktop",
+        "mobile"
+      ],
+      "expectedIdentity": {
+        "type": "route",
+        "value": "/delete-my-info"
+      },
+      "safeActions": [
+        "navigate"
+      ],
+      "fixtureRequirements": [],
+      "persistenceRequired": true,
+      "cleanupPolicy": "exact-run"
+    }
+  ],
+  "allowedHttpFailures": []
+}

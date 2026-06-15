@@ -45,20 +45,27 @@ function copyPublicAssetDir(relativeDir) {
 copyPublicAssetDir('assets/avatar');
 copyPublicAssetDir('assets/brand');
 
-const clientModules = {
+const runtimeSource = path.join(root, 'src/runtime');
+const runtimeTarget = path.join(dist, 'assets');
+
+// Every browser entry point imports sibling runtime modules. Copy the complete
+// runtime module set so the deployed ESM graph cannot fail with a hidden 404.
+for (const entry of fs.readdirSync(runtimeSource, { withFileTypes: true })) {
+  if (entry.isFile() && entry.name.endsWith('.mjs')) {
+    fs.copyFileSync(path.join(runtimeSource, entry.name), path.join(runtimeTarget, entry.name));
+  }
+}
+
+// Stable browser-facing aliases remain explicit so HTML entry points do not
+// depend on source filenames. Imported sibling modules keep their .mjs names.
+const clientEntryAliases = {
   'practiceFlow.mjs': 'practice-flow.js',
-  'pitchQuestions.mjs': 'pitchQuestions.mjs',
-  'storyCard.mjs': 'storyCard.mjs',
-  'consent.mjs': 'consent.mjs',
   'aiStoryCardClient.mjs': 'ai-story-card.js',
   'shareFlow.mjs': 'share-flow.js',
-  'clipboard.mjs': 'clipboard.mjs',
-  'disclaimerModel.mjs': 'disclaimerModel.mjs',
-  'scooterJourneyModel.mjs': 'scooterJourneyModel.mjs',
-  'scooterMediaContract.mjs': 'scooterMediaContract.mjs'
+  'deleteMyInfo.mjs': 'delete-my-info.js'
 };
-for (const [moduleFile, outputName] of Object.entries(clientModules)) {
-  fs.copyFileSync(path.join(root, 'src/runtime', moduleFile), path.join(dist, 'assets', outputName));
+for (const [moduleFile, outputName] of Object.entries(clientEntryAliases)) {
+  fs.copyFileSync(path.join(runtimeSource, moduleFile), path.join(runtimeTarget, outputName));
 }
 
 for (const route of PHASE_2_ROUTES) {

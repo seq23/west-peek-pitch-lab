@@ -95,3 +95,8 @@ Phase 9B used the right colors but not enough actual app-family parity. Phase 9B
 ## Not proven
 
 This pass does not prove pixel-perfect parity with live sites because the West Peek app family itself is not fully standardized. It does prove that Pitch Lab now follows the approved reference direction rather than a generic AI tool style.
+
+
+## Cross-suite canonical authority
+
+This repo-specific treatment is subordinate to [`WEST_PEEK_BRAND_SYSTEM.md`](../WEST_PEEK_BRAND_SYSTEM.md). The canonical West Peek Orange is `#F05A1A`; black/white remain primary and orange remains an accent.

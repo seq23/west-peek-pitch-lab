@@ -6,9 +6,12 @@ import { chromium } from '@playwright/test';
 
 const root = process.cwd();
 const args = new Set(process.argv.slice(2));
+const tierArg = [...args].find((arg) => arg.startsWith('--tier='));
+const tier = tierArg ? tierArg.split('=')[1] : 'all';
+const tier3Ultimate = tier === '3' || tier === 'tier3' || tier === 'all';
 const headed = args.has('--headed');
-const includeLive = args.has('--live') || process.env.PITCH_LAB_RUN_LIVE_PROOFS === 'true';
-const includePostdeploy = args.has('--postdeploy') || Boolean(process.env.PITCH_LAB_DEPLOY_URL);
+const includeLive = tier3Ultimate || args.has('--live') || process.env.PITCH_LAB_RUN_LIVE_PROOFS === 'true';
+const includePostdeploy = tier3Ultimate || args.has('--postdeploy') || Boolean(process.env.PITCH_LAB_DEPLOY_URL);
 const installBrowsers = args.has('--install-browsers');
 const reportRoot = path.join(root, 'tmp', 'test-operations');
 const logsDir = path.join(reportRoot, 'logs');
@@ -259,6 +262,18 @@ const steps = [
     doesNotProve: 'Voice/avatar providers or human approval.'
   },
   {
+    tier: 'TIER 3 — ULTIMATE DEPLOYED + REAL PROVIDER VALIDATION',
+    id: 'network-os-live-handoff',
+    name: 'Live deployed Network OS signed handoff proof',
+    command: 'npx',
+    args: ['playwright', 'test', 'tests/e2e/master-gauntlet.spec.mjs', '-g', 'LIVE gated Network OS handoff E2E', '--project=desktop-chromium'],
+    skip: !liveEnvRequested || !postdeployRequested,
+    skipReason: !liveEnvRequested ? 'Live provider mode not requested. Run: npm run validate:everything:live:postdeploy' : 'PITCH_LAB_DEPLOY_URL is not set.',
+    env: { PITCH_LAB_LIVE_NETWORK_OS_E2E: 'true', PITCH_LAB_DEPLOY_URL: deployUrl, PLAYWRIGHT_BASE_URL: deployUrl, PLAYWRIGHT_SKIP_WEBSERVER: 'true' },
+    proves: 'Deployed Pitch Lab sends a real signed Network OS handoff through the browser share flow and receives pending_network_review without auto-contact creation.',
+    doesNotProve: 'Network OS internal downstream Gmail/Sheets/AI provider lanes unless Network OS Tier 3 also passes.'
+  },
+  {
     tier: 'TIER 3 — LIVE DEPLOYED VALIDATION',
     id: 'postdeploy-functions',
     name: 'Postdeploy function gauntlet',
@@ -299,13 +314,16 @@ const counts = results.reduce((acc, item) => {
 const failed = results.filter((r) => r.status === 'FAIL');
 const warned = results.filter((r) => r.status === 'WARN');
 const unproven = results.filter((r) => r.status === 'UNPROVEN');
-const finalStatus = failed.length ? 'FAILED' : warned.length ? 'PASSED_WITH_WARNINGS' : unproven.length ? 'PASSED_WITH_UNPROVEN_LAYERS' : 'PASSED';
+const tier3BlockingUnproven = tier3Ultimate && unproven.some((item) => String(item.tier || '').includes('TIER 3'));
+const finalStatus = failed.length ? 'FAILED' : tier3BlockingUnproven ? 'FAILED_UNPROVEN_TIER3' : warned.length ? 'PASSED_WITH_WARNINGS' : unproven.length ? 'PASSED_WITH_UNPROVEN_LAYERS' : 'PASSED';
 
 const report = {
   summary: finalStatus,
   startedAt,
   finishedAt,
   headed,
+  tier,
+  tier3Ultimate,
   includeLive,
   includePostdeploy,
   deployUrl: deployUrl || null,
@@ -326,6 +344,8 @@ const md = [
   `- Started: ${startedAt}`,
   `- Finished: ${finishedAt}`,
   `- Headed: ${headed}`,
+  `- Tier: ${tier}`,
+  `- Tier 3 ultimate mode: ${tier3Ultimate}`,
   `- Live provider mode: ${includeLive}`,
   `- Postdeploy mode: ${includePostdeploy}`,
   `- Deploy URL: ${deployUrl || 'not provided'}`,
@@ -347,7 +367,7 @@ if (!failed.length && !warned.length && !unproven.length) {
     md.push(`- ${item.status}: ${item.id} — ${item.likelyFix}`);
   }
 }
-md.push('', '## Proof Boundary', '', '- Tier 1 can be run before ZIP delivery by the assistant/container.', '- Tier 2 must run locally because it requires Playwright Chromium/browser runtime.', '- Tier 3 must run locally because it requires restored secrets/provider env and may require deployed URLs.', '- Tier 4 remains human approval: AI answer quality, voice quality, avatar quality, visual/design judgment, business usefulness.');
+md.push('', '## Proof Boundary', '', '- Tier 1 can be run before ZIP delivery by the assistant/container.', '- Tier 2 must run locally because it requires Playwright Chromium/browser runtime.', '- Tier 3 is the ultimate release gate for provider-backed Pitch Lab: restored secrets, live providers, deployed browser proof, and Network OS handoff proof when configured.', '- There is no Tier 4. Human approval of AI answer quality, voice quality, avatar quality, visual/design judgment, and business usefulness is a signoff overlay, not a validation tier.');
 fs.writeFileSync(path.join(reportRoot, 'summary.md'), md.join('\n'));
 
 console.log(`TEST OPERATIONS ${finalStatus}`);
@@ -357,4 +377,4 @@ if (failed.length || warned.length || unproven.length) {
   console.log('Repair / unproven list:');
   for (const item of [...failed, ...warned, ...unproven]) console.log(`- ${item.status}: ${item.id} — ${item.likelyFix}`);
 }
-process.exit(failed.length ? 1 : 0);
+process.exit(failed.length || tier3BlockingUnproven ? 1 : 0);
