@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "1.1",
   "repo": "west-peek-pitch-lab",
   "lane": "public",
   "scenarios": [
@@ -57,12 +57,29 @@
         },
         {
           "type": "fill",
-          "label": "You",
+          "label": "Your answer",
           "value": "Deploy Proof Co helps founder-led teams turn fragmented operational context into one clear workflow and repeatable story."
         },
         {
           "type": "assertText",
-          "value": "What you are building"
+          "value": "What you are building",
+          "viewports": [
+            "desktop"
+          ]
+        },
+        {
+          "type": "clickButton",
+          "name": "Founder Story Card 1 of 7 required",
+          "viewports": [
+            "mobile"
+          ]
+        },
+        {
+          "type": "assertText",
+          "value": "What you are building",
+          "viewports": [
+            "mobile"
+          ]
         }
       ],
       "final_path": "/practice"
