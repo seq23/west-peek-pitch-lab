@@ -188,3 +188,7 @@ The MVP succeeds only if:
 ## Phase 10 locked product framing
 
 West Peek Pitch Lab is an AI Scooter-led founder story practice system. It captures minimal founder identity, guides founders through a structured chat-style coaching experience, optionally uses a deck as context, generates a Pitch Story Card, supports optional local camera rehearsal, and lets founders explicitly share a Founder Story Packet with West Peek for network review and relationship routing — with clear disclaimers, strict AI guardrails, no fake human review, no investment-review framing, and no guaranteed outcomes.
+
+## 2026-06-16 Persistent Coaching Room UI Addendum
+
+The canonical founder-facing artifact name is **Founder Story Card**. The homepage is a concise session lobby with a `Start Step 1` action. The active session uses a persistent top Scooter stage, progressive profile and optional deck disclosure, a primary coaching conversation, and a secondary live draft. Desktop uses a two-column workbench beneath Scooter; mobile uses a single-column task with an accessible Founder Story Card bottom sheet. This addendum changes presentation only and does not alter the authoritative Scooter media, provider, question, persistence, consent, or Network OS handoff contracts. See `docs/PITCH_LAB_PERSISTENT_COACHING_ROOM_UI_CONTRACT.md`.

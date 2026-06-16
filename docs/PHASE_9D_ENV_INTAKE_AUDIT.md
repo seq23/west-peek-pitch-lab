@@ -147,3 +147,19 @@ Do not invent a second value. The secret is a pair.
 - Live ElevenLabs voice/video render proof has not run.
 - Local headed Master Gauntlet has not run.
 - Cloudflare production deploy and postdeploy smoke have not run.
+
+
+## Profile Capture Contract Repair — 2026-06-16
+
+The canonical env registry now also includes:
+
+- `NETWORK_OS_PITCH_LAB_PACKET_ENDPOINT`
+- `NETWORK_OS_PITCH_LAB_PROFILE_ENDPOINT`
+- `NETWORK_OS_PROFILE_CAPTURE_ENABLED`
+
+The runtime derives the profile endpoint from `NETWORK_OS_BASE_URL` or the packet endpoint when the explicit profile endpoint is absent. This makes the code compatible with the existing deployed env shape. Live persistence still requires the exact same secret value in both deployments:
+
+- Pitch Lab: `NETWORK_OS_SHARED_SECRET`
+- Network OS: `PITCH_LAB_SHARED_SECRET`
+
+The historical intake note above records that the receiver-side secret still needed synchronization. That is a deployment configuration task, not a Network OS source-code defect.

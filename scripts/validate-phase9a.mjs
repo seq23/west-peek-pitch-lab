@@ -19,7 +19,7 @@ const runtime = ['src/runtime/storyCard.mjs', 'src/runtime/aiStoryCardClient.mjs
 const combined = `${combinedBuilt}\n${runtime}`;
 
 for (const [label, terms] of [
-  ['copy-card path', ['Copy Pitch Story Card', 'formatStoryCardForClipboard']],
+  ['copy-card path', ['Copy Founder Story Card', 'formatStoryCardForClipboard']],
   ['story strength signals', ['Story Strength Snapshot', 'Needs Sharpening', 'not a funding prediction']],
   ['no-account/no-forced-share', ['No account required', 'Share only if you choose']],
   ['confidentiality reminder', ['Do not include confidential information']],

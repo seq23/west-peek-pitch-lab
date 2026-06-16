@@ -34,7 +34,7 @@ requireIncludes('src/server/ai/openaiProvider.mjs', 'OPENAI_API_KEY');
 requireIncludes('src/server/ai/openaiProvider.mjs', 'response_format');
 requireIncludes('functions/api/pitch/story-card.js', 'onRequestPost');
 requireIncludes('src/runtime/aiStoryCardClient.mjs', 'No fake AI output was generated.');
-requireIncludes('src/ui/appShell.mjs', 'Generate AI Pitch Story Card');
+requireIncludes('src/ui/storyReviewWorkspace.mjs', 'Generate my Founder Story Card');
 
 const clientFiles = ['src/runtime/aiStoryCardClient.mjs', 'src/ui/appShell.mjs', 'src/runtime/practiceFlow.mjs'];
 for (const rel of clientFiles) {

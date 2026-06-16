@@ -1,6 +1,29 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "2.0",
   "repo": "west-peek-pitch-lab",
-  "required_current_strings": [],
-  "forbidden_stale_strings": []
+  "required_current_strings": [
+    "Start Step 1",
+    "Continue to your first question",
+    "Founder Story Card",
+    "Generate my Founder Story Card",
+    "Share my Founder Story Card with West Peek"
+  ],
+  "forbidden_stale_strings": [
+    "Start AI Scooter practice",
+    "Copy Pitch Story Card",
+    "Generate AI Pitch Story Card",
+    "Optional deck-as-context",
+    "Cached / reusable",
+    "No paid clip per question",
+    "Optional v1.1",
+    "Dynamic after text appears",
+    "AI Scooter media identity"
+  ],
+  "required_scan_roots": [
+    "src",
+    "tests/e2e"
+  ],
+  "forbidden_scan_roots": [
+    "src"
+  ]
 }

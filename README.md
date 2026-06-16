@@ -9,11 +9,9 @@ West Peek Pitch Lab is a public founder-facing AI pitch coaching tool. Founders 
 
 ## Current Phase
 
-**Phase 1 — Product docs and contracts.**
+**Phase 9E.2 — Coaching-room UX, Network OS profile capture, and local-browser gate repair.**
 
-This baseline contains repo identity, product spec, validation matrix, architecture decisions, environment contract, privacy/consent model, Scooter Wisdom Layer plan, avatar/voice provider plan, cost/provider plan, and Network OS handoff contract.
-
-It intentionally does not contain the production app UI or API implementation yet.
+The production application UI, APIs, provider contracts, consent boundaries, local persistence, Network OS handoff, desktop/mobile browser gauntlet, packaging contracts, and deployment runbooks are present. The current release candidate is updater-ready after container validation; the v3.1 updater must still run the canonical local headed Playwright gate before commit and push.
 
 ## Locked Decisions
 
@@ -26,7 +24,7 @@ It intentionally does not contain the production app UI or API implementation ye
 - Voice: ElevenLabs for Scooter's approved voice
 - LLM: Gemini first for lowest-cost/free-tier V1 path
 - Intelligence: Scooter Wisdom Layer + broader LLM founder/VC storytelling layer
-- Output: Pitch Story Card
+- Output: Founder Story Card
 - Capture: value first, consented share second
 - Internal destination: existing West Peek Network OS intake queue
 - CRM rule: no duplicate CRM and no automatic contact creation
@@ -205,3 +203,13 @@ This repo implements the suite Revision 3 lifecycle: machine-readable route mani
 ## Baseline ZIP preflight
 
 Before applying a baseline ZIP, use `docs/runbooks/PRE_UPDATER_BASELINE_CHECKLIST.md`. It is the canonical checklist for required root files, safe environment examples, forbidden generated artifacts, ZIP integrity, updater preflight, and localhost-before-push execution.
+
+
+## Phase 9E — Network OS profile-capture repair
+
+Pitch Lab now derives the Network OS profile endpoint from the configured Network OS base URL or packet endpoint, registers the canonical profile/packet env variables, and reports whether the founder profile actually synchronized or remains pending locally. The attached Network OS source already contained the compatible signed receiver and Google Sheets write/readback path, so this repair changes Pitch Lab only. Live deployment still requires the paired shared secret in both projects.
+
+
+## Phase 9E.1 — Local browser gate repair
+
+The first v3.1 updater run correctly stopped before commit after local Chromium exposed a mixed product/test failure set. This repair fixes blank-optional-answer draft leakage, desktop first-viewport CTA geometry, rehearsal-consent readiness, trust and text-first guidance, and stale E2E selectors/copy. The browser suite remains 112 tests across desktop and mobile; the updater must rerun the full local browser gate before commit or push. See `PITCH_LAB_LOCAL_BROWSER_GATE_REPAIR_2026-06-16.md`.

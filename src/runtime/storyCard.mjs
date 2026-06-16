@@ -55,7 +55,7 @@ export function createLocalDraftStoryCard(answers) {
     status: validation.ok ? 'local_draft_complete' : 'local_draft_incomplete',
     aiEnhanced: false,
     shareEnabled: false,
-    notice: 'This is a local draft shell. AI coaching can create a sharper Pitch Story Card when configured. Sharing with West Peek is always optional and consent-gated.',
+    notice: 'This is a local draft shell. AI coaching can create a sharper Founder Story Card when configured. Sharing with West Peek is always optional and consent-gated.',
     oneLinePitch: validation.ok ? `${building} for ${who}.` : 'Complete the practice questions to create a local draft one-line pitch.',
     companySummary: building,
     whoItHelps: who,
@@ -68,7 +68,7 @@ export function createLocalDraftStoryCard(answers) {
       ? 'Use the Story Strength Snapshot to see what needs sharpening before sharing.'
       : 'Complete all required answers before reviewing story gaps.',
     suggestedNextSteps: validation.ok
-      ? 'Review each section, tighten vague language, and generate the AI Pitch Story Card when provider keys are configured.'
+      ? 'Review each section, tighten vague language, and generate the AI-enhanced Founder Story Card when providers are configured.'
       : 'Finish the question flow first.',
     suggestedPeopleOrRelationships: sentenceFrom(normalized.help_needed),
     storyStrengthSignals: createStoryStrengthSignalsFromAnswers(normalized),

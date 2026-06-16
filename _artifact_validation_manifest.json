@@ -1,34 +1,82 @@
 {
-  "schema_version": "2.3",
+  "schema_version": "2.5",
   "repo": "west-peek-pitch-lab",
   "profile": "container",
   "release_prepush_container": "PASS",
   "ui_test_parity": "PASS",
   "browser_suite_contract": "PASS",
   "runtime_proof_contract": "PASS",
-  "artifact_source_parity": "PASS",
+  "artifact_source_parity": "PASS_53_CRITICAL_FILES",
   "reopened_container_validation": "PASS",
-  "local_browser_validation": "FAILED_PREVIOUS_ARTIFACT_FIXTURE_REPAIRED_REVALIDATION_REQUIRED",
+  "local_browser_validation": "NOT_EXECUTED_FOR_REPLACEMENT_ARTIFACT",
+  "container_visual_smoke": "INDEPENDENT_HOSTILE_BROWSER_REVIEW_PASS_8_STATES_CANONICAL_LOCAL_SUITE_NOT_REPLACED",
   "required_local_command": "npm run release:prepush:local",
-  "status": "FIRST-COMMAND-READY \u2014 LOCAL BROWSER REVALIDATION REQUIRED",
-  "source_tree_fingerprint": "1400229c359f5d8b679e00be3121dd6ef5caeef713e67d3bd4b39a0b4cc15bf9",
+  "status": "FIRST-COMMAND-READY \u2014 LOCAL BROWSER AND LIVE HANDOFF VALIDATION REQUIRED",
+  "source_tree_fingerprint": "ab6787a2ca4ea7ab9143d2bbbc4f07ddbca301e43e546acd5bdd94b68a0d6220",
+  "source_tree_fingerprint_excludes": [
+    "_artifact_validation_manifest.json",
+    "generated/build/evidence directories"
+  ],
   "artifact_sha256_binding": "DETACHED_SHA256_SIDECAR",
-  "generated_at": "2026-06-15T19:42:38.594668+00:00",
+  "generated_at": "2026-06-16T14:00:15.873792+00:00",
+  "browser_collection": {
+    "total": 112,
+    "desktop-chromium": 56,
+    "mobile-chromium": 56,
+    "new_skips": 0
+  },
+  "browser_runtime_bundle": "PASS",
+  "critical_file_parity_count": 53,
   "evidence_references": [
+    "docs/PITCH_LAB_PERSISTENT_COACHING_ROOM_UI_CONTRACT.md",
+    "docs/PITCH_LAB_UX_UI_REDESIGN_IMPLEMENTATION_REPORT_2026-06-16.md",
     "_browser_suite_contract.json",
     "_runtime_proof_contract.json",
     "_artifact_parity_contract.json",
-    "scripts/validate-browser-runtime-bundle.mjs",
-    "ARCHITECTURAL_DECISIONS.md#ADM-2026-06-15-02",
-    "tests/e2e/persistence-and-deletion-proof.spec.mjs",
-    "ARCHITECTURAL_DECISIONS.md#ADM-2026-06-15-03"
+    "tests/e2e/founder-room-ux-proof.spec.mjs",
+    "ARCHITECTURAL_DECISIONS.md#ADM-2026-06-16-01",
+    "PITCH_LAB_NETWORK_OS_PROFILE_CAPTURE_REPAIR_2026-06-16.md",
+    "ARCHITECTURAL_DECISIONS.md#ADM-2026-06-16-02",
+    "tests/domain/profile-lead-contracts.mjs",
+    "PITCH_LAB_LOCAL_BROWSER_GATE_REPAIR_2026-06-16.md",
+    "ARTIFACT_MANIFEST.md#Phase-9E.1-local-browser-gate-repair",
+    "ARCHITECTURAL_DECISIONS.md#ADM-2026-06-16-03",
+    "tests/domain/phase3-contracts.mjs",
+    "tests/e2e/founder-context-and-accessibility-proof.spec.mjs",
+    "tests/e2e/media-provider-proof.spec.mjs",
+    "ARCHITECTURAL_DECISIONS.md#ADM-2026-06-16-04",
+    "tests/e2e/founder-camera-rehearsal-proof.spec.mjs"
   ],
-  "browser_collection": {
-    "total": 104,
-    "desktop-chromium": 52,
-    "mobile-chromium": 52
+  "network_os_profile_capture_repair": {
+    "source_repo_changed": "west-peek-pitch-lab",
+    "consumer_repo_changed": false,
+    "consumer_contract_tests": "PASS",
+    "profile_endpoint_derivation": "PASS",
+    "env_registry_parity": "PASS",
+    "live_google_sheets_readback": "NOT_EXECUTED"
   },
-  "browser_runtime_bundle": "PASS",
-  "critical_file_parity_count": 24,
-  "fixture_lifecycle_repair": "PASS_STATIC_AND_ARTIFACT_PROOF"
+  "independent_hostile_browser_review": {
+    "result": "PASS",
+    "states": 8,
+    "viewports": [
+      "1280x720",
+      "393x851"
+    ],
+    "checks": [
+      "homepage CTA above fold",
+      "horizontal overflow",
+      "profile \u2192 deck \u2192 questions progressive disclosure",
+      "draft hidden before meaningful answer",
+      "desktop live draft",
+      "mobile draft sheet and focus return",
+      "text-first Story Card order",
+      "share consent and payload",
+      "selected rehearsal consent enabled",
+      "selected rehearsal deletion resets consent",
+      "complete mobile eight-question path without control overlap"
+    ],
+    "canonical_local_suite_replacement": false
+  },
+  "reopened_dependency_install": "PASS_ZERO_REPORTED_VULNERABILITIES",
+  "reopened_independent_hostile_browser_review": "PASS_8_STATES"
 }

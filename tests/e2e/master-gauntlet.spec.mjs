@@ -129,6 +129,14 @@ function liveEnvEnabled(name) {
   return String(process.env[name] || '').toLowerCase() === 'true';
 }
 
+async function openPublicNavigationIfNeeded(page) {
+  const toggle = page.locator('[data-mobile-nav-toggle]');
+  if (await toggle.isVisible().catch(() => false)) {
+    await toggle.click();
+    await expect(page.locator('[data-primary-nav]')).toHaveAttribute('data-open', 'true');
+  }
+}
+
 test.describe('West Peek Pitch Lab Master Gauntlet — hostile max-depth', () => {
   test.beforeEach(async ({ page }) => {
     page.on('pageerror', (error) => { throw error; });
@@ -150,11 +158,11 @@ test.describe('West Peek Pitch Lab Master Gauntlet — hostile max-depth', () =>
 
   test('hero uses the canonical Scooter image instead of initials fallback', async ({ page }) => {
     await page.goto('/');
-    const photo = page.locator('.avatar-frame img.avatar-photo');
+    const photo = page.locator('.scooter-stage-visual img.avatar-photo');
     await expect(photo).toHaveAttribute('src', '/assets/avatar/scooter-avatar-source.png');
     await expect(photo).toBeVisible();
     await expect(page.locator('.avatar-initials')).toHaveCount(0);
-    await expect(page.locator('.avatar-frame')).not.toContainText(/^ST$/);
+    await expect(page.locator('.scooter-stage-visual')).not.toContainText(/^ST$/);
     await expectNoForbiddenPromises(page);
   });
 
@@ -162,10 +170,11 @@ test.describe('West Peek Pitch Lab Master Gauntlet — hostile max-depth', () =>
     await page.goto('/');
     for (const [label, expectedRoute] of [
       ['How it works', '/how-it-works'],
-      ['Practice', '/practice'],
-      ['Story Card', '/story-card'],
+      ['Start pitch practice', '/practice'],
       ['Privacy', '/privacy']
     ]) {
+      await page.goto('/');
+      await openPublicNavigationIfNeeded(page);
       await page.getByRole('link', { name: label }).first().click();
       await expect(page.locator('body')).toHaveAttribute('data-route', expectedRoute);
       await expectNoForbiddenPromises(page);
@@ -174,23 +183,24 @@ test.describe('West Peek Pitch Lab Master Gauntlet — hostile max-depth', () =>
 
   test('practice flow blocks thin answers, advances through all eight prompts, and persists founder answers locally', async ({ page }) => {
     await page.goto('/practice');
-    await expect(page.locator('body')).toContainText('AI Scooter coaching conversation');
+    await expect(page.locator('body')).toContainText('Private coaching room');
     await page.getByRole('textbox', { name: /^Name\b/i }).fill('Avery Founder');
-    await page.getByRole('textbox', { name: /^Email\b/i }).fill('avery@example.com');
-    await page.getByLabel('Company name').fill('ExampleCo');
-    await page.getByRole('button', { name: /Start AI Scooter practice/i }).click();
+    await page.getByRole('textbox', { name: /^Work email\b/i }).fill('avery@example.com');
+    await page.getByLabel('Company or project').fill('ExampleCo');
+    await page.getByRole('button', { name: /Continue to your first question/i }).click();
+    await page.getByRole('button', { name: /Continue without a deck/i }).click();
 
     await page.locator('textarea').first().fill('too short');
-    await page.getByRole('button', { name: /next question/i }).click();
+    await page.locator('[data-next-question]').click();
     await expect(page.locator('[data-error]')).toBeVisible();
     await expect(page.locator('[data-error]')).toContainText('Minimum');
 
     for (const answer of Object.values(founderAnswers)) {
       await page.locator('textarea').first().fill(answer);
-      await page.getByRole('button', { name: /next question|create local draft card|create session draft card/i }).click();
+      await page.locator('[data-next-question]').click();
     }
 
-    await expect(page.locator('body')).toContainText('Your Pitch Story Card draft is ready.');
+    await expect(page.locator('body')).toContainText('Your Founder Story Card is ready to review.');
     const saved = await page.evaluate((key) => JSON.parse(localStorage.getItem(key) || '{}'), STORAGE_ANSWERS_KEY);
     expect(saved).toMatchObject(founderAnswers);
     await expectNoForbiddenPromises(page);
@@ -199,29 +209,34 @@ test.describe('West Peek Pitch Lab Master Gauntlet — hostile max-depth', () =>
 
   test('practice guidance makes the next step obvious without modal tutorial or visual hard-fail theater', async ({ page }) => {
     await page.goto('/practice');
-    await expect(page.locator('body')).toContainText('Start here');
-    await expect(page.locator('body')).toContainText('Use the name West Peek should recognize');
-    await expect(page.locator('body')).toContainText('this creates the private session context');
+    await expect(page.locator('body')).toContainText('Step 1 — About you');
+    await expect(page.locator('body')).toContainText('Start your private pitch-practice session');
+    await expect(page.locator('body')).toContainText('Pitch answers are not shared at this step');
     await page.getByRole('textbox', { name: /^Name\b/i }).fill('Avery Founder');
-    await page.getByRole('textbox', { name: /^Email\b/i }).fill('avery@example.com');
-    await page.getByLabel('Company name').fill('ExampleCo');
-    await page.getByRole('button', { name: /Start AI Scooter practice/i }).click();
+    await page.getByRole('textbox', { name: /^Work email\b/i }).fill('avery@example.com');
+    await page.getByLabel('Company or project').fill('ExampleCo');
+    await page.getByRole('button', { name: /Continue to your first question/i }).click();
 
-    await expect(page.locator('body')).toContainText('Optional deck-as-context');
-    await expect(page.locator('body')).toContainText('skip the deck and answer from scratch');
-    await expect(page.getByRole('button', { name: /No deck/i })).toHaveClass(/attention-ready/);
-    await page.getByRole('button', { name: /No deck/i }).click();
+    await expect(page.locator('body')).toContainText('Have a deck handy?');
+    await expect(page.locator('body')).toContainText('continue without one');
+    await page.getByRole('button', { name: /Continue without a deck/i }).click();
 
-    await expect(page.locator('[data-next-step-card]')).toContainText('Next:');
-    await expect(page.locator('.answer-helper-panel')).toContainText('Why Scooter asks');
-    await expect(page.locator('.answer-helper-panel')).toContainText('Strong answer hint');
-    await expect(page.locator('.answer-helper-panel')).toContainText('Example');
+            await expect(page.locator('.answer-helper-panel')).toContainText('Example');
     await expect(page.locator('.answer-helper-panel')).toContainText('Avoid');
-    await expect(page.locator('textarea')).toHaveAttribute('title', /live draft updates/i);
-
+    
     await page.locator('textarea').first().fill(founderAnswers.what_building);
-    await expect(page.locator('[data-next-step-card]')).toHaveClass(/attention-ready/);
-    await expect(page.getByRole('button', { name: /Next question/i })).toHaveClass(/attention-ready/);
+    const mobile = (page.viewportSize()?.width || 0) <= 720;
+    if (mobile) {
+      await expect(page.locator('[data-story-card-panel]')).toBeHidden();
+      await expect(page.locator('[data-story-draft-trigger]')).toBeVisible();
+      await page.locator('[data-story-draft-trigger]').click();
+      await expect(page.locator('[data-story-draft-sheet]')).toBeVisible();
+      await expect(page.locator('[data-story-card-sheet-content]')).toContainText(founderAnswers.what_building);
+      await page.getByRole('button', { name: /Close Founder Story Card/i }).click();
+    } else {
+      await expect(page.locator('[data-story-card-panel]')).toBeVisible();
+      await expect(page.locator('[data-story-card-preview]')).toContainText(founderAnswers.what_building);
+    }
     await expectNoForbiddenPromises(page);
   });
 
@@ -237,7 +252,7 @@ test.describe('West Peek Pitch Lab Master Gauntlet — hostile max-depth', () =>
     await expect(page.locator('.camera-practice')).toContainText('Consent');
     await expect(page.locator('[data-camera-status]')).toContainText('No video uploads from this screen');
     await expect(page.locator('[data-take-list]')).toContainText('No takes recorded yet');
-    await page.locator('[data-consent-selected-take]').click({ force: true });
+    await expect(page.locator('[data-consent-selected-take]')).toBeDisabled();
     await expect(page.locator('[data-rehearsal-consent-status]')).toContainText('Choose a best take before attaching rehearsal context');
     await expectNoForbiddenPromises(page);
   });
@@ -259,15 +274,15 @@ test.describe('West Peek Pitch Lab Master Gauntlet — hostile max-depth', () =>
     await seedCompleteAnswers(page);
     await page.goto('/story-card');
 
-    await expect(page.locator('body')).toContainText('Local Pitch Story Card shell');
+    await expect(page.locator('body')).toContainText('Local Founder Story Card');
     await expect(page.locator('body')).toContainText('Story Strength Snapshot');
-    await expect(page.locator('body')).toContainText('Copy Pitch Story Card');
+    await expect(page.locator('body')).toContainText('Copy Founder Story Card');
     await expect(page.locator('body')).toContainText('relationship-intelligence tool');
     await expect(page.locator('body')).toContainText('Strong');
     await expect(page.locator('body')).toContainText('Developing');
     await expectNoForbiddenPromises(page);
 
-    await page.getByRole('button', { name: /Copy Pitch Story Card/i }).first().click();
+    await page.getByRole('button', { name: /Copy Founder Story Card/i }).first().click();
     await expect(page.locator('[data-local-copy-status]')).toContainText(/Copied|Clipboard/);
   });
 
@@ -278,7 +293,7 @@ test.describe('West Peek Pitch Lab Master Gauntlet — hostile max-depth', () =>
     });
 
     await page.goto('/story-card');
-    await page.getByRole('button', { name: /Generate AI Pitch Story Card/i }).click();
+    await page.getByRole('button', { name: /Generate my Founder Story Card/i }).click();
     await expect(page.locator('[data-ai-story-card-root]')).toContainText('AI coaching is unavailable');
     await expect(page.locator('[data-ai-story-card-root]')).toContainText('No fake AI output was generated');
     const aiStored = await page.evaluate((key) => localStorage.getItem(key), STORAGE_AI_CARD_KEY);
@@ -294,10 +309,10 @@ test.describe('West Peek Pitch Lab Master Gauntlet — hostile max-depth', () =>
     });
 
     await page.goto('/story-card');
-    await page.getByRole('button', { name: /Generate AI Pitch Story Card/i }).click();
-    await expect(page.locator('[data-ai-story-card-root]')).toContainText('AI-enhanced Pitch Story Card');
+    await page.getByRole('button', { name: /Generate my Founder Story Card/i }).click();
+    await expect(page.locator('[data-ai-story-card-root]')).toContainText('AI-enhanced Founder Story Card');
     await expect(page.locator('[data-ai-story-card-root]')).toContainText('West Peek Pitch Lab helps founders');
-    await page.getByRole('button', { name: /Copy Pitch Story Card/i }).last().click();
+    await page.getByRole('button', { name: /Copy Founder Story Card/i }).last().click();
     await expect(page.locator('[data-ai-copy-status]')).toContainText(/Copied|Clipboard/);
     const stored = await page.evaluate((key) => JSON.parse(localStorage.getItem(key) || 'null'), STORAGE_AI_CARD_KEY);
     expect(stored?.storyCard?.oneLinePitch).toContain('West Peek Pitch Lab helps founders');
@@ -309,7 +324,7 @@ test.describe('West Peek Pitch Lab Master Gauntlet — hostile max-depth', () =>
   test('share page blocks placeholder submission when no AI Pitch Story Card exists', async ({ page }) => {
     await page.goto('/share');
     await expect(page.locator('body')).toContainText('Start with your founder profile');
-    await expect(page.locator('body')).toContainText('Your pitch answers and Founder Story Packet stay private unless you choose to share them');
+    await expect(page.locator('body')).toContainText('Your pitch answers and Founder Story Card stay private unless you choose to share them');
     const shareStatus = await page.evaluate((key) => localStorage.getItem(key), STORAGE_SHARE_STATUS_KEY);
     expect(shareStatus).toBeNull();
     await expectNoForbiddenPromises(page);
@@ -324,7 +339,7 @@ test.describe('West Peek Pitch Lab Master Gauntlet — hostile max-depth', () =>
     });
 
     await page.goto('/share');
-    await page.getByRole('button', { name: /Share Founder Story Packet with West Peek/i }).click();
+    await page.getByRole('button', { name: /Share my Founder Story Card with West Peek/i }).click();
     await expect(page.locator('[data-share-error]')).toContainText('Consent is required');
     expect(called).toBe(false);
     await expectNoForbiddenPromises(page);
@@ -338,7 +353,7 @@ test.describe('West Peek Pitch Lab Master Gauntlet — hostile max-depth', () =>
 
     await page.goto('/share');
     await page.getByLabel(/I consent to share/i).check();
-    await page.getByRole('button', { name: /Share Founder Story Packet with West Peek/i }).click();
+    await page.getByRole('button', { name: /Share my Founder Story Card with West Peek/i }).click();
     await expect(page.locator('[data-share-result]')).toContainText('Submission was not completed');
     await expect(page.locator('[data-share-result]')).toContainText('Nothing was shared');
     const shareStatus = await page.evaluate((key) => localStorage.getItem(key), STORAGE_SHARE_STATUS_KEY);
@@ -357,8 +372,8 @@ test.describe('West Peek Pitch Lab Master Gauntlet — hostile max-depth', () =>
 
     await page.goto('/share');
     await page.getByLabel(/I consent to share/i).check();
-    await page.getByRole('button', { name: /Share Founder Story Packet with West Peek/i }).click();
-    await expect(page.locator('[data-share-result]')).toContainText('Founder Story Packet shared with West Peek for network review');
+    await page.getByRole('button', { name: /Share my Founder Story Card with West Peek/i }).click();
+    await expect(page.locator('[data-share-result]')).toContainText('Founder Story Card shared with West Peek for network review');
     await expect(page.locator('[data-share-result]')).toContainText('Contact created: No');
 
     await page.getByRole('link', { name: /Continue/i }).click();
@@ -384,8 +399,8 @@ test.describe('West Peek Pitch Lab Master Gauntlet — hostile max-depth', () =>
 
     await page.goto('/share');
     await page.getByLabel(/I consent to share/i).check();
-    await page.getByRole('button', { name: /Share Founder Story Packet with West Peek/i }).click();
-    await expect(page.locator('[data-share-result]')).toContainText('Founder Story Packet shared with West Peek for network review');
+    await page.getByRole('button', { name: /Share my Founder Story Card with West Peek/i }).click();
+    await expect(page.locator('[data-share-result]')).toContainText('Founder Story Card shared with West Peek for network review');
 
     expect(observedPayload).not.toBeNull();
     const shareStatus = await page.evaluate((key) => JSON.parse(localStorage.getItem(key) || 'null'), STORAGE_SHARE_STATUS_KEY);
@@ -404,10 +419,11 @@ test.describe('West Peek Pitch Lab Master Gauntlet — hostile max-depth', () =>
 
   test('Scooter media lane is visibly core, honestly degraded, and backend/provider-gated', async ({ page, request }) => {
     await page.goto('/story-card');
-    await expect(page.locator('body')).toContainText('Scooter media identity');
-    await expect(page.locator('body')).toContainText('Talking AI Scooter is core');
-    await expect(page.locator('body')).toContainText('static/text-only mode is an honest degraded fallback');
-    await expect(page.locator('body')).toContainText('Text carries the detailed artifact');
+    await expect(page.locator('[data-scooter-stage]')).toBeVisible();
+    await expect(page.locator('[data-scooter-stage]')).toHaveAttribute('data-scooter-moment', /Final summary/);
+    await expect(page.locator('[data-required-speaking-moment]')).toHaveCount(1);
+    await expect(page.locator('body')).toContainText('Founder Story Card');
+    await expect(page.locator('body')).toContainText('Practice Out Loud');
 
     for (const endpoint of ['/api/avatar/status', '/api/voice/status']) {
       const response = await request.get(endpoint);
@@ -431,17 +447,16 @@ test.describe('West Peek Pitch Lab Master Gauntlet — hostile max-depth', () =>
       await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(fakeAiResponse) });
     });
     await page.goto('/story-card');
-    await page.getByRole('button', { name: /Generate AI Pitch Story Card/i }).click();
-    await expect(page.locator('[data-ai-story-card-root]')).toContainText('AI-enhanced Pitch Story Card');
+    await page.getByRole('button', { name: /Generate my Founder Story Card/i }).click();
+    await expect(page.locator('[data-ai-story-card-root]')).toContainText('AI-enhanced Founder Story Card');
     await expect(page.locator('[data-final-scooter-summary]')).toContainText('AI Scooter final summary');
     await expect(page.locator('[data-avatar-lane]')).toContainText(/Scooter’s short personalized media summary is preparing|Scooter media is unavailable right now/);
-    await expect(page.locator('[data-avatar-lane]')).toContainText('Hard ceiling 65 seconds');
-    await expect(page.getByRole('link', { name: /Preview Founder Story Packet/i })).toBeVisible();
+    await expect(page.getByRole('link', { name: /Continue to sharing/i })).toBeVisible();
 
     await seedAiCard(page);
     await page.goto('/share');
-    await expect(page.locator('.share-close-moment')).toContainText('AI Scooter close');
-    await expect(page.locator('.share-close-moment')).toContainText('Required talking Scooter close');
+    await expect(page.locator('[data-scooter-stage]')).toHaveAttribute('data-scooter-moment', /Share close/);
+    await expect(page.locator('[data-required-speaking-moment]')).toHaveCount(1);
     await expectNoForbiddenPromises(page);
   });
 
@@ -462,10 +477,10 @@ test.describe('West Peek Pitch Lab Master Gauntlet — hostile max-depth', () =>
     });
 
     await page.goto('/share');
-    await page.getByLabel(/I consent to share my Founder Story Packet/i).check();
+    await page.getByLabel(/I consent to share my Founder Story Card/i).check();
     await expect(page.getByLabel(/Include my selected Practice Out Loud take/i)).toBeChecked();
-    await page.getByRole('button', { name: /Share Founder Story Packet with West Peek/i }).click();
-    await expect(page.locator('[data-share-result]')).toContainText('Founder Story Packet shared with West Peek for network review');
+    await page.getByRole('button', { name: /Share my Founder Story Card with West Peek/i }).click();
+    await expect(page.locator('[data-share-result]')).toContainText('Founder Story Card shared with West Peek for network review');
     expect(observedPayload).not.toBeNull();
     await expectNoForbiddenPromises(page);
   });
@@ -493,8 +508,8 @@ test.describe('West Peek Pitch Lab Master Gauntlet — hostile max-depth', () =>
     await seedAiCard(page);
     await page.goto('/share');
     await page.getByLabel(/I consent to share/i).check();
-    await page.getByRole('button', { name: /Share Founder Story Packet with West Peek/i }).click();
-    await expect(page.locator('[data-share-result]')).toContainText('Founder Story Packet shared with West Peek for network review');
+    await page.getByRole('button', { name: /Share my Founder Story Card with West Peek/i }).click();
+    await expect(page.locator('[data-share-result]')).toContainText('Founder Story Card shared with West Peek for network review');
     const shareStatus = await page.evaluate((key) => JSON.parse(localStorage.getItem(key) || 'null'), STORAGE_SHARE_STATUS_KEY);
     expect(shareStatus.reviewStatus).toBe('pending_network_review');
     expect(shareStatus.contactCreated).toBe(false);
@@ -526,8 +541,13 @@ test.describe('West Peek Pitch Lab Master Gauntlet — hostile max-depth', () =>
 
   test('profile gate, footer disclosures, policy routes, deck context, and Practice Out Loud are present', async ({ page }) => {
     await page.goto('/practice');
-    await expect(page.locator('body')).toContainText('Enter your email to begin and save your Pitch Lab session');
-    await expect(page.locator('body')).toContainText('Optional deck-as-context');
+    await expect(page.locator('body')).toContainText('Start your private pitch-practice session');
+    await expect(page.locator('body')).not.toContainText('Have a deck handy?');
+    await page.getByRole('textbox', { name: /^Name\b/i }).fill('Avery Founder');
+    await page.getByRole('textbox', { name: /^Work email\b/i }).fill('avery@example.com');
+    await page.getByLabel('Company or project').fill('ExampleCo');
+    await page.getByRole('button', { name: /Continue to your first question/i }).click();
+    await expect(page.locator('body')).toContainText('Have a deck handy?');
     await expect(page.locator('body')).toContainText('not a deck review');
     await page.goto('/story-card');
     await expect(page.locator('body')).toContainText('Practice Out Loud');
@@ -550,8 +570,8 @@ test.describe('West Peek Pitch Lab Master Gauntlet — hostile max-depth', () =>
       await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(fakeShareSuccess) });
     });
     await page.goto('/share');
-    await page.getByLabel(/I consent to share my Founder Story Packet/i).check();
-    await page.getByRole('button', { name: /Share Founder Story Packet with West Peek/i }).click();
+    await page.getByLabel(/I consent to share my Founder Story Card/i).check();
+    await page.getByRole('button', { name: /Share my Founder Story Card with West Peek/i }).click();
     expect(observedPayload).not.toBeNull();
     await expect(page.locator('[data-share-result]')).toContainText('network review');
   });

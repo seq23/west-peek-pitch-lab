@@ -1,18 +1,17 @@
 # User Journey Test Matrix — west-peek-pitch-lab
 
-Status: ACTIVE
-Date: 2026-06-11
+**Status:** ACTIVE  
+**Updated:** 2026-06-16
 
-Every meaningful user action must map to local proof, deployed proof, and provider proof where applicable.
-
-| Persona | Action | Expected state change / outcome | Tier 1 source proof | Tier 2 local/browser proof | Tier 3 deployed/provider proof | Negative/edge path | Status |
-|---|---|---|---|---|---|---|---|
-| Founder | Complete pitch intake and AI Scooter critique | LLM response visible, saved in journey state, no placeholder AI output | matrix/docs/validators | headed/self-spawn/browser path | deployed + provider evidence/readback | invalid/duplicate/unauthorized/provider-unavailable path required | REQUIRED |
-| Founder | Camera/rehearsal/media path | local browser proof or safe unavailable state; no fake media success | matrix/docs/validators | headed/self-spawn/browser path | deployed + provider evidence/readback | invalid/duplicate/unauthorized/provider-unavailable path required | REQUIRED |
-| Founder | Share profile/story packet to Network OS | signed handoff succeeds and Network OS confirms pending review | matrix/docs/validators | headed/self-spawn/browser path | deployed + provider evidence/readback | invalid/duplicate/unauthorized/provider-unavailable path required | REQUIRED |
-| Operator | Restore vault and sync Cloudflare env | env present by name without printing values; deployed runtime uses same contract | matrix/docs/validators | headed/self-spawn/browser path | deployed + provider evidence/readback | invalid/duplicate/unauthorized/provider-unavailable path required | REQUIRED |
-| Founder | Mobile/browser route journey | core flows usable across viewport and refresh/re-entry | matrix/docs/validators | headed/self-spawn/browser path | deployed + provider evidence/readback | invalid/duplicate/unauthorized/provider-unavailable path required | REQUIRED |
-
-## Rule
-
-Seeded/demo fixtures may support fast smoke tests but cannot replace newly-created/entity-scoped or provider-backed Tier 3 proof.
+| Persona | Journey | Tier 1 source/container proof | Tier 2 local browser proof | Tier 3 deployed/provider proof | Negative/edge path |
+|---|---|---|---|---|---|
+| Cold founder | Understand product and start from first viewport | locked copy, public usability, parity contract | CTA geometry at desktop/mobile; no overflow | public click audit | internal production language absent |
+| Founder | Complete profile and optional deck choice | progressive-state source anchors | profile → deck → prompt; keyboard labels | deployed journey | invalid profile; deck optional |
+| Founder | Answer first question while Scooter remains present | persistent stage and draft event contracts | first answer reveals draft; stage persists | deployed click audit | empty draft hidden before input |
+| Founder | Review live draft on desktop | two-column source/CSS contract | draft visible without third competing column | deployed desktop evidence | long content and overflow |
+| Founder | Review live draft on mobile | bottom-sheet/focus source contract | menu, sheet, Escape, focus return | deployed mobile evidence | no clipped nav; no background scroll |
+| Founder | Generate and copy Founder Story Card | schema/display contracts | honest success/unavailable rendering | live LLM mutation/readback | provider unavailable; no fake output |
+| Founder | Practice Out Loud | local media contracts | camera/take/transcript/best-take path | provider proof only where applicable | denied permission; cleanup |
+| Founder | Share by explicit consent | payload and consent contracts | blocked early share; confirmed receipt only | signed Network OS mutation/readback | unchecked consent; provider/handoff failure |
+| Founder | Return/refresh and delete info | storage/deletion contracts | refresh/re-entry and exact clearing | deployed integrity | fresh context isolation |
+| Operator | Close release lifecycle | validation matrix and reports | exact 112-test suite | postdeploy audit, cleanup, final report | environment/provider gaps labeled |

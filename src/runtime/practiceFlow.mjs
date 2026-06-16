@@ -1,5 +1,5 @@
 import { normalizeDisplayValue } from './normalizeDisplayValue.mjs';
-import { PITCH_QUESTIONS, validateAnswer, validatePitchAnswers, normalizeAnswer } from './pitchQuestions.mjs';
+import { PITCH_QUESTIONS, validateAnswer, validatePitchAnswers, normalizeAnswer, countCompletedPitchAnswers } from './pitchQuestions.mjs';
 import { createLocalDraftStoryCard } from './storyCard.mjs';
 import { copyTextToClipboard, formatStoryCardForClipboard } from './clipboard.mjs';
 import { DISCLOSURE_COPY } from './disclaimerModel.mjs';
@@ -55,13 +55,29 @@ function updateScooter(status, script) {
 
 function answerReadiness(question, value) {
   const length = normalizeAnswer(value).length;
-  if (length >= question.minLength) return { state: 'ready', copy: 'Ready for the next prompt.' };
-  if (length >= Math.max(1, Math.floor(question.minLength * 0.55))) return { state: 'almost', copy: 'Almost there — add one more specific detail.' };
-  return { state: 'start', copy: 'Start with one plain sentence. Specific beats perfect.' };
+  if (question.required === false && length === 0) return { state: 'optional', copy: 'Optional — skip this or add useful context.' };
+  if (length >= question.minLength) return { state: 'ready', copy: 'Ready for the next question.' };
+  if (length >= Math.max(1, Math.floor(question.minLength * 0.55))) return { state: 'almost', copy: 'Almost there — add one specific detail.' };
+  return { state: 'start', copy: 'Start rough. Specific beats polished.' };
+}
+
+
+function updateDraftVisibility(answers = {}) {
+  const count = countCompletedPitchAnswers(answers);
+  const requiredTotal = PITCH_QUESTIONS.filter((question) => question.required !== false).length;
+  const optionalFilled = PITCH_QUESTIONS.some((question) => question.required === false && normalizeAnswer(answers?.[question.id]).length > 0);
+  const progressCopy = optionalFilled ? `${count} story elements` : `${Math.min(count, requiredTotal)} of ${requiredTotal} required`;
+  const panel = document.querySelector('[data-story-card-panel]');
+  const desktopProgress = document.querySelector('[data-draft-progress]');
+  const mobileProgress = document.querySelector('[data-mobile-draft-progress]');
+  if (panel) panel.hidden = count === 0;
+  if (desktopProgress) desktopProgress.textContent = progressCopy;
+  if (mobileProgress) mobileProgress.textContent = progressCopy;
+  document.dispatchEvent(new CustomEvent('pitchlab:draft-visibility', { detail: { visible: count > 0, count, requiredTotal, optionalFilled } }));
 }
 
 function renderQuestionHelp(question) {
-  return `<aside class="answer-helper-panel" aria-label="How to answer this question"><div class="helper-block"><span>Why Scooter asks</span><p>${escapeHtml(question.helper)}</p></div><div class="helper-block"><span>Strong answer hint</span><p>${escapeHtml(question.hint || 'Give one concrete detail a smart outsider could repeat.')}</p></div><div class="helper-block example"><span>Example</span><p>${escapeHtml(question.example || 'Use a specific customer, problem, proof point, or next relationship.')}</p></div><div class="helper-block avoid"><span>Avoid</span><p>${escapeHtml(question.avoid || 'Avoid vague, buzzword-heavy answers.')}</p></div></aside>`;
+  return `<details class="answer-helper-panel"><summary>Need help shaping this answer?</summary><div class="helper-grid"><div class="helper-block"><span>Focus on</span><p>${escapeHtml(question.hint || question.helper)}</p></div><div class="helper-block example"><span>Example</span><p>${escapeHtml(question.example || 'Use one concrete customer, problem, proof point, or relationship.')}</p></div><div class="helper-block avoid"><span>Avoid</span><p>${escapeHtml(question.avoid || 'Avoid vague, buzzword-heavy language.')}</p></div></div></details>`;
 }
 
 function renderStoryStrengthSignals(signals = []) {
@@ -73,57 +89,97 @@ function renderCardHtml(card) {
   const rows = [
     ['One-line pitch', card.oneLinePitch], ['Company summary', card.companySummary], ['Who it helps', card.whoItHelps], ['Problem', card.problem], ['Traction / proof', card.tractionProof], ['Founder edge', card.founderEdge], ['Why now', card.whyNow], ['Additional context', card.additionalContext], ['Biggest storytelling gap', card.biggestStoryGap], ['Suggested next steps', card.suggestedNextSteps], ['Suggested people or relationships', card.suggestedPeopleOrRelationships]
   ];
-  return `<div class="card-status" data-ai-enhanced="false">Local draft · not AI-enhanced</div><p class="phase-note">${escapeHtml(card.notice)}</p>${renderStoryStrengthSignals(card.storyStrengthSignals)}<div class="actions"><button type="button" class="button secondary" data-copy-local-card>Copy Pitch Story Card</button><span class="copy-status" data-local-copy-status></span></div><div class="story-card-grid">${rows.map(([label,value])=>`<article class="story-card-section"><h3>${escapeHtml(label)}</h3><p>${escapeHtml(value)}</p></article>`).join('')}</div>`;
+  return `<div class="card-status" data-ai-enhanced="false">Local Founder Story Card</div><p class="phase-note">${escapeHtml(card.notice)}</p>${renderStoryStrengthSignals(card.storyStrengthSignals)}<div class="actions"><button type="button" class="button secondary" data-copy-local-card>Copy Founder Story Card</button><span class="copy-status" data-local-copy-status></span></div><div class="story-card-grid">${rows.map(([label,value])=>`<article class="story-card-section"><h3>${escapeHtml(label)}</h3><p>${escapeHtml(value)}</p></article>`).join('')}</div>`;
+}
+
+const LIVE_DRAFT_ROWS = [
+  ['what_building', 'What you are building'],
+  ['who_for', 'Who it helps'],
+  ['painful_problem', 'The painful problem'],
+  ['why_now', 'Why now'],
+  ['founder_edge', 'Founder edge'],
+  ['proof_traction', 'Proof / traction'],
+  ['help_needed', 'Next useful relationship'],
+  ['anything_else', 'Additional context']
+];
+
+function renderLiveDraftHtml(answers = {}) {
+  const populated = LIVE_DRAFT_ROWS.filter(([id]) => normalizeAnswer(answers[id])).map(([id, label]) => `<article class="live-draft-item"><span>${escapeHtml(label)}</span><p>${escapeHtml(normalizeAnswer(answers[id]))}</p></article>`);
+  if (!populated.length) return '<div class="draft-empty"><strong>Your story will begin forming after your first answer.</strong><p>Only the sections you have started will appear here.</p></div>';
+  return `<div class="live-draft-list">${populated.join('')}</div>`;
 }
 
 function updateStoryPreview(answers) {
   const target = document.querySelector('[data-story-card-preview]');
   if (!target) return;
-  const card = createLocalDraftStoryCard(answers);
-  target.innerHTML = renderCardHtml(card);
-  target.querySelector('[data-copy-local-card]')?.addEventListener('click', async () => {
-    const copy = await copyTextToClipboard(formatStoryCardForClipboard(card, { title: 'Local Draft Pitch Story Card', storyStrengthSignals: card.storyStrengthSignals || [] }));
-    const status = target.querySelector('[data-local-copy-status]');
-    if (status) status.textContent = copy.ok ? 'Copied.' : copy.reason;
-  });
+  target.innerHTML = renderLiveDraftHtml(answers);
+  updateDraftVisibility(answers);
+  document.dispatchEvent(new CustomEvent('pitchlab:draft-updated'));
+}
+
+function setPracticePhase(phase) {
+  const layout = document.querySelector('[data-practice-layout]');
+  if (layout) layout.dataset.practicePhase = phase;
 }
 
 function renderProfileGate(root, onComplete) {
   const profile = loadProfile();
   if (profileComplete(profile)) {
-    root.innerHTML = `<div class="profile-summary"><strong>${escapeHtml(profile.name)}</strong> · ${escapeHtml(profile.email)} · ${escapeHtml(profile.companyName)} <button type="button" class="button secondary mini" data-edit-profile>Edit profile</button></div>`;
-    root.querySelector('[data-edit-profile]')?.addEventListener('click', () => renderProfileForm(root, onComplete));
+    root.innerHTML = `<div class="profile-summary"><div><span>Session profile</span><strong>${escapeHtml(profile.name)}</strong><small>${escapeHtml(profile.email)} · ${escapeHtml(profile.companyName)}</small></div><button type="button" class="button secondary mini" data-edit-profile>Edit</button></div>`;
+    root.querySelector('[data-edit-profile]')?.addEventListener('click', () => {
+      document.querySelector('[data-deck-context-root]')?.setAttribute('hidden', '');
+      document.querySelector('[data-practice-root]')?.setAttribute('hidden', '');
+      setPracticePhase('profile');
+      renderProfileForm(root, onComplete);
+    });
     onComplete(profile);
     return;
   }
+  setPracticePhase('profile');
   renderProfileForm(root, onComplete);
 }
 
 function renderProfileForm(root, onComplete) {
   const existing = loadProfile();
-  root.innerHTML = `<section class="profile-gate boundary-card" aria-labelledby="profile-gate-title"><p class="eyebrow">Start here</p><h2 id="profile-gate-title">Enter your email to begin and save your Pitch Lab session.</h2><p>${escapeHtml(DISCLOSURE_COPY.profileGate)}</p><div class="next-step-card attention-ready"><strong>Next:</strong> this creates the private session context. Your pitch answers are still private until you choose to share.</div><p class="phase-note" data-profile-sync-status>Your session starts after this step. Pitch answers stay private until you choose to share.</p><form data-profile-form novalidate><label>Name <span class="field-help">Use the name West Peek should recognize if you later share.</span><input name="name" required minlength="2" autocomplete="name" value="${escapeHtml(existing.name || '')}" title="Your name for the founder session." /></label><label>Email <span class="field-help">Used to identify this session and support update/delete requests.</span><input name="email" type="email" required autocomplete="email" value="${escapeHtml(existing.email || '')}" title="Use the email tied to this founder story." /></label><label>Company name <span class="field-help">This anchors the Story Card and packet preview.</span><input name="companyName" required minlength="2" autocomplete="organization" value="${escapeHtml(existing.companyName || '')}" title="Company, project, or founder initiative name." /></label><label>Website optional <span class="field-help">Add only if it helps context. You can leave this blank.</span><input name="website" autocomplete="url" value="${escapeHtml(existing.website || '')}" title="Optional website for context." /></label><p class="field-error" data-profile-error hidden></p><div class="actions"><button class="button primary attention-ready" type="submit">Start AI Scooter practice</button></div></form></section>`;
+  root.innerHTML = `<section class="profile-gate boundary-card" aria-labelledby="profile-gate-title"><p class="eyebrow">Step 1 — About you</p><h2 id="profile-gate-title">Start your private pitch-practice session.</h2><p class="profile-intro">Add the basic context Scooter needs to personalize the room. Your pitch answers remain private unless you choose to share the finished Founder Story Card.</p><form data-profile-form novalidate><div class="profile-fields"><label>Name<input name="name" required minlength="2" autocomplete="name" value="${escapeHtml(existing.name || '')}" /></label><label>Work email<input name="email" type="email" required autocomplete="email" value="${escapeHtml(existing.email || '')}" /></label><label>Company or project<input name="companyName" required minlength="2" autocomplete="organization" value="${escapeHtml(existing.companyName || '')}" /></label><label>Website <span class="optional-label">Optional</span><input name="website" autocomplete="url" value="${escapeHtml(existing.website || '')}" /></label></div><p class="field-error" data-profile-error hidden></p><div class="actions"><button class="button primary button-large" type="submit">Continue to your first question</button></div><p class="profile-privacy" data-profile-sync-status>Basic profile details create the session context. Pitch answers are not shared at this step.</p></form></section>`;
   root.querySelector('[data-profile-form]').addEventListener('submit', async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const profile = { name: normalizeAnswer(data.get('name')), email: normalizeAnswer(data.get('email')).toLowerCase(), companyName: normalizeAnswer(data.get('companyName')), website: normalizeAnswer(data.get('website')) };
     const error = root.querySelector('[data-profile-error]');
-    if (!profileComplete(profile)) { error.textContent = 'Name, valid email, and company name are required before practice.'; error.hidden = false; return; }
+    if (!profileComplete(profile)) { error.textContent = 'Name, a valid email, and company or project are required.'; error.hidden = false; return; }
     saveJson(STORAGE_PROFILE_KEY, profile);
     const syncStatus = root.querySelector('[data-profile-sync-status]');
     if (syncStatus) syncStatus.textContent = 'Saving your basic founder profile…';
     syncProfileCapture(profile).then((status) => {
-      if (syncStatus) syncStatus.textContent = status.ok ? 'Profile saved. Your pitch answers remain private until you choose to share.' : 'Profile saved for this session. You can continue practice.';
+      const activeStatus = document.querySelector('[data-profile-sync-status]');
+      if (!activeStatus) return;
+      activeStatus.dataset.profileSyncState = status.ok ? 'synced' : 'pending';
+      activeStatus.textContent = status.ok
+        ? 'Profile saved to West Peek Network OS. Your pitch answers remain private until you choose to share.'
+        : `Profile saved in this browser. West Peek Network OS sync is pending (${status.errorCode || 'NETWORK_OS_UNAVAILABLE'}). You can continue.`;
     });
     renderProfileGate(root, onComplete);
   });
 }
 
-function hydrateDeckContext() {
+function hydrateDeckContext(onContinue) {
   const root = document.querySelector('[data-deck-context-root]');
   if (!root) return;
+  root.hidden = false;
+  setPracticePhase('deck');
   const deck = loadJson(STORAGE_DECK_CONTEXT_KEY, null);
-  root.innerHTML = `<section class="deck-context-panel boundary-card" aria-labelledby="deck-context-title"><h2 id="deck-context-title">Optional deck-as-context</h2><p>${escapeHtml(DISCLOSURE_COPY.deckUpload)}</p><div class="next-step-card"><strong>Choose one:</strong> skip the deck and answer from scratch, or add deck context so the story prompts have more background.</div><div class="actions"><button type="button" class="button secondary attention-ready" data-no-deck title="Recommended if you want the fastest guided session.">No deck — guide me through pitch practice</button><label class="button secondary file-button" title="Use a deck only as context. Sharing the deck remains separate consent.">Use deck as background context<input type="file" data-deck-file accept=".txt,.md,.pdf,.ppt,.pptx" hidden /></label></div><p class="phase-note" data-deck-status>${deck?.deck_provided ? `Deck context noted: ${escapeHtml(deck.filename)}. Parsing is background context only.` : 'No deck context required.'}</p></section>`;
-  root.querySelector('[data-no-deck]')?.addEventListener('click', () => { saveJson(STORAGE_DECK_CONTEXT_KEY, { deck_provided: false, deck_context_used: false }); root.querySelector('[data-deck-status]').textContent = 'No deck context will be used. Continue with AI Scooter practice.'; });
+  const continueIntoPractice = () => {
+    root.hidden = true;
+    setPracticePhase('questions');
+    onContinue();
+  };
+  if (deck && Object.prototype.hasOwnProperty.call(deck, 'deck_provided')) {
+    continueIntoPractice();
+    return;
+  }
+  root.innerHTML = `<section class="deck-context-panel boundary-card" aria-labelledby="deck-context-title"><p class="eyebrow">Optional context</p><h2 id="deck-context-title">Have a deck handy?</h2><p>Add it as background context, or continue without one. This is not a deck review, and a deck is never required to use Pitch Lab.</p><div class="deck-choice-actions"><button type="button" class="button primary" data-no-deck>Continue without a deck</button><label class="button secondary file-button">Add deck<input type="file" data-deck-file accept=".txt,.md,.pdf,.ppt,.pptx" hidden /></label></div><p class="phase-note" data-deck-status>${escapeHtml(DISCLOSURE_COPY.deckUpload)}</p></section>`;
+  root.querySelector('[data-no-deck]')?.addEventListener('click', () => { saveJson(STORAGE_DECK_CONTEXT_KEY, { deck_provided: false, deck_context_used: false }); continueIntoPractice(); });
   root.querySelector('[data-deck-file]')?.addEventListener('change', async (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -132,22 +188,23 @@ function hydrateDeckContext() {
       try { summary = (await file.text()).slice(0, 2000); } catch { summary = ''; }
     }
     saveJson(STORAGE_DECK_CONTEXT_KEY, { deck_provided: true, deck_context_used: Boolean(summary), filename: file.name, summary, parsed_at: new Date().toISOString(), deck_included_with_consent: false });
-    root.querySelector('[data-deck-status]').textContent = summary ? `Deck context extracted from ${file.name}. It will inform the story prompts only.` : `Deck received as context (${file.name}), but automatic parsing is unavailable here. Continue with practice questions.`;
+    continueIntoPractice();
   });
 }
 
 function renderStep(root, state) {
+  root.hidden = false;
   const question = PITCH_QUESTIONS[state.index];
   const answer = state.answers[question.id] || '';
   const progress = `${state.index + 1} of ${PITCH_QUESTIONS.length}`;
-  const optionalBadge = question.required === false ? ' · optional context' : '';
   const isMidpoint = state.index === 3;
-  const prompt = isMidpoint ? 'Midpoint check-in: the shape is forming. Now make the pain specific and the proof concrete.' : question.helper;
+  const prompt = isMidpoint ? 'The shape is forming. Now make the pain specific and the proof concrete.' : question.helper;
   updateScooter(isMidpoint ? SCOOTER_COMPANION_STATES.midpoint_checkin_ready : SCOOTER_COMPANION_STATES.practice_listening, prompt);
   const readiness = answerReadiness(question, answer);
-  root.innerHTML = `<section class="practice-flow coaching-thread" aria-labelledby="practice-step-title" data-answer-readiness="${readiness.state}"><div class="progress-row"><span>${escapeHtml(progress)}${escapeHtml(optionalBadge)}</span><progress max="${PITCH_QUESTIONS.length}" value="${state.index + 1}"></progress></div><div class="next-step-card ${readiness.state === 'ready' ? 'attention-ready' : ''}" data-next-step-card><strong>Next:</strong> answer this prompt with one specific customer, problem, proof, or relationship signal. <span data-readiness-copy>${escapeHtml(readiness.copy)}</span></div>${isMidpoint ? '<div class="chat-message ai-message" data-midpoint-checkin><strong>AI Scooter:</strong> I’m hearing the shape of it. The customer is getting clearer; now sharpen the pain and proof.</div>' : ''}<div class="chat-message ai-message"><strong>AI Scooter:</strong> ${escapeHtml(question.label)} <span class="helper-text">${escapeHtml(prompt)}</span>${question.required === false ? '<span class="session-pill">Optional — add context only if useful</span>' : ''}</div>${renderQuestionHelp(question)}<form data-practice-form novalidate><label for="answer"><span id="practice-step-title">You</span><span class="field-help">Write like you are explaining it to one smart person who has never heard of the company.</span></label><textarea id="answer" name="answer" rows="8" minlength="${question.minLength}" maxlength="${question.maxLength}" placeholder="Answer AI Scooter here. Start rough — specificity matters more than polish. If this is optional and nothing else matters, you can leave it blank." title="Answer this prompt in plain English. The live draft updates as you type.">${escapeHtml(answer)}</textarea><div class="field-meta"><span data-count>${normalizeAnswer(answer).length}</span> / ${question.maxLength} characters · minimum ${question.minLength}</div><p class="field-error" data-error hidden></p><div class="actions"><button type="button" class="button secondary" data-back ${state.index === 0 ? 'disabled' : ''}>Back</button><button type="submit" class="button primary ${readiness.state === 'ready' ? 'attention-ready' : ''}" data-next-question>${state.index === PITCH_QUESTIONS.length - 1 ? 'Create session draft card' : (question.required === false ? 'Skip or continue' : 'Next question')}</button></div></form><p class="phase-note">Answers stay in this session while you practice. AI Scooter will not share them with West Peek unless you explicitly submit a Founder Story Packet.</p></section>`;
+  root.innerHTML = `<section class="practice-flow coaching-thread" aria-labelledby="practice-step-title" data-answer-readiness="${readiness.state}"><div class="progress-row"><span>Question ${escapeHtml(progress)}${question.required === false ? ' · optional' : ''}</span><progress max="${PITCH_QUESTIONS.length}" value="${state.index + 1}"></progress></div>${isMidpoint ? '<div class="chat-message ai-message" data-midpoint-checkin><strong>AI Scooter</strong><p>I’m hearing the shape of it. Now sharpen the pain and proof.</p></div>' : ''}<div class="chat-message ai-message"><strong>AI Scooter</strong><h2 id="practice-step-title">${escapeHtml(question.label)}</h2><p>${escapeHtml(prompt)}</p>${question.required === false ? '<span class="session-pill">Optional context</span>' : ''}</div><form data-practice-form novalidate><label class="sr-only" for="answer">Your answer</label><textarea id="answer" name="answer" rows="7" minlength="${question.minLength}" maxlength="${question.maxLength}" placeholder="Give Scooter the rough version. You can make it polished later.">${escapeHtml(answer)}</textarea><div class="answer-meta"><span data-readiness-copy>${escapeHtml(readiness.copy)}</span><span><span data-count>${normalizeAnswer(answer).length}</span> / ${question.maxLength}</span></div>${renderQuestionHelp(question)}<p class="field-error" data-error hidden></p><div class="actions question-actions"><button type="button" class="button secondary" data-back ${state.index === 0 ? 'disabled' : ''}>Back</button><button type="submit" class="button primary" data-next-question>${state.index === PITCH_QUESTIONS.length - 1 ? 'Create my Founder Story Card' : (question.required === false ? 'Skip or finish' : 'Continue')}</button></div></form><p class="answer-privacy">Saved in this browser while you practice. Nothing is shared unless you explicitly submit the finished card.</p></section>`;
   const textarea = root.querySelector('textarea'); const count = root.querySelector('[data-count]'); const error = root.querySelector('[data-error]');
-  textarea.addEventListener('input', () => { const normalizedLength = normalizeAnswer(textarea.value).length; count.textContent = String(normalizedLength); error.hidden = true; state.answers[question.id] = textarea.value; saveAnswers(state.answers); updateStoryPreview(state.answers); const readiness = answerReadiness(question, textarea.value); const section = root.querySelector('.practice-flow'); const nextCard = root.querySelector('[data-next-step-card]'); const readinessCopy = root.querySelector('[data-readiness-copy]'); const nextButton = root.querySelector('[data-next-question]'); if (section) section.dataset.answerReadiness = readiness.state; if (readinessCopy) readinessCopy.textContent = readiness.copy; if (nextCard) nextCard.classList.toggle('attention-ready', readiness.state === 'ready'); if (nextButton) nextButton.classList.toggle('attention-ready', readiness.state === 'ready'); });
+  textarea.focus({ preventScroll: true });
+  textarea.addEventListener('input', () => { const normalizedLength = normalizeAnswer(textarea.value).length; count.textContent = String(normalizedLength); error.hidden = true; state.answers[question.id] = textarea.value; saveAnswers(state.answers); updateStoryPreview(state.answers); const readiness = answerReadiness(question, textarea.value); const section = root.querySelector('.practice-flow'); const readinessCopy = root.querySelector('[data-readiness-copy]'); if (section) section.dataset.answerReadiness = readiness.state; if (readinessCopy) readinessCopy.textContent = readiness.copy; });
   root.querySelector('[data-back]')?.addEventListener('click', () => { if (state.index > 0) { state.index -= 1; renderStep(root, state); } });
   root.querySelector('[data-practice-form]').addEventListener('submit', (event) => { event.preventDefault(); const result = validateAnswer(question, textarea.value); if (!result.ok) { error.textContent = result.message; error.hidden = false; return; } state.answers[question.id] = normalizeAnswer(textarea.value); saveAnswers(state.answers); updateStoryPreview(state.answers); if (state.index < PITCH_QUESTIONS.length - 1) { state.index += 1; renderStep(root, state); return; } renderComplete(root, state.answers); });
 }
@@ -155,9 +212,8 @@ function renderStep(root, state) {
 function renderComplete(root, answers) {
   const validation = validatePitchAnswers(answers);
   const card = createLocalDraftStoryCard(answers);
-  updateScooter(SCOOTER_COMPANION_STATES.story_text_ready, 'Your Pitch Story Card draft is ready. Next, generate the AI Pitch Story Card when providers are configured.');
-  root.innerHTML = `<section class="practice-flow complete" aria-labelledby="practice-complete-title"><p class="eyebrow">Session draft created</p><h2 id="practice-complete-title">Your Pitch Story Card draft is ready.</h2><div class="next-step-card attention-ready"><strong>Next:</strong> go to the Story Card review studio, generate the AI Pitch Story Card, then rehearse out loud if you want a stronger delivery.</div><p>${escapeHtml(card.notice)}</p><div class="actions"><button type="button" class="button secondary" data-edit>Edit answers</button><a class="button primary attention-ready" href="/story-card">View Pitch Story Card</a></div><p class="phase-note">Founder Story Packet sharing remains separate and consent-gated. You can update and come back later.</p></section>`;
-
+  updateScooter(SCOOTER_COMPANION_STATES.story_text_ready, 'Your Founder Story Card draft is ready. Review it, sharpen it, and practice it out loud before sharing.');
+  root.innerHTML = `<section class="practice-flow complete" aria-labelledby="practice-complete-title"><p class="eyebrow">Practice complete</p><h2 id="practice-complete-title">Your Founder Story Card is ready to review.</h2><p>${escapeHtml(card.notice)}</p><div class="actions"><button type="button" class="button secondary" data-edit>Edit answers</button><a class="button primary" href="/story-card">Review my Founder Story Card</a></div><p class="answer-privacy">Sharing remains separate and consent-gated. You can copy the card and leave without sending anything to West Peek.</p></section>`;
   if (!validation.ok) root.querySelector('p').textContent = 'Some required answers still need more detail.';
   root.querySelector('[data-edit]')?.addEventListener('click', () => renderStep(root, { index: 0, answers }));
 }
@@ -168,8 +224,8 @@ export function hydratePracticeFlow() {
   if (!root || !gate) return;
   const answers = loadAnswers();
   updateStoryPreview(answers);
-  hydrateDeckContext();
-  renderProfileGate(gate, () => renderStep(root, { index: 0, answers }));
+  const beginQuestions = () => renderStep(root, { index: 0, answers });
+  renderProfileGate(gate, () => hydrateDeckContext(beginQuestions));
 }
 
 export function hydrateStoryCard() {
@@ -178,7 +234,7 @@ export function hydrateStoryCard() {
   const answers = loadAnswers();
   const card = createLocalDraftStoryCard(answers);
   root.innerHTML = renderCardHtml(card);
-  root.querySelector('[data-copy-local-card]')?.addEventListener('click', async () => { const copy = await copyTextToClipboard(formatStoryCardForClipboard(card, { title: 'Local Draft Pitch Story Card', storyStrengthSignals: card.storyStrengthSignals || [] })); const status = root.querySelector('[data-local-copy-status]'); if (status) status.textContent = copy.ok ? 'Copied.' : copy.reason; });
+  root.querySelector('[data-copy-local-card]')?.addEventListener('click', async () => { const copy = await copyTextToClipboard(formatStoryCardForClipboard(card, { title: 'Founder Story Card', storyStrengthSignals: card.storyStrengthSignals || [] })); const status = root.querySelector('[data-local-copy-status]'); if (status) status.textContent = copy.ok ? 'Copied.' : copy.reason; });
 }
 
 function loadRehearsalTakes() { return loadJson(STORAGE_REHEARSAL_TAKES_KEY, { takes: [] }); }
@@ -259,7 +315,7 @@ function renderTakeList(root, playback, setStatus) {
   }
   list.innerHTML = takes.map((take, index) => {
     const active = selected?.id === take.id;
-    return `<article class="take-row ${active ? 'selected' : ''}" data-take-id="${escapeHtml(take.id)}"><div><strong>${takeLabel(index)}</strong><p>${escapeHtml(formatSeconds(take.durationSeconds))} · ${escapeHtml(take.createdAtLabel || 'Recorded locally')}</p><p>${escapeHtml(take.transcript ? take.transcript.slice(0, 140) : 'No transcript saved yet. Add one before sharing for the strongest packet.')}${take.transcript && take.transcript.length > 140 ? '…' : ''}</p></div><div class="take-actions"><button type="button" class="button secondary mini" data-play-take="${escapeHtml(take.id)}">Play</button><button type="button" class="button primary mini" data-select-take="${escapeHtml(take.id)}">${active ? 'Selected' : 'Choose best'}</button><button type="button" class="button secondary mini" data-delete-take="${escapeHtml(take.id)}">Delete</button></div></article>`;
+    return `<article class="take-row ${active ? 'selected' : ''}" data-take-id="${escapeHtml(take.id)}"><div><strong>${takeLabel(index)}</strong><p>${escapeHtml(formatSeconds(take.durationSeconds))} · ${escapeHtml(take.createdAtLabel || 'Recorded locally')}</p><p>${escapeHtml(take.transcript ? take.transcript.slice(0, 140) : 'No transcript saved yet. Add one before sharing for the strongest Founder Story Card.')}${take.transcript && take.transcript.length > 140 ? '…' : ''}</p></div><div class="take-actions"><button type="button" class="button secondary mini" data-play-take="${escapeHtml(take.id)}">Play</button><button type="button" class="button primary mini" data-select-take="${escapeHtml(take.id)}">${active ? 'Selected' : 'Choose best'}</button><button type="button" class="button secondary mini" data-delete-take="${escapeHtml(take.id)}">Delete</button></div></article>`;
   }).join('');
   list.querySelectorAll('[data-play-take]').forEach((button) => button.addEventListener('click', async () => {
     const id = button.getAttribute('data-play-take');
@@ -277,17 +333,33 @@ function renderTakeList(root, playback, setStatus) {
     const id = button.getAttribute('data-select-take');
     const take = (loadRehearsalTakes().takes || []).find((item) => item.id === id);
     saveSelectedRehearsal({ id, selectedAt: new Date().toISOString(), selectedWithConsent: false });
-    root.querySelector('[data-consent-selected-take]').checked = false;
+    const consentControl = root.querySelector('[data-consent-selected-take]');
+    if (consentControl) {
+      consentControl.checked = false;
+      consentControl.disabled = false;
+    }
+    const consentCopy = root.querySelector('[data-rehearsal-consent-status]');
+    if (consentCopy) consentCopy.textContent = 'Nothing from camera rehearsal is included unless you choose this.';
     root.querySelector('[data-coaching-review]').innerHTML = renderCoachingReview(take);
     renderTakeList(root, playback, setStatus);
-    setStatus('Best take selected. Add consent below if you want its transcript/status included with the Founder Story Packet.');
+    setStatus('Best take selected. Add consent below if you want its transcript/status included with your Founder Story Card.');
   }));
   list.querySelectorAll('[data-delete-take]').forEach((button) => button.addEventListener('click', async () => {
     const id = button.getAttribute('data-delete-take');
     await deleteTakeBlob(id);
     const remaining = (loadRehearsalTakes().takes || []).filter((item) => item.id !== id);
     saveRehearsalTakes({ takes: remaining });
-    if (loadSelectedRehearsal()?.id === id) saveSelectedRehearsal(null);
+    const deletedWasSelected = loadSelectedRehearsal()?.id === id;
+    if (deletedWasSelected) {
+      saveSelectedRehearsal(null);
+      const consentControl = root.querySelector('[data-consent-selected-take]');
+      if (consentControl) {
+        consentControl.checked = false;
+        consentControl.disabled = true;
+      }
+      const consentCopy = root.querySelector('[data-rehearsal-consent-status]');
+      if (consentCopy) consentCopy.textContent = 'Choose a best take before attaching rehearsal context.';
+    }
     renderTakeList(root, playback, setStatus);
     root.querySelector('[data-coaching-review]').innerHTML = renderCoachingReview(selectedRehearsalSummary());
     setStatus('Take deleted from this browser.');
@@ -307,7 +379,7 @@ export function hydratePracticeOutLoud() {
     <div class="rehearsal-brief">
       <p class="eyebrow">Practice Out Loud</p>
       <h3>Camera Room Opens: rehearse your 60-second pitch in a private camera room.</h3>
-      <p>AI Scooter remains visible. Your camera appears here. Countdown starts when you are ready. You turn on camera/mic, get a countdown, record one or more takes, watch playback, add or dictate a transcript, choose the best take, then decide whether the transcript/status should travel with the Founder Story Packet.</p>
+      <p>AI Scooter remains visible. Your camera appears here. Countdown starts when you are ready. You turn on camera/mic, get a countdown, record one or more takes, watch playback, add or dictate a transcript, choose the best take, then decide whether the transcript/status should be attached to your Founder Story Card.</p>
       <div class="journey-mini-steps" aria-label="Practice Out Loud steps"><span>1 Camera</span><span>2 Countdown</span><span>3 Record</span><span>4 Playback</span><span>5 Choose</span><span>6 Consent</span></div>
       <div class="session-status-grid"><span>Local camera room</span><span>Multiple takes</span><span>Transcript optional</span><span>Consent before share</span></div>
     </div>
@@ -333,7 +405,7 @@ export function hydratePracticeOutLoud() {
     </section>
     <section class="take-library boundary-card" aria-labelledby="take-library-title"><div class="panel-title-row"><div><p class="eyebrow">Choose Best Take</p><h3 id="take-library-title">Your local rehearsal takes</h3></div></div><div data-take-list></div></section>
     <section class="boundary-card" aria-label="Selected rehearsal coaching"><div data-coaching-review>${renderCoachingReview(selected)}</div></section>
-    <section class="consent-gate-card boundary-card" aria-labelledby="rehearsal-consent-title"><p class="eyebrow">Consent Gate</p><h3 id="rehearsal-consent-title">Attach rehearsal context to the Founder Story Packet?</h3><p>The selected video remains local unless a storage/upload path is enabled later. Today, consent can attach the selected take status and transcript text to the packet.</p><label class="checkbox-row"><input type="checkbox" data-consent-selected-take ${selected?.selectedWithConsent ? 'checked' : ''} /> Include my selected rehearsal take transcript/status with my Founder Story Packet.</label><p class="phase-note" data-rehearsal-consent-status>${selected?.selectedWithConsent ? 'Selected take context is marked for packet inclusion.' : 'Nothing from camera rehearsal is included unless you choose this.'}</p></section>
+    <section class="consent-gate-card boundary-card" aria-labelledby="rehearsal-consent-title"><p class="eyebrow">Consent Gate</p><h3 id="rehearsal-consent-title">Attach rehearsal context to the Founder Story Card?</h3><p>The selected video remains local unless a storage/upload path is enabled later. Today, consent can attach the selected take status and transcript text to the Story Card you share.</p><label class="checkbox-row"><input type="checkbox" data-consent-selected-take ${selected?.selectedWithConsent ? 'checked' : ''} ${selected?.id ? '' : 'disabled'} /> Include my selected rehearsal take transcript/status with my Founder Story Card.</label><p class="phase-note" data-rehearsal-consent-status>${selected?.selectedWithConsent ? 'Selected take context is marked for sharing.' : (selected?.id ? 'Nothing from camera rehearsal is included unless you choose this.' : 'Choose a best take before attaching rehearsal context.')}</p></section>
   </div>`;
 
   const preview = root.querySelector('[data-camera-preview]');
@@ -370,13 +442,15 @@ export function hydratePracticeOutLoud() {
       saveRehearsalTakes({ takes: [newTake, ...existing].slice(0, 6) });
       saveSelectedRehearsal({ id, selectedAt: new Date().toISOString(), selectedWithConsent: false });
       consent.checked = false;
+      consent.disabled = false;
+      consentStatus.textContent = 'Nothing from camera rehearsal is included unless you choose this.';
       root.querySelector('[data-coaching-review]').innerHTML = renderCoachingReview(newTake);
       renderTakeList(root, playback, setStatus);
       if (playback.src) URL.revokeObjectURL(playback.src);
       playback.src = URL.createObjectURL(blob);
       playback.hidden = false;
       deleteRecordingArtifactsOverLimit();
-      setStatus('Take saved locally. Watch it back, revise the transcript, then choose whether it can be included with the packet.');
+      setStatus('Take saved locally. Watch it back, revise the transcript, then choose whether it can be included with your Founder Story Card.');
       stopRecording.disabled = true; startCountdown.disabled = false; countdownDisplay.textContent = 'Ready';
     };
     recorder.start();
@@ -392,7 +466,7 @@ export function hydratePracticeOutLoud() {
       stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
       preview.srcObject = stream; await preview.play(); startCountdown.disabled = false; setStatus('Camera/mic are on locally. Nothing is uploaded.');
       updateScooter(SCOOTER_COMPANION_STATES.practice_listening, 'Good. When you are ready, I’ll count you down. Pitch me like I’m hearing this for the first time.');
-    } catch { setStatus('Camera permission was unavailable or denied. You can still create and share a Founder Story Packet without video practice.'); }
+    } catch { setStatus('Camera permission was unavailable or denied. You can still create and share a Founder Story Card without video practice.'); }
   });
   startCountdown.addEventListener('click', async () => {
     for (const label of ['3','2','1']) {
@@ -435,7 +509,7 @@ export function hydratePracticeOutLoud() {
     const selectedState = loadSelectedRehearsal();
     if (!selectedState?.id) { consent.checked = false; consentStatus.textContent = 'Choose a best take before attaching rehearsal context.'; return; }
     saveSelectedRehearsal({ ...selectedState, selectedWithConsent: consent.checked, consentedAt: consent.checked ? new Date().toISOString() : null });
-    consentStatus.textContent = consent.checked ? 'Selected take transcript/status will be included if you share the Founder Story Packet.' : 'Selected take context removed from packet inclusion.';
+    consentStatus.textContent = consent.checked ? 'Selected take transcript/status will be included if you share the Founder Story Card.' : 'Selected take context removed from sharing.';
   });
 }
 

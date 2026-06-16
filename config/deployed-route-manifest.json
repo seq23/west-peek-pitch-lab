@@ -18,7 +18,9 @@
         "value": "/"
       },
       "safeActions": [
-        "navigate"
+        "navigate",
+        "activate-primary-cta",
+        "open-mobile-navigation"
       ],
       "fixtureRequirements": [],
       "persistenceRequired": false,
@@ -39,7 +41,9 @@
         "value": "/how-it-works"
       },
       "safeActions": [
-        "navigate"
+        "navigate",
+        "activate-primary-cta",
+        "open-mobile-navigation"
       ],
       "fixtureRequirements": [],
       "persistenceRequired": false,
@@ -60,7 +64,14 @@
         "value": "/practice"
       },
       "safeActions": [
-        "navigate"
+        "navigate",
+        "toggle-scooter-stage",
+        "submit-profile",
+        "continue-without-deck",
+        "add-deck-context",
+        "answer-prompt",
+        "open-mobile-story-draft",
+        "close-mobile-story-draft"
       ],
       "fixtureRequirements": [],
       "persistenceRequired": true,
@@ -81,7 +92,12 @@
         "value": "/story-card"
       },
       "safeActions": [
-        "navigate"
+        "navigate",
+        "toggle-scooter-stage",
+        "copy-founder-story-card",
+        "generate-founder-story-card",
+        "open-practice-out-loud",
+        "continue-to-share"
       ],
       "fixtureRequirements": [],
       "persistenceRequired": true,
@@ -102,7 +118,12 @@
         "value": "/share"
       },
       "safeActions": [
-        "navigate"
+        "navigate",
+        "toggle-scooter-stage",
+        "review-founder-story-card",
+        "set-share-consent",
+        "submit-founder-story-card",
+        "keep-practicing"
       ],
       "fixtureRequirements": [],
       "persistenceRequired": true,
@@ -123,7 +144,9 @@
         "value": "/thank-you"
       },
       "safeActions": [
-        "navigate"
+        "navigate",
+        "toggle-scooter-stage",
+        "return-home"
       ],
       "fixtureRequirements": [],
       "persistenceRequired": false,

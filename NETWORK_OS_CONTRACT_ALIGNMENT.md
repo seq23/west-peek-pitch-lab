@@ -1,7 +1,7 @@
 # Pitch Lab ↔ Network OS Contract Alignment
 
 Status: ACTIVE  
-Updated: 2026-06-11
+Updated: 2026-06-16
 
 ## Current status
 
@@ -17,6 +17,7 @@ Primary runtime files:
 - `src/server/network/networkOsClient.mjs`
 - `src/server/network/pitchLabHandoffContract.mjs`
 - `src/server/network/profileLeadContract.mjs`
+- `functions/api/pitch/profile-capture.js`
 - `functions/api/pitch/share.js`
 
 ## Required paired proof
@@ -31,3 +32,18 @@ A complete two-repo proof requires:
 ## Current patch scope
 
 No sender-code signature repair was required in this Pitch Lab ZIP because the sender already matches the canonical Network OS signature contract. The required change here is validation/documentation alignment: Tier 3 is the ultimate provider/deployed proof gate, and live Network OS handoff must be explicit in the operations orchestrator.
+
+
+## Profile-capture repair — 2026-06-16
+
+The profile gate previously referenced `NETWORK_OS_PROFILE_CAPTURE_ENABLED` and `NETWORK_OS_PITCH_LAB_PROFILE_ENDPOINT` in runtime code without registering them in the canonical env registry or committed env examples. A deployed environment configured only with `NETWORK_OS_BASE_URL`, `NETWORK_OS_PITCH_LAB_ENDPOINT`, and `NETWORK_OS_HANDOFF_ENABLED` therefore returned `NETWORK_OS_PROFILE_URL_MISSING`, while the browser continued locally.
+
+The sender now:
+
+- derives `/api/intake/pitch-lab-profile` from `NETWORK_OS_BASE_URL` when no explicit profile endpoint is present;
+- derives the profile endpoint from the packet endpoint as a second fallback;
+- registers the canonical profile and packet endpoint variables;
+- exposes a truthful synced/pending state in the founder profile UI;
+- tests the derived URL, signature headers, success response, and env-registry parity.
+
+Network OS source already contains the compatible public receiver at `/api/intake/pitch-lab-profile`; no consumer source change is required for this repair.

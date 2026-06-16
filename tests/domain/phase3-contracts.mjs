@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import assert from 'node:assert/strict';
-import { PITCH_QUESTIONS, validateAnswer, validatePitchAnswers } from '../../src/runtime/pitchQuestions.mjs';
+import { PITCH_QUESTIONS, validateAnswer, validatePitchAnswers, countCompletedPitchAnswers } from '../../src/runtime/pitchQuestions.mjs';
 import { createLocalDraftStoryCard } from '../../src/runtime/storyCard.mjs';
 import { PHASE_3_CONSENT_STATE } from '../../src/runtime/consent.mjs';
 
@@ -28,6 +28,11 @@ for (const question of PITCH_QUESTIONS) {
 
 const answers = Object.fromEntries(PITCH_QUESTIONS.map((question) => [question.id, 'This answer has enough detail to satisfy the local question validation gate and explain the founder story.']));
 assert.equal(validatePitchAnswers(answers).ok, true);
+
+
+assert.equal(countCompletedPitchAnswers({}), 0, 'blank optional prompt must not reveal or advance the live draft');
+assert.equal(countCompletedPitchAnswers({ anything_else: '' }), 0, 'blank optional context must not count as a completed story element');
+assert.equal(countCompletedPitchAnswers({ what_building: answers.what_building }), 1, 'first meaningful required answer should reveal one live-draft element');
 
 const card = createLocalDraftStoryCard(answers);
 assert.equal(card.status, 'local_draft_complete');

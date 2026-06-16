@@ -30,7 +30,7 @@ const phase3RuntimeSource = combined + '\n' + fs.readFileSync(path.join(root, 's
 
 for (const [label, terms] of [
   ['Local practice UI', ['Local practice flow', 'Live local draft preview']],
-  ['Local card shell', ['Local Pitch Story Card shell', 'local draft']],
+  ['Local card shell', ['Local Founder Story Card', 'local draft']],
   ['Consent-gated sharing', ['explicit consent', 'No contact is created', 'pending intake']],
   ['No unearned success claim', ['does not guarantee funding', 'contact', 'human review']]
 ]) {

@@ -62,7 +62,8 @@ const clientEntryAliases = {
   'practiceFlow.mjs': 'practice-flow.js',
   'aiStoryCardClient.mjs': 'ai-story-card.js',
   'shareFlow.mjs': 'share-flow.js',
-  'deleteMyInfo.mjs': 'delete-my-info.js'
+  'deleteMyInfo.mjs': 'delete-my-info.js',
+  'sessionExperience.mjs': 'session-experience.js'
 };
 for (const [moduleFile, outputName] of Object.entries(clientEntryAliases)) {
   fs.copyFileSync(path.join(runtimeSource, moduleFile), path.join(runtimeTarget, outputName));

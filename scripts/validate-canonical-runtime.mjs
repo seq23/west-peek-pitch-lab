@@ -30,7 +30,13 @@ const requiredRuntimeFiles = [
   'src/runtime/consent.mjs',
   'src/runtime/practiceFlow.mjs',
   'src/runtime/aiStoryCardClient.mjs',
-  'src/ui/appShell.mjs'
+  'src/runtime/sessionExperience.mjs',
+  'src/ui/appShell.mjs',
+  'src/ui/publicLanding.mjs',
+  'src/ui/sessionShell.mjs',
+  'src/ui/practiceWorkspace.mjs',
+  'src/ui/storyReviewWorkspace.mjs',
+  'src/ui/shareWorkspace.mjs'
 ];
 for (const file of requiredRuntimeFiles) if (!fs.existsSync(path.join(root, file))) failures.push(`Missing canonical runtime file: ${file}`);
 

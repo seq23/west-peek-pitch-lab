@@ -70,10 +70,17 @@ Pitch Lab sends a Founder Story Packet to Network OS only after explicit founder
 
 ## Pitch Lab → Network OS profile/packet endpoints
 
+NETWORK_OS_HANDOFF_ENABLED=true
 NETWORK_OS_PROFILE_CAPTURE_ENABLED=true
-NETWORK_OS_PITCH_LAB_PROFILE_ENDPOINT=https://network.example.com/api/intake/pitch-lab-profile
-NETWORK_OS_PITCH_LAB_PACKET_ENDPOINT=https://network.example.com/api/intake/pitch-lab
+NETWORK_OS_BASE_URL=https://network.joinwestpeek.com
+NETWORK_OS_PITCH_LAB_PROFILE_ENDPOINT=https://network.joinwestpeek.com/api/intake/pitch-lab-profile
+NETWORK_OS_PITCH_LAB_PACKET_ENDPOINT=https://network.joinwestpeek.com/api/intake/pitch-lab
 NETWORK_OS_SHARED_SECRET=<shared-secret>
 NETWORK_OS_TIMEOUT_MS=15000
 
 Profile capture sends only founder name, email, company, and optional website. Pitch answers remain private until the Founder Story Packet is explicitly shared.
+
+
+### Endpoint fallback contract
+
+If `NETWORK_OS_PITCH_LAB_PROFILE_ENDPOINT` is not present, Pitch Lab must derive the profile endpoint from `NETWORK_OS_BASE_URL` or from the configured packet endpoint. Missing optional alias variables must not silently disable a profile write when the Network OS handoff is otherwise enabled.

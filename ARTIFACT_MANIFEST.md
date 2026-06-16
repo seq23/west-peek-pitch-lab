@@ -2,10 +2,30 @@
 
 ## Current artifact
 
-- Artifact: `west-peek-pitch-lab-main_BASELINE_06-09-26_0000024.zip`
-- Phase: 9D — Hostile Master Gauntlet + local dependency lock
-- Source artifact: `west-peek-pitch-lab-main_BASELINE_06-09-26_0000023.zip`
-- Root: `west-peek-pitch-lab-main/`
+- Artifact: `west-peek-pitch-lab-main_BASELINE_06-16-26_ab6787a2.zip`
+- Phase: 9E.2 — Second local-browser gate repair and hostile UX double-check
+- Source artifact: `west-peek-pitch-lab-main_BASELINE_06-16-26_ad740fab.zip`
+- Root: repository root (flat baseline accepted by updater v3.1)
+- Version: `0.9.8-phase9e-local-browser-gate-repair-2`
+
+## Phase 9E.2 second local-browser gate repair
+
+- Enabled rehearsal-sharing consent when a newly recorded take becomes selected.
+- Reset and disabled rehearsal-sharing consent when the selected take is deleted.
+- Removed mobile header and Story Card launcher overlap with active coaching controls.
+- Updated mobile browser proof to use the bottom-sheet contract rather than the desktop draft panel.
+- Reconciled remaining founder-facing Story Card terminology.
+- Preserved Scooter speaking/media timing, provider contracts, persistence, share consent, and Network OS handoff semantics.
+
+## Phase 9E.1 local browser gate repair
+
+- Fixed the optional eighth prompt so an empty optional answer cannot reveal or advance the live Founder Story Card.
+- Tightened homepage desktop geometry so the complete Step 1 CTA remains above the 720px release viewport fold.
+- Added explicit trust-boundary and text-first media-order cues.
+- Disabled rehearsal-context consent until a best take exists.
+- Reconciled Playwright selectors, labels, progressive deck state, session navigation, mobile navigation, and share consent with the redesigned UI.
+- Preserved the approved Scooter speaking/media contract, APIs, persistence semantics, consent boundary, and Network OS handoff payload.
+- Container prepush passed after repair. Canonical local headed Playwright and live provider/readback proof remain updater/local-environment gates.
 
 ## Phase 9A changes
 
@@ -310,3 +330,24 @@ Validation run after patch:
 Unproven:
 
 - Live deployed Network OS handoff proof still requires `PITCH_LAB_DEPLOY_URL`, restored live env, `NETWORK_OS_HANDOFF_ENABLED=true`, and matching shared secret in both repos.
+
+## 2026-06-16 Persistent Coaching Room UX/UI Redesign
+
+### New source
+- `src/ui/publicLanding.mjs`
+- `src/ui/sessionShell.mjs`
+- `src/ui/practiceWorkspace.mjs`
+- `src/ui/storyReviewWorkspace.mjs`
+- `src/ui/shareWorkspace.mjs`
+- `src/runtime/sessionExperience.mjs`
+
+### New proof and governance
+- `tests/e2e/founder-room-ux-proof.spec.mjs`
+- `docs/PITCH_LAB_PERSISTENT_COACHING_ROOM_UI_CONTRACT.md`
+- `docs/PITCH_LAB_UX_UI_REDESIGN_IMPLEMENTATION_REPORT_2026-06-16.md`
+
+### Required release contract
+- 112 collected browser tests: 56 desktop + 56 mobile
+- no new registered skips
+- container proof must pass before packaging
+- local real-browser and deployed proof remain required for COMPLETE

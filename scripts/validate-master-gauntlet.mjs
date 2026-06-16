@@ -46,7 +46,7 @@ for (const term of ['welcome', 'final_summary', 'share_cta', 'coreProductRule', 
 for (const term of ['talking AI Scooter media is core', 'Final personalized Pitch Story Card summary', 'Real env values are the last subset of Phase 9D']) {
   if (!doc.includes(term)) failures.push(`9D docs missing anchor: ${term}`);
 }
-for (const term of ['Good people should meet good people.', 'Good products need good stories.', 'Copy Pitch Story Card', 'does not guarantee', 'hostile max-depth', 'Network OS failure keeps the founder in honest non-submitted state', 'Scooter media lane is visibly core']) {
+for (const term of ['Good people should meet good people.', 'Good products need good stories.', 'Copy Founder Story Card', 'does not guarantee', 'hostile max-depth', 'Network OS failure keeps the founder in honest non-submitted state', 'Scooter media lane is visibly core']) {
   if (!spec.includes(term)) failures.push(`Master gauntlet spec missing journey assertion: ${term}`);
 }
 if (registry?.rules?.currentImplementedPhase !== 'phase9d') failures.push('Env registry currentImplementedPhase must be phase9d for 9D patch.');

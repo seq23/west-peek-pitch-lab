@@ -175,3 +175,7 @@ AI Scooter is not considered operational merely because static copy says “AI S
 The browser proof must not stub `/api/pitch/story-card`. Stubs are allowed only in local failure/success fixture tests that prove fallback and copy-only behavior. Live release proof must call the deployed route.
 
 If either layer fails, the response path is `UNPROVEN`, even if the rest of the gauntlet passes.
+
+## 2026-06-16 Async Persistent-Room Implementation Boundary
+
+The current persistent top Scooter stage, compact listening state, two-column desktop workbench, and mobile draft sheet are the v1/v1.5 asynchronous UI implementation of this room vision. They intentionally do not add WebRTC, streaming transcription, new speaking moments, or continuous avatar rendering. The future real-time roadmap remains unchanged.

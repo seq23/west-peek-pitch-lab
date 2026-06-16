@@ -3,8 +3,13 @@
   "featureName": "Pitch Practice with AI Scooter \u00b7 Pitch Practice with Scooter",
   "founderLine": "Good products need good stories.",
   "brandLine": "Good people should meet good people.",
-  "primaryCta": "Practice your pitch",
+  "homepageEyebrow": "Private AI pitch practice",
+  "homepageHeadline": "Turn your startup story into a pitch people remember.",
+  "homepageSupport": "Answer focused questions with AI Scooter and leave with a clear Founder Story Card. Share with West Peek only if you choose.",
+  "homepageMicrocopy": "About 5\u20137 minutes \u00b7 Private until you choose to share",
+  "primaryCta": "Start Step 1",
   "secondaryCta": "See how it works",
   "aiDisclosure": "AI Scooter is an AI storytelling coach inspired by Scooter Taylor and an AI pitch-practice coach for founder story clarity. This is not the real-time human Scooter; AI Scooter is not the real Scooter, not a live human reviewer, not an investment committee, and does not provide investment, legal, tax, securities, or financial advice.",
-  "noProviderCallsNotice": "Pitch Lab degrades honestly when AI, voice, avatar video, deck parsing, camera, or Network OS providers are unavailable. No fake output or false success is generated."
+  "noProviderCallsNotice": "Pitch Lab degrades honestly when AI, voice, avatar video, deck parsing, camera, or Network OS providers are unavailable. No fake output or false success is generated.",
+  "legacyPrimaryCta": "Practice your pitch"
 }

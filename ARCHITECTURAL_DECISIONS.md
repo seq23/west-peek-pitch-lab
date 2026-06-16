@@ -358,3 +358,53 @@ If ElevenLabs cost/latency/API quality fails the gauntlet or account test, switc
 
 **Enforcement:** `tests/e2e/persistence-and-deletion-proof.spec.mjs` uses `west-peek-pitch-lab-proof-seeded` as a session-only marker, and the fixture is included in critical source-to-artifact parity.
 
+
+### Decision ID: ADM-2026-06-16-01
+* **Date:** 2026-06-16
+* **Status:** Accepted
+* **Context:** The founder entry and practice surfaces duplicated explanation, delayed Step 1, and treated Scooter, the active question, and an empty draft as three competing columns. The approved media speaking schedule and provider contracts were already authoritative and were not the defect.
+* **Decision:** Implement a persistent coaching-room presentation: concise public lobby, persistent top Scooter stage, progressive profile and deck choice, two-column desktop workbench, and accessible mobile Founder Story Card bottom sheet. Keep vanilla ESM/static Cloudflare architecture and all existing media, persistence, consent, provider, and handoff behavior.
+* **Alternatives Considered:** Retain the three-column layout; make Scooter a side rail; migrate frameworks; add real-time/WebRTC infrastructure.
+* **Reasoning:** The selected architecture makes Scooter feel continuously present while giving the active coaching task primary focus and the story draft secondary artifact status. It is reversible, lightweight, and compatible with the 8GB local environment.
+* **Tradeoffs:** Additional UI modules and responsive state orchestration; browser proof must cover expanded/compact stage and bottom-sheet focus behavior.
+* **Risks Accepted:** Sticky geometry can vary by viewport; route-level session continuity remains static-page based rather than SPA-based.
+* **Validation Impact:** Browser suite increases from 104 to 112 tests: 56 desktop and 56 mobile. Required proof includes above-fold CTA, progressive disclosure, persistent Scooter, live draft reveal, mobile navigation, bottom-sheet focus return, and zero horizontal overflow.
+* **Future Reversal Conditions:** Revisit only if measured user testing shows the top stage obstructs task completion or if a later true real-time coaching architecture changes the session shell contract.
+
+
+### Decision ID: ADM-2026-06-16-02
+* **Date:** 2026-06-16
+* **Status:** Accepted
+* **Context:** Founder profile capture executed locally but could not reach Network OS because profile-specific runtime variables were referenced without being registered or present in committed env examples.
+* **Decision:** Register canonical packet/profile endpoint variables, preserve legacy aliases, derive the profile endpoint from the Network OS base URL or packet endpoint, and expose non-blocking sync status to the founder.
+* **Alternatives Considered:** Require a new explicit deployment variable only; remove profile capture; block practice until Network OS succeeds.
+* **Reasoning:** Derivation restores compatibility with already-configured deployments and avoids losing founder sessions because one optional alias is absent. Practice remains usable during provider outages while the UI reports the true sync state.
+* **Tradeoffs:** The sender supports multiple compatible env names and therefore requires regression tests to prevent precedence drift.
+* **Risks Accepted:** A deployed Network OS with missing shared secret or broken Google Sheets remains unable to persist; live provider proof is still required after deployment.
+* **Validation Impact:** Domain tests must prove explicit and derived endpoint selection, signed request delivery, env registration, and truthful sync-state copy. Tier 4 must prove deployed Google Sheets readback.
+* **Future Reversal Conditions:** Replace derivation only if a centrally managed service-discovery contract makes all endpoint variables deterministic across the West Peek suite.
+
+
+### Decision ID: ADM-2026-06-16-03
+* **Date:** 2026-06-16
+* **Status:** Accepted
+* **Context:** The first local browser run after the coaching-room redesign exposed one true progressive-disclosure defect, one desktop geometry defect, several usability clarity defects, and stale pre-redesign E2E expectations.
+* **Decision:** Repair product behavior and browser contracts together: blank optional context never reveals the draft, Step 1 remains above fold, rehearsal consent is unavailable until a take exists, trust/media-order guidance is explicit, and tests target the approved progressive room architecture.
+* **Alternatives Considered:** Weaken assertions; restore the old UI copy/layout; skip the browser gate; treat all failures as stale tests.
+* **Reasoning:** The failure set contained both real defects and proof drift. Fixing only one side would either preserve broken UX or manufacture green.
+* **Tradeoffs:** Founder-facing terminology is standardized to Founder Story Card while the signed backend handoff retains packet semantics; test maintenance remains required when intentional UI language changes.
+* **Risks Accepted:** Exact local browser proof remains environment-bound and must rerun on the operator Mac.
+* **Validation Impact:** Tier 1 adds optional-answer counting regression and expanded critical-file parity. Tier 2 retains all 112 desktop/mobile tests with no new skips.
+* **Future Reversal Conditions:** Revisit only after measured user testing or a material session-shell architecture change.
+
+### Decision ID: ADM-2026-06-16-04
+* **Date:** 2026-06-16
+* **Status:** Accepted
+* **Context:** The second local headed browser run reduced the failure set to eight and proved that selected-take consent state and mobile overlay geometry still diverged from the intended coaching-room interaction model.
+* **Decision:** Synchronize rehearsal consent directly with selected-take creation/deletion, remove overlaying mobile chrome from the active question path, and test the mobile Story Card through its bottom-sheet contract rather than the desktop sidebar.
+* **Alternatives Considered:** Force-click obscured controls in Playwright; keep the sticky overlays and weaken geometry checks; require founders to re-select the first recorded take; restore Founder Story Packet as public terminology.
+* **Reasoning:** The selected take already exists in runtime state, so consent must become available immediately. Active coaching controls must never sit beneath persistent UI. Mobile intentionally has a different presentation contract from desktop and should be tested as such.
+* **Tradeoffs:** The mobile Story Card launcher is in-flow rather than permanently sticky; the session header scrolls away while Scooter remains the persistent coaching presence.
+* **Risks Accepted:** The mobile launcher is slightly less persistent, but it no longer blocks task completion and remains directly below the active coaching workspace.
+* **Validation Impact:** Focused local browser proof must cover recorded-take consent enablement, selected-take deletion reset, the complete eight-prompt mobile journey, and the mobile Story Card sheet. The full 112-test gate remains required before push.
+* **Future Reversal Conditions:** Revisit a sticky mobile launcher only if it can reserve layout space and pass real-browser non-overlap proof across supported viewports.

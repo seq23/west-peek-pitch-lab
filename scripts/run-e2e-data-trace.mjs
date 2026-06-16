@@ -75,7 +75,7 @@ requireIncludes('tests/e2e/llm-live-response.spec.mjs', [
   'PITCH_LAB_LIVE_LLM_E2E',
   'deployed story-card API returns a real schema-backed AI Scooter response',
   'deployed browser journey triggers live LLM and renders AI Scooter response in the UI',
-  'await page.getByRole(\'button\', { name: /Generate AI Pitch Story Card/i }).click();',
+  'await page.getByRole(\'button\', { name: /Generate my Founder Story Card/i }).click();',
   'expect(response.status()).toBe(200)',
   'expect(body.aiEnhanced).toBe(true)',
   'localStorage.getItem'

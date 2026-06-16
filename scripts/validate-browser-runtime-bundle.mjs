@@ -4,7 +4,7 @@ import path from 'node:path';
 
 const root = process.cwd();
 const distAssets = path.join(root, 'dist', 'assets');
-const htmlEntryFiles = ['practice-flow.js', 'ai-story-card.js', 'share-flow.js', 'delete-my-info.js'];
+const htmlEntryFiles = ['session-experience.js', 'practice-flow.js', 'ai-story-card.js', 'share-flow.js', 'delete-my-info.js'];
 const errors = [];
 
 if (!fs.existsSync(distAssets)) {

@@ -58,10 +58,10 @@
         "_repo_validation_matrix.json",
         "ARCHITECTURAL_DECISIONS.md"
       ],
-      "expected_total": 104,
+      "expected_total": 112,
       "expected_per_project": {
-        "desktop-chromium": 52,
-        "mobile-chromium": 52
+        "desktop-chromium": 56,
+        "mobile-chromium": 56
       }
     },
     "expected_skipped_policy": "registered_only",

@@ -87,20 +87,24 @@ test.describe('Founder context and accessibility proof', () => {
 
   test('basic keyboard and label journey is usable without relying only on glow or mouse', async ({ page }) => {
     await page.goto('/practice');
-    await expect(page.getByRole('navigation', { name: 'Primary navigation' })).toContainText('Practice');
+    await expect(page.getByRole('navigation', { name: 'Session navigation' })).toContainText('Exit session');
+    await expect(page.getByLabel('Session stage')).toContainText('Practice');
     await expect(page.getByRole('textbox', { name: /^Name\b/i })).toBeVisible();
-    await expect(page.getByRole('textbox', { name: /^Email/i })).toBeVisible();
-    await expect(page.getByLabel(/Company name/i)).toBeVisible();
+    await expect(page.getByRole('textbox', { name: /^Work email/i })).toBeVisible();
+    await expect(page.getByLabel(/Company or project/i)).toBeVisible();
 
     await page.keyboard.press('Tab');
     await page.keyboard.press('Tab');
     await expect(page.locator(':focus')).toBeVisible();
     await page.getByRole('textbox', { name: /^Name\b/i }).fill('Avery Founder');
-    await page.getByRole('textbox', { name: /^Email/i }).fill('avery@example.com');
-    await page.getByLabel(/Company name/i).fill('ExampleCo');
-    await page.getByRole('button', { name: /Start AI Scooter practice/i }).focus();
+    await page.getByRole('textbox', { name: /^Work email/i }).fill('avery@example.com');
+    await page.getByLabel(/Company or project/i).fill('ExampleCo');
+    await page.getByRole('button', { name: /Continue to your first question/i }).focus();
     await page.keyboard.press('Enter');
-    await expect(page.locator('body')).toContainText(/What are you building\?|Why Scooter asks|Strong answer hint/i);
-    await expect(page.locator('body')).toContainText('Answers stay in this session');
+    await expect(page.getByRole('heading', { name: /Have a deck handy/i })).toBeVisible();
+    await page.getByRole('button', { name: /Continue without a deck/i }).focus();
+    await page.keyboard.press('Enter');
+    await expect(page.locator('body')).toContainText(/What are you building\?|Need help shaping this answer/i);
+    await expect(page.locator('body')).toContainText('Saved in this browser while you practice');
   });
 });

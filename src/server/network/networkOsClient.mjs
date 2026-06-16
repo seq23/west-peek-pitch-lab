@@ -1,19 +1,50 @@
 import { buildPitchLabNetworkPayload, signPitchLabPayload } from './pitchLabHandoffContract.mjs';
 import { buildPitchLabProfileLeadPayload } from './profileLeadContract.mjs';
 
+function enabledFlag(value, fallback = false) {
+  const normalized = String(value ?? '').trim().toLowerCase();
+  if (!normalized) return fallback;
+  return normalized === 'true';
+}
+
+function trimTrailingSlash(value) {
+  return String(value || '').trim().replace(/\/+$/, '');
+}
+
+function endpointFromBase(baseUrl, path) {
+  const base = trimTrailingSlash(baseUrl);
+  return base ? `${base}${path}` : '';
+}
+
+function deriveProfileEndpoint(env = {}) {
+  const explicit = String(env.NETWORK_OS_PITCH_LAB_PROFILE_ENDPOINT || env.NETWORK_OS_PROFILE_CAPTURE_ENDPOINT || '').trim();
+  if (explicit) return explicit;
+
+  const baseDerived = endpointFromBase(env.NETWORK_OS_BASE_URL, '/api/intake/pitch-lab-profile');
+  if (baseDerived) return baseDerived;
+
+  const packetEndpoint = String(env.NETWORK_OS_PITCH_LAB_PACKET_ENDPOINT || env.NETWORK_OS_PITCH_LAB_ENDPOINT || env.NETWORK_OS_INTAKE_URL || '').trim();
+  if (/\/api\/intake\/pitch-lab\/?$/i.test(packetEndpoint)) {
+    return packetEndpoint.replace(/\/api\/intake\/pitch-lab\/?$/i, '/api/intake/pitch-lab-profile');
+  }
+  return '';
+}
+
 export function getNetworkOsConfig(env = {}) {
+  const intakeUrl = String(env.NETWORK_OS_PITCH_LAB_PACKET_ENDPOINT || env.NETWORK_OS_PITCH_LAB_ENDPOINT || env.NETWORK_OS_INTAKE_URL || endpointFromBase(env.NETWORK_OS_BASE_URL, '/api/intake/pitch-lab')).trim();
   return {
-    enabled: String(env.NETWORK_OS_HANDOFF_ENABLED || 'false').toLowerCase() === 'true',
-    intakeUrl: String(env.NETWORK_OS_PITCH_LAB_PACKET_ENDPOINT || env.NETWORK_OS_PITCH_LAB_ENDPOINT || env.NETWORK_OS_INTAKE_URL || '').trim(),
+    enabled: enabledFlag(env.NETWORK_OS_HANDOFF_ENABLED),
+    intakeUrl,
     sharedSecret: String(env.NETWORK_OS_SHARED_SECRET || '').trim(),
     timeoutMs: Number(env.NETWORK_OS_TIMEOUT_MS || 15000)
   };
 }
 
 export function getNetworkOsProfileConfig(env = {}) {
+  const handoffEnabled = enabledFlag(env.NETWORK_OS_HANDOFF_ENABLED);
   return {
-    enabled: String(env.NETWORK_OS_PROFILE_CAPTURE_ENABLED || env.NETWORK_OS_HANDOFF_ENABLED || 'false').toLowerCase() === 'true',
-    intakeUrl: String(env.NETWORK_OS_PITCH_LAB_PROFILE_ENDPOINT || env.NETWORK_OS_PROFILE_CAPTURE_ENDPOINT || '').trim(),
+    enabled: enabledFlag(env.NETWORK_OS_PROFILE_CAPTURE_ENABLED, handoffEnabled),
+    intakeUrl: deriveProfileEndpoint(env),
     sharedSecret: String(env.NETWORK_OS_SHARED_SECRET || '').trim(),
     timeoutMs: Number(env.NETWORK_OS_TIMEOUT_MS || 15000)
   };

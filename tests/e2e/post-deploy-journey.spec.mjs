@@ -78,28 +78,28 @@ test.describe('Post-deploy Pitch Lab journey gauntlet', () => {
   test('deployed practice page hydrates beyond static shell and exposes founder guidance', async ({ page }) => {
     await page.goto(deployedUrl('/practice'));
     await expect(page.locator('[data-founder-profile-gate]')).not.toContainText('Loading guided practice flow');
-    await expect(page.locator('[data-founder-profile-gate]')).toContainText(/Start here|Enter your email|founder profile/i);
+    await expect(page.locator('[data-founder-profile-gate]')).toContainText(/Step 1|Start your private pitch-practice session|About you/i);
     await expect(page.getByRole('textbox', { name: /^Name\b/i })).toBeVisible();
-    await expect(page.getByRole('textbox', { name: /^Email\b/i })).toBeVisible();
-    await expect(page.getByLabel(/Company name/i)).toBeVisible();
-    await expect(page.locator('body')).toContainText(/Next:|Hints on every answer|Next step always visible/i);
-    await expect(page.locator('body')).toContainText(/Optional deck-as-context|private session context|answers stay private/i);
+    await expect(page.getByRole('textbox', { name: /^Work email\b/i })).toBeVisible();
+    await expect(page.getByLabel(/Company or project/i)).toBeVisible();
+    await expect(page.locator('body')).toContainText(/Continue to your first question|Private until you share|Your conversation/i);
+    await expect(page.locator('body')).toContainText(/Website|Basic profile details|not shared at this step/i);
     await expectNoInternalLanguage(page);
   });
 
   test('deployed practice journey advances through profile, deck choice, prompts, helpers, and local persistence', async ({ page }) => {
     await page.goto(deployedUrl('/practice'));
     await page.getByRole('textbox', { name: /^Name\b/i }).fill('Avery Founder');
-    await page.getByRole('textbox', { name: /^Email\b/i }).fill('avery@example.com');
-    await page.getByLabel(/Company name/i).fill('ExampleCo');
-    await page.getByRole('button', { name: /Start AI Scooter practice/i }).click();
+    await page.getByRole('textbox', { name: /^Work email\b/i }).fill('avery@example.com');
+    await page.getByLabel(/Company or project/i).fill('ExampleCo');
+    await page.getByRole('button', { name: /Continue to your first question/i }).click();
 
-    await expect(page.locator('body')).toContainText(/Optional deck-as-context|deck-as-context/i);
-    await page.getByRole('button', { name: /No deck/i }).click();
+    await expect(page.locator('body')).toContainText(/Have a deck handy|Optional context/i);
+    await page.getByRole('button', { name: /Continue without a deck/i }).click();
     await expect(page.locator('body')).toContainText(/Why Scooter asks|Strong answer|Example|Avoid/i);
     await expect(page.locator('body')).toContainText(/What are you building/i);
     await page.getByRole('textbox').last().fill('West Peek Pitch Lab helps founders turn rough company context into a clear, repeatable story for useful relationship routing.');
-    await expect(page.locator('body')).toContainText(/Ready for next question|Next question/i);
+    await expect(page.locator('body')).toContainText(/Ready for the next question|Continue|Next question/i);
 
     const stored = await page.evaluate(() => JSON.parse(window.localStorage.getItem('west-peek-pitch-lab.founder-profile.v1') || '{}'));
     expect(stored.email).toBe('avery@example.com');
@@ -110,20 +110,20 @@ test.describe('Post-deploy Pitch Lab journey gauntlet', () => {
     await seedCompletePracticeSession(page);
     await page.goto(deployedUrl('/story-card'));
     await expect(page.locator('body')).toContainText('Story Strength Snapshot');
-    await expect(page.locator('body')).toContainText('Copy Pitch Story Card');
-    await expect(page.locator('body')).toContainText(/Text first|Scooter final summary follows|copy\/share never wait/i);
+    await expect(page.locator('body')).toContainText('Copy Founder Story Card');
+    await expect(page.locator('body')).toContainText(/Founder Story Card|Scooter review|Practice Out Loud/i);
     await expect(page.locator('body')).toContainText(/Practice Out Loud|Camera Room Opens|countdown|record one or more takes|choose the best take/i);
-    await expect(page.locator('body')).toContainText(/Talking AI Scooter is core|required at the welcome, final story summary, and share close/i);
+    await expect(page.locator('body')).toContainText(/AI Scooter|Final summary|Private coaching room/i);
     await expectNoInternalLanguage(page);
   });
 
   test('deployed AI Story Card transaction produces honest failure or schema-backed success without blocking on media', async ({ page }) => {
     await seedCompletePracticeSession(page);
     await page.goto(deployedUrl('/story-card'));
-    await page.getByRole('button', { name: /Generate AI Pitch Story Card/i }).click();
+    await page.getByRole('button', { name: /Generate my Founder Story Card/i }).click();
 
     const root = page.locator('[data-ai-story-card-root]');
-    await expect(root).toContainText(/AI-enhanced Pitch Story Card|AI coaching is unavailable|No fake AI output was generated|not completed|unavailable/i, { timeout: 60000 });
+    await expect(root).toContainText(/AI-enhanced Founder Story Card|AI coaching is unavailable|No fake AI output was generated|not completed|unavailable/i, { timeout: 60000 });
     await expect(page.locator('body')).toContainText(/Text appears first|text-first|Scooter.*summary follows|media summary/i);
     await expect(page.locator('body')).not.toContainText(/fake AI output generated|guaranteed investment review/i);
     await expectNoInternalLanguage(page);
@@ -131,12 +131,12 @@ test.describe('Post-deploy Pitch Lab journey gauntlet', () => {
 
   test('deployed share gate blocks early sharing and preserves explicit founder consent boundary', async ({ page }) => {
     await page.goto(deployedUrl('/share'));
-    await expect(page.locator('body')).toContainText(/Start with your founder profile|Generate your AI Pitch Story Card first|Founder Story Packet/i);
+    await expect(page.locator('body')).toContainText(/Start with your founder profile|Generate your AI Founder Story Card first|Founder Story Card/i);
     await expect(page.locator('body')).not.toContainText(/shared with West Peek for network review|pending_network_review/i);
 
     await seedAiStoryCard(page);
     await page.goto(deployedUrl('/share'));
-    await expect(page.locator('body')).toContainText(/Share your Founder Story Packet with West Peek|Founder Story Packet|Share only if you choose/i);
+    await expect(page.locator('body')).toContainText(/Share your Founder Story Card with West Peek|Founder Story Card|Share only if you choose/i);
     await expect(page.locator('body')).toContainText(/Practice Out Loud|Deck provided|Relationship routing/i);
     await expect(page.locator('input[name="shareWithWestPeek"]')).toBeVisible();
     await expectNoInternalLanguage(page);
@@ -144,12 +144,12 @@ test.describe('Post-deploy Pitch Lab journey gauntlet', () => {
 
   test('deployed MVP v1 media moments exist without requiring live provider renders', async ({ page }) => {
     await page.goto(deployedUrl('/practice'));
-    await expect(page.locator('[data-scooter-companion]').first()).toContainText(/AI Scooter session|Listening/i);
-    await expect(page.locator('body')).toContainText(/AI Scooter is listening|persistent|private pitch-practice room/i);
+    await expect(page.locator('[data-scooter-companion]').first()).toContainText(/AI Scooter|Listening|Start with name/i);
+    await expect(page.locator('body')).toContainText(/AI Scooter|Private coaching room|Start with the basics/i);
 
     await page.goto(deployedUrl('/story-card'));
     await expect(page.locator('[data-scooter-companion]').first()).toContainText(/Final summary|AI Scooter is reviewing your story/i);
-    await expect(page.locator('body')).toContainText(/Required talking Scooter moment|final story summary|text carries the detailed artifact/i);
+    await expect(page.locator('body')).toContainText(/Required talking Scooter moment|Final summary|Founder Story Card/i);
 
     await page.goto(deployedUrl('/share'));
     await expect(page.locator('[data-scooter-companion]').first()).toContainText(/Share close|share decision|AI Scooter/i);

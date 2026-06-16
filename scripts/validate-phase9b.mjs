@@ -20,15 +20,16 @@ for (const file of builtRoutes) if (!fs.existsSync(file)) failures.push(`Missing
 
 const built = builtRoutes.filter((file) => fs.existsSync(file)).map((file) => fs.readFileSync(file, 'utf8')).join('\n');
 const styles = fs.existsSync(path.join(root, 'src/styles.css')) ? fs.readFileSync(path.join(root, 'src/styles.css'), 'utf8') : '';
-const appShell = fs.existsSync(path.join(root, 'src/ui/appShell.mjs')) ? fs.readFileSync(path.join(root, 'src/ui/appShell.mjs'), 'utf8') : '';
-const combined = `${built}\n${styles}\n${appShell}`;
+const sourceFiles = ['src/ui/appShell.mjs', 'src/ui/publicLanding.mjs', 'src/ui/sessionShell.mjs', 'src/ui/practiceWorkspace.mjs', 'src/ui/storyReviewWorkspace.mjs', 'src/ui/shareWorkspace.mjs', 'src/runtime/practiceFlow.mjs', 'src/runtime/aiStoryCardClient.mjs', 'src/runtime/shareFlow.mjs'];
+const source = sourceFiles.filter((file) => fs.existsSync(path.join(root, file))).map((file) => fs.readFileSync(path.join(root, file), 'utf8')).join('\n');
+const combined = `${built}\n${styles}\n${source}`;
 
 for (const [label, terms] of [
   ['West Peek logo asset usage', ['west-peek-logo.jpg', 'west-peek-mark.png', 'West Peek Ventures']],
   ['locked brand/product mantras', ['Good people should meet good people.', 'Good products need good stories.']],
   ['West Peek palette', ['--wp-black', '--wp-white', '--wp-orange', '#f05a1a']],
   ['premium founder-room layout', ['brand-band', 'avatar-card', 'story-card-stage']],
-  ['readability preserved', ['Story Strength Snapshot', 'Copy Pitch Story Card', 'Trust boundary']],
+  ['readability preserved', ['Story Strength Snapshot', 'Copy Founder Story Card', 'Trust boundary']],
   ['share consent still visible', ['explicit consent', 'does not guarantee funding', 'pending intake']]
 ]) {
   const missing = terms.filter((term) => !combined.includes(term));

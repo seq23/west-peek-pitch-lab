@@ -35,13 +35,13 @@ test.describe('MVP v1 live media proof — headed when requested', () => {
   test('browser shows the locked talking-Scooter media journey slots without static-shell failure', async ({ page }) => {
     await page.goto('/practice');
     await expect(page.locator('[data-scooter-companion]').first()).toContainText(/AI Scooter session|Listening/i);
-    await expect(page.locator('body')).toContainText(/AI Scooter coaching conversation|private pitch-practice room/i);
+    await expect(page.locator('body')).toContainText(/Private coaching room|Build the story with Scooter/i);
     await expect(page.locator('[data-founder-profile-gate]')).not.toContainText('Loading guided practice flow');
 
     await seedSession(page);
     await page.goto('/story-card');
     await expect(page.locator('[data-scooter-companion]').first()).toContainText(/Final summary|AI Scooter is reviewing your story/i);
-    await expect(page.locator('body')).toContainText(/Text first|Scooter final summary follows|Required talking Scooter moment/i);
+    await expect(page.locator('body')).toContainText(/Founder Story Card|Scooter final summary|Required talking Scooter moment/i);
     await expect(page.locator('body')).toContainText(/Practice Out Loud|record one or more takes|choose the best take/i);
 
     await page.goto('/share');
@@ -87,13 +87,13 @@ test.describe('MVP v1 live media proof — headed when requested', () => {
   test('Story Card is text-first and live media proof reveals final summary provider state in-browser', async ({ page }) => {
     await seedSession(page);
     await page.goto('/story-card');
-    await page.getByRole('button', { name: /Generate AI Pitch Story Card/i }).click();
+    await page.getByRole('button', { name: /Generate my Founder Story Card/i }).click();
     const root = page.locator('[data-ai-story-card-root]');
-    await expect(root).toContainText(/AI-enhanced Pitch Story Card|AI coaching is unavailable|No fake AI output was generated/i, { timeout: live ? 30000 : 15000 });
+    await expect(root).toContainText(/AI-enhanced Founder Story Card|AI coaching is unavailable|No fake AI output was generated/i, { timeout: live ? 30000 : 15000 });
     await expect(page.locator('body')).toContainText(/Text appears first|text-first|talking summary follows/i);
 
     if (live) {
-      await expect(root).toContainText('AI-enhanced Pitch Story Card', { timeout: 30000 });
+      await expect(root).toContainText('AI-enhanced Founder Story Card', { timeout: 30000 });
       await expect(page.locator('[data-avatar-lane]')).toContainText(/queued|ready|preparing|unavailable/i, { timeout: 30000 });
     } else {
       await expect(page.locator('body')).not.toContainText(/avatar video generated successfully/i);

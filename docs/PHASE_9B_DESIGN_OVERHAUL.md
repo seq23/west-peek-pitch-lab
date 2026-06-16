@@ -51,3 +51,7 @@ The trust boundary, consent language, no-guarantee language, no-email posture, a
 - Headed Playwright behavior.
 
 Those are candidates for Phase 9D Master Gauntlet / local headed run.
+
+## 2026-06-16 Visual Supersession
+
+The original Phase 9B card/grid layout is superseded by the persistent coaching-room UI contract. The West Peek palette, approved assets, trust boundaries, and no-theater requirements remain active.

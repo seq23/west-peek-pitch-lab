@@ -11,12 +11,58 @@
         "mobile"
       ],
       "expected": {
-        "heading": "West Peek Pitch Lab"
+        "heading": "Turn your startup story into a pitch people remember."
       },
       "actions": [
         {
           "type": "clickLink",
-          "name": "Practice"
+          "name": "Start Step 1"
+        }
+      ],
+      "final_path": "/practice"
+    },
+    {
+      "id": "progressive-practice-room",
+      "path": "/practice",
+      "viewports": [
+        "desktop",
+        "mobile"
+      ],
+      "expected": {
+        "heading": "Build the story with Scooter."
+      },
+      "actions": [
+        {
+          "type": "fill",
+          "label": "Name",
+          "value": "Deploy Proof Founder"
+        },
+        {
+          "type": "fill",
+          "label": "Work email",
+          "value": "deploy-proof@example.com"
+        },
+        {
+          "type": "fill",
+          "label": "Company or project",
+          "value": "Deploy Proof Co"
+        },
+        {
+          "type": "clickButton",
+          "name": "Continue to your first question"
+        },
+        {
+          "type": "clickButton",
+          "name": "Continue without a deck"
+        },
+        {
+          "type": "fill",
+          "label": "You",
+          "value": "Deploy Proof Co helps founder-led teams turn fragmented operational context into one clear workflow and repeatable story."
+        },
+        {
+          "type": "assertText",
+          "value": "What you are building"
         }
       ],
       "final_path": "/practice"
@@ -39,7 +85,7 @@
         }
       },
       "expected": {
-        "heading": "Turn the session into a founder-ready story."
+        "heading": "Review your Founder Story Card."
       },
       "actions": []
     },

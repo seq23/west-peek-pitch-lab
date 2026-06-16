@@ -48,6 +48,19 @@
       "blocks_completion": true
     },
     {
+      "id": "PL-T2-003",
+      "tier": 2,
+      "journey": "persistent coaching room UX",
+      "command": "npm run release:local-visual-proof",
+      "mutation": "profile, deck choice, first answer, responsive controls",
+      "readback": "above-fold CTA, persistent Scooter stage, progressive Founder Story Card, mobile draft sheet and focus return",
+      "refresh_reentry": false,
+      "mobile": true,
+      "provider": "none",
+      "cleanup": "browser context teardown",
+      "blocks_completion": true
+    },
+    {
       "id": "PL-T3-001",
       "tier": 3,
       "journey": "live LLM Story Card",

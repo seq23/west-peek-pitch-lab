@@ -28,9 +28,9 @@ export const SCOOTER_COMPANION_STATES = {
   final_video_ready: 'AI Scooter video is ready.',
   final_video_unavailable: 'AI Scooter video is unavailable. The text coaching remains usable.',
   practice_out_loud_ready: 'Practice this out loud locally before sharing.',
-  share_decision: 'You can keep practicing privately or share your Founder Story Packet.',
+  share_decision: 'You can keep practicing privately or share your Founder Story Card.',
   handoff_pending: 'Network review submission is pending confirmation.',
-  handoff_confirmed: 'Founder Story Packet shared for network review only.',
+  handoff_confirmed: 'Founder Story Card shared for network review only.',
   handoff_failed: 'Submission failed safely. No submitted state was recorded.',
   update_later: 'You can update your story and come back anytime.'
 };

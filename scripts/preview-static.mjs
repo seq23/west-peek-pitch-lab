@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 const root = process.cwd();
 const dist = path.join(root, 'dist');
 const port = Number(process.env.PORT || process.env.PLAYWRIGHT_PORT || 4173);
+const host = process.env.PREVIEW_HOST || '127.0.0.1';
 
 if (!fs.existsSync(dist)) {
   console.error('Missing dist/. Run npm run build before preview.');
@@ -31,7 +32,7 @@ function send(res, status, body, type = 'text/plain; charset=utf-8') {
 }
 
 const server = http.createServer((req, res) => {
-  const url = new URL(req.url || '/', `http://127.0.0.1:${port}`);
+  const url = new URL(req.url || '/', `http://${host}:${port}`);
   let pathname = decodeURIComponent(url.pathname);
 
   if (pathname.startsWith('/api/avatar/status')) {
@@ -51,6 +52,6 @@ const server = http.createServer((req, res) => {
   fs.createReadStream(file).pipe(res);
 });
 
-server.listen(port, '127.0.0.1', () => {
-  console.log(`Static preview listening at http://127.0.0.1:${port}`);
+server.listen(port, host, () => {
+  console.log(`Static preview listening at http://${host}:${port}`);
 });

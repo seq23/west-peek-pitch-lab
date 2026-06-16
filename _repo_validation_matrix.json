@@ -15,7 +15,13 @@
       "STRONG WARNING",
       "WARNING",
       "INFO / NO VALIDATION"
-    ]
+    ],
+    "browserSuiteExpectedTotal": 112,
+    "browserSuiteExpectedPerProject": {
+      "desktop-chromium": 56,
+      "mobile-chromium": 56
+    },
+    "browserSuiteCountChangeReason": "Added four persistent coaching-room UX proofs executed in desktop and mobile projects; no new skips."
   },
   "validateAllHardFailCommands": [
     "build",

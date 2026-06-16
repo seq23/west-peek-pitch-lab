@@ -107,6 +107,14 @@ export function validateAnswer(question, value) {
   return { ok: true, message: '' };
 }
 
+export function countCompletedPitchAnswers(answers = {}) {
+  return PITCH_QUESTIONS.filter((question) => {
+    const length = normalizeAnswer(answers?.[question.id]).length;
+    if (question.required === false) return length > 0;
+    return length >= question.minLength;
+  }).length;
+}
+
 export function validatePitchAnswers(answers) {
   const errors = {};
   for (const question of PITCH_QUESTIONS) {

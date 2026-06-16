@@ -83,6 +83,9 @@ docs/COST_AND_PROVIDER_PLAN.md
 | `HUMAN_REVIEW_REQUIRED` | phase7 | server_config | plain_var | forbidden | `true` |
 | `NETWORK_OS_BASE_URL` | phase7 | server_config | plain_var | forbidden | `https://network.joinwestpeek.com` |
 | `NETWORK_OS_PITCH_LAB_ENDPOINT` | phase7 | server_config | plain_var | forbidden | `https://network.joinwestpeek.com/api/in...` |
+| `NETWORK_OS_PITCH_LAB_PACKET_ENDPOINT` | phase7 | server_config | plain_var | forbidden | `https://network.joinwestpeek.com/api/in...` |
+| `NETWORK_OS_PITCH_LAB_PROFILE_ENDPOINT` | phase7 | server_config | plain_var | forbidden | `https://network.joinwestpeek.com/api/in...` |
+| `NETWORK_OS_PROFILE_CAPTURE_ENABLED` | phase7 | server_config | plain_var | forbidden | `false` |
 | `NETWORK_OS_HANDOFF_ENABLED` | phase7 | server_config | plain_var | forbidden | `false` |
 | `NETWORK_OS_SHARED_SECRET` | phase7 | server_secret | secret | forbidden | `REPLACE_WITH_LOCAL_NETWORK_OS_SHARED_SE...` |
 | `NETWORK_OS_TIMEOUT_MS` | phase7 | server_config | plain_var | forbidden | `15000` |
@@ -179,9 +182,11 @@ Phase 1 does not apply values to Cloudflare. It only creates a deterministic pla
 
 ## Pitch Lab → Network OS profile/packet endpoints
 
+NETWORK_OS_HANDOFF_ENABLED=true
 NETWORK_OS_PROFILE_CAPTURE_ENABLED=true
-NETWORK_OS_PITCH_LAB_PROFILE_ENDPOINT=https://network.example.com/api/intake/pitch-lab-profile
-NETWORK_OS_PITCH_LAB_PACKET_ENDPOINT=https://network.example.com/api/intake/pitch-lab
+NETWORK_OS_BASE_URL=https://network.joinwestpeek.com
+NETWORK_OS_PITCH_LAB_PROFILE_ENDPOINT=https://network.joinwestpeek.com/api/intake/pitch-lab-profile
+NETWORK_OS_PITCH_LAB_PACKET_ENDPOINT=https://network.joinwestpeek.com/api/intake/pitch-lab
 NETWORK_OS_SHARED_SECRET=<shared-secret>
 NETWORK_OS_TIMEOUT_MS=15000
 

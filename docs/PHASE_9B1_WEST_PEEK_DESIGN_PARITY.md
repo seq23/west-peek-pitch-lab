@@ -100,3 +100,7 @@ This pass does not prove pixel-perfect parity with live sites because the West P
 ## Cross-suite canonical authority
 
 This repo-specific treatment is subordinate to [`WEST_PEEK_BRAND_SYSTEM.md`](../WEST_PEEK_BRAND_SYSTEM.md). The canonical West Peek Orange is `#F05A1A`; black/white remain primary and orange remains an accent.
+
+## 2026-06-16 Route-Level Parity Update
+
+Current parity is measured by a concise public lobby, persistent dark Scooter stage, flatter white work surfaces, restrained orange emphasis, progressive task disclosure, desktop conversation/draft hierarchy, and mobile-native menu and draft sheet. Route-only screenshots are insufficient; state evidence is required under `HALLMARK_ROUTE_COVERAGE.md`.

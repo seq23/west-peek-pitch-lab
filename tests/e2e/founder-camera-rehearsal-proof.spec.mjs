@@ -70,6 +70,7 @@ test.describe('Founder Practice Out Loud camera rehearsal proof', () => {
 
     await page.getByRole('button', { name: /Save transcript to selected take/i }).click();
     await expect(page.locator('[data-transcript-status]')).toContainText('Transcript saved to selected take');
+    await expect(page.getByLabel(/Include my selected rehearsal take transcript\/status/i)).toBeEnabled();
     await page.getByLabel(/Include my selected rehearsal take transcript\/status/i).check();
     await expect(page.locator('[data-rehearsal-consent-status]')).toContainText('will be included');
 
@@ -81,7 +82,7 @@ test.describe('Founder Practice Out Loud camera rehearsal proof', () => {
     expect(takes.takes[0].transcript).toContain('customer, pain, proof');
 
     await page.reload();
-    await expect(page.locator('[data-rehearsal-consent-status]')).toContainText('Selected take context is marked for packet inclusion');
+    await expect(page.locator('[data-rehearsal-consent-status]')).toContainText('Selected take context is marked for sharing');
     await page.goto('/share');
     await expect(page.locator('.founder-story-packet')).toContainText('Best take selected:');
     await expect(page.locator('.founder-story-packet')).toContainText('Transcript saved: Yes');
@@ -99,6 +100,7 @@ test.describe('Founder Practice Out Loud camera rehearsal proof', () => {
     await page.waitForTimeout(900);
     await page.getByRole('button', { name: /Stop take/i }).click();
     await expect(page.locator('[data-camera-status]')).toContainText('Take saved locally', { timeout: 15000 });
+    await expect(page.getByLabel(/Include my selected rehearsal take transcript\/status/i)).toBeEnabled();
     await page.getByLabel(/Include my selected rehearsal take transcript\/status/i).check();
     await page.getByRole('button', { name: /Delete/i }).first().click();
     await expect(page.locator('[data-camera-status]')).toContainText('Take deleted from this browser');

@@ -68,9 +68,9 @@ test.describe('Live LLM response E2E — deployed AI Scooter talks back', () => 
   test('deployed browser journey triggers live LLM and renders AI Scooter response in the UI', async ({ page }) => {
     await seedFounderSession(page);
     await page.goto(deployedUrl('/story-card'));
-    await page.getByRole('button', { name: /Generate AI Pitch Story Card/i }).click();
+    await page.getByRole('button', { name: /Generate my Founder Story Card/i }).click();
     const root = page.locator('[data-ai-story-card-root]');
-    await expect(root).toContainText('AI-enhanced Pitch Story Card', { timeout: 45_000 });
+    await expect(root).toContainText('AI-enhanced Founder Story Card', { timeout: 45_000 });
     await expect(root).toContainText(/AI Scooter critique|AI Scooter final summary|Story Strength/i);
     await expect(root).toContainText(/Founder|pitch|story|relationship|customer|investor|operator|West Peek|Pitch Lab/i);
     await expect(page.locator('[data-final-scooter-summary]')).toContainText(/AI Scooter final summary/i);

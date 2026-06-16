@@ -77,3 +77,7 @@ The previous practice page looked and behaved like a static website. AI Scooter 
 ## Remaining v2 Boundary
 
 This pass makes the current Cloudflare Pages-compatible version feel like a premium async coaching room. The fuller v2 vision still likely requires real-time/near-real-time infrastructure for live voice, live transcription, turn-taking, WebRTC/WebSockets, and dynamic avatar/video response orchestration.
+
+## Supersession Notice — 2026-06-16
+
+The card-heavy visual layout and sticky side-rail implementation documented above are superseded by `docs/PITCH_LAB_PERSISTENT_COACHING_ROOM_UI_CONTRACT.md`. Historical product, trust, consent, and media-boundary reasoning remains valid. The current visual authority is a persistent top Scooter stage, progressive practice disclosure, two-column desktop workbench, and mobile draft sheet.
