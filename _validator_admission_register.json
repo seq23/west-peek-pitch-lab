@@ -146,6 +146,24 @@
       "owner": "Juniper / autonomous engineering department",
       "blockerPolicy": "Blocks delivery or push.",
       "simplificationDisposition": "KEEP"
+    },
+    {
+      "script": "validate:release-env-contract",
+      "command": "node tests/domain/release-lifecycle-env-contracts.mjs",
+      "status": "ACTIVE",
+      "admission": "registered_release_gate",
+      "category": "release-lifecycle-env",
+      "severity": "HARD FAIL",
+      "productionRisk": "A release closer can destroy local env state or misroute local/deployed tests without this contract.",
+      "whatItProves": "Local env preservation, fallback-only vault restore, deploy URL alias normalization, local/deployed lane isolation, and bounded browser execution.",
+      "whatItDoesNotProve": "Live provider success or deployed secret correctness.",
+      "failureHandling": "Repair and rerun before delivery or lifecycle closure.",
+      "ownerDecisionNeeded": "NO unless owner-interruption budget applies.",
+      "removalConditions": "Only after an equal or stronger environment-ownership proof replaces it.",
+      "expectedFailureFrequency": "Low",
+      "owner": "Juniper / autonomous engineering department",
+      "blockerPolicy": "Blocks release lifecycle closure.",
+      "simplificationDisposition": "KEEP"
     }
   ]
 }

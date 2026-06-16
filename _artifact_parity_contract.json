@@ -54,6 +54,16 @@
     "tests/e2e/media-provider-proof.spec.mjs",
     "package-lock.json",
     "ARTIFACT_MANIFEST.md",
-    "PITCH_LAB_LOCAL_BROWSER_GATE_REPAIR_2026-06-16.md"
+    "PITCH_LAB_LOCAL_BROWSER_GATE_REPAIR_2026-06-16.md",
+    "scripts/lib/release-env.mjs",
+    "scripts/prepare-local-live-env.mjs",
+    "scripts/run-test-operations-orchestrator.mjs",
+    "scripts/run-postdeploy-functions.mjs",
+    "scripts/run-postdeploy-gauntlet.mjs",
+    "scripts/detect-release-environment.mjs",
+    "scripts/run-master-gauntlet.mjs",
+    "playwright.config.mjs",
+    "tests/domain/release-lifecycle-env-contracts.mjs",
+    "PITCH_LAB_LIFECYCLE_ENV_REPAIR_2026-06-16.md"
   ]
 }

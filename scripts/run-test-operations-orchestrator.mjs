@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { chromium } from '@playwright/test';
+import { normalizeDeployEnv, resolveDeployUrl } from './lib/release-env.mjs';
 
 const root = process.cwd();
 const args = new Set(process.argv.slice(2));
@@ -11,7 +12,9 @@ const tier = tierArg ? tierArg.split('=')[1] : 'all';
 const tier3Ultimate = tier === '3' || tier === 'tier3' || tier === 'all';
 const headed = args.has('--headed');
 const includeLive = tier3Ultimate || args.has('--live') || process.env.PITCH_LAB_RUN_LIVE_PROOFS === 'true';
-const includePostdeploy = tier3Ultimate || args.has('--postdeploy') || Boolean(process.env.PITCH_LAB_DEPLOY_URL);
+const normalizedProcessEnv = normalizeDeployEnv(process.env);
+const deployUrl = resolveDeployUrl(normalizedProcessEnv);
+const includePostdeploy = tier3Ultimate || args.has('--postdeploy') || Boolean(deployUrl);
 const installBrowsers = args.has('--install-browsers');
 const reportRoot = path.join(root, 'tmp', 'test-operations');
 const logsDir = path.join(reportRoot, 'logs');
@@ -20,7 +23,6 @@ fs.rmSync(reportRoot, { recursive: true, force: true });
 fs.mkdirSync(logsDir, { recursive: true });
 
 const startedAt = new Date().toISOString();
-const deployUrl = process.env.PITCH_LAB_DEPLOY_URL || '';
 const results = [];
 
 function redact(text) {
@@ -38,14 +40,32 @@ function redact(text) {
     .replace(/https:\/\/[^\s"]*\.wav[^\s"]*/gi, '[redacted-audio-url]');
 }
 
-function removeLocalEnv() {
-  const envPath = path.join(root, '.env.local');
-  if (fs.existsSync(envPath)) fs.rmSync(envPath, { force: true });
+const localEnvPath = path.join(root, '.env.local');
+const localEnvExistedAtStart = fs.existsSync(localEnvPath);
+let localEnvCreatedByOrchestrator = false;
+
+function withEnvLocalTemporarilyHidden(fn) {
+  if (!fs.existsSync(localEnvPath)) return fn();
+  const hiddenPath = path.join(root, 'tmp', `.env.local.hidden-${process.pid}-${Date.now()}`);
+  fs.mkdirSync(path.dirname(hiddenPath), { recursive: true });
+  fs.renameSync(localEnvPath, hiddenPath);
+  try {
+    return fn();
+  } finally {
+    if (fs.existsSync(hiddenPath)) fs.renameSync(hiddenPath, localEnvPath);
+  }
+}
+
+function cleanupOrchestratorEnv() {
+  if (!localEnvExistedAtStart && localEnvCreatedByOrchestrator && fs.existsSync(localEnvPath)) {
+    fs.rmSync(localEnvPath, { force: true });
+    console.log('LOCAL LIVE ENV CLEANUP: removed .env.local created by this orchestrator run.');
+  }
 }
 
 function browserInstalled() {
   try {
-    return fs.existsSync(chromium.executablePath());
+    return fs.existsSync(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH || chromium.executablePath());
   } catch {
     return false;
   }
@@ -85,18 +105,18 @@ function runStep(step) {
     return item;
   }
 
-  if (step.removeEnvBefore) removeLocalEnv();
-
-  const env = { ...process.env, ...(step.env || {}) };
-  const result = spawnSync(step.command, step.args, {
+  const env = { ...normalizedProcessEnv, ...(step.env || {}) };
+  for (const key of step.unsetEnv || []) delete env[key];
+  const execute = () => spawnSync(step.command, step.args, {
     cwd: root,
     env,
     shell: false,
     encoding: 'utf8',
     maxBuffer: 1024 * 1024 * 80
   });
+  const result = step.hideEnvLocal ? withEnvLocalTemporarilyHidden(execute) : execute();
 
-  if (step.removeEnvAfter) removeLocalEnv();
+  if (step.id === 'env-restore' && !localEnvExistedAtStart && fs.existsSync(localEnvPath)) localEnvCreatedByOrchestrator = true;
 
   const stdout = redact(result.stdout || '');
   const stderr = redact(result.stderr || '');
@@ -143,8 +163,7 @@ const steps = [
     name: 'Full static, domain, matrix, build, route, no-secret, no-theater validation',
     command: 'npm',
     args: ['run', 'validate:all'],
-    removeEnvBefore: true,
-    removeEnvAfter: true,
+    hideEnvLocal: true,
     proves: 'Repo contracts, build, source validation, route smoke, matrix validation, no plaintext secrets, domain tests, e2e data trace.',
     doesNotProve: 'Real browser behavior, provider success, deployed runtime, visual quality.'
   },
@@ -163,6 +182,8 @@ const steps = [
     name: 'Full local Playwright master gauntlet',
     command: 'npm',
     args: ['run', headed ? 'gauntlet:headed' : 'gauntlet'],
+    hideEnvLocal: true,
+    unsetEnv: ['PITCH_LAB_DEPLOY_URL','POSTDEPLOY_BASE_URL','SMOKE_BASE_URL','PLAYWRIGHT_BASE_URL','PLAYWRIGHT_SKIP_WEBSERVER','PITCH_LAB_LIVE_LLM_E2E','PITCH_LAB_LIVE_NETWORK_OS_E2E','PITCH_LAB_LIVE_AVATAR_E2E'],
     skip: shouldSkipBrowser,
     skipReason: 'Chromium is not installed. Run with --install-browsers or run: npx playwright install chromium',
     proves: 'Local browser journeys, navigation, forms, persistence-visible behavior, consent boundaries, core app flows.',
@@ -174,6 +195,8 @@ const steps = [
     name: 'Real journey proof runner',
     command: 'npm',
     args: ['run', headed ? 'proof:journey:headed' : 'proof:journey'],
+    hideEnvLocal: true,
+    unsetEnv: ['PITCH_LAB_DEPLOY_URL','POSTDEPLOY_BASE_URL','SMOKE_BASE_URL','PLAYWRIGHT_BASE_URL','PLAYWRIGHT_SKIP_WEBSERVER','PITCH_LAB_LIVE_LLM_E2E','PITCH_LAB_LIVE_NETWORK_OS_E2E','PITCH_LAB_LIVE_AVATAR_E2E'],
     skip: shouldSkipBrowser,
     skipReason: 'Chromium is not installed. Run with --install-browsers or run: npx playwright install chromium',
     proves: 'Critical founder journey proof beyond static contract checks.',
@@ -185,6 +208,8 @@ const steps = [
     name: 'Founder camera rehearsal proof',
     command: 'npm',
     args: ['run', headed ? 'proof:camera:headed' : 'proof:camera'],
+    hideEnvLocal: true,
+    unsetEnv: ['PITCH_LAB_DEPLOY_URL','POSTDEPLOY_BASE_URL','SMOKE_BASE_URL','PLAYWRIGHT_BASE_URL','PLAYWRIGHT_SKIP_WEBSERVER','PITCH_LAB_LIVE_LLM_E2E','PITCH_LAB_LIVE_NETWORK_OS_E2E','PITCH_LAB_LIVE_AVATAR_E2E'],
     skip: shouldSkipBrowser,
     skipReason: 'Chromium is not installed. Run with --install-browsers or run: npx playwright install chromium',
     warnOnFailure: true,
@@ -205,12 +230,12 @@ const steps = [
   {
     tier: 'TIER 3 — LIVE PROVIDER VALIDATION',
     id: 'env-restore',
-    name: 'Restore .env.local from vault for live provider proofs',
-    command: 'npm',
-    args: ['run', 'env:restore:force'],
+    name: 'Prepare local live env without overwriting an existing .env.local',
+    command: 'node',
+    args: ['scripts/prepare-local-live-env.mjs'],
     skip: !liveEnvRequested,
     skipReason: 'Live provider mode not requested. Run: npm run validate:everything:live',
-    proves: 'Local provider env can be restored from vault on this machine.',
+    proves: 'An existing local env is preserved, or the approved vault restores one only when absent.',
     doesNotProve: 'Provider APIs work.'
   },
   {
@@ -302,7 +327,7 @@ const steps = [
 try {
   for (const step of steps) runStep(step);
 } finally {
-  removeLocalEnv();
+  cleanupOrchestratorEnv();
 }
 
 const finishedAt = new Date().toISOString();

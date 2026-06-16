@@ -2,11 +2,24 @@
 
 ## Current artifact
 
-- Artifact: `west-peek-pitch-lab-main_BASELINE_06-16-26_ab6787a2.zip`
-- Phase: 9E.2 — Second local-browser gate repair and hostile UX double-check
-- Source artifact: `west-peek-pitch-lab-main_BASELINE_06-16-26_ad740fab.zip`
+- Artifact: `west-peek-pitch-lab-main_BASELINE_06-16-26_49e93116.zip`
+- Phase: 9E.3 — Release lifecycle local-environment repair
+- Source artifact: `west-peek-pitch-lab-main_BASELINE_06-16-26_ab6787a2.zip`
 - Root: repository root (flat baseline accepted by updater v3.1)
-- Version: `0.9.8-phase9e-local-browser-gate-repair-2`
+- Version: `0.9.9-phase9e-lifecycle-env-repair`
+- Source marker: `49e93116`
+
+## Phase 9E.3 release lifecycle environment repair
+
+- Preserves an existing `.env.local`; it is never overwritten or deleted by lifecycle closure.
+- Temporarily hides local env only for no-secret/static and deterministic local-browser lanes.
+- Uses the encrypted vault only as fallback when `.env.local` is absent.
+- Normalizes `PITCH_LAB_DEPLOY_URL`, `POSTDEPLOY_BASE_URL`, `SMOKE_BASE_URL`, and remote HTTPS `PLAYWRIGHT_BASE_URL`.
+- Isolates local Playwright lanes from deployed URL and live-provider opt-in variables.
+- Bounds Playwright concurrency to four workers by default.
+- Adds optional explicit Chromium path and video-disable controls for constrained validation environments.
+- Adds a hard-fail release-env contract, validator admission, governance record, and 63-file artifact parity set.
+- Structural/container validation passed; live provider and deployed Network OS proof require the locally configured env and deployed Cloudflare secrets.
 
 ## Phase 9E.2 second local-browser gate repair
 

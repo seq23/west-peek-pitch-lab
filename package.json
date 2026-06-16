@@ -1,13 +1,13 @@
 {
   "name": "west-peek-pitch-lab",
-  "version": "0.9.8-phase9e-local-browser-gate-repair-2",
+  "version": "0.9.9-phase9e-lifecycle-env-repair",
   "private": true,
   "type": "module",
   "scripts": {
     "validate:phase1": "node scripts/validate-phase1.mjs",
     "validate:env": "node scripts/validate-env-contract.mjs",
     "validate:no-secrets": "node scripts/check-no-plaintext-secrets.mjs",
-    "validate:all": "npm run validate:suite-release-lifecycle-contract && npm run validate:runtime-proof-contract && npm run validate:baseline-package-contract && npm run validate:matrix && npm run validate:deployed-route-manifest && npm run test:display-normalization && npm run validate:public-usability && npm run validate:env && npm run validate:no-secrets && npm run validate:no-theater && npm run validate:canonical-runtime && npm run build && npm run validate:browser-runtime-bundle && npm run test:domain && npm run validate:phase2 && npm run validate:phase3 && npm run validate:phase4 && npm run validate:phase5 && npm run validate:phase6 && npm run validate:phase7 && npm run validate:phase9a && npm run validate:master-gauntlet && npm run validate:e2e-data-trace && npm run smoke:routes && npm run test:profile-lead-contracts",
+    "validate:all": "npm run validate:suite-release-lifecycle-contract && npm run validate:release-env-contract && npm run validate:runtime-proof-contract && npm run validate:baseline-package-contract && npm run validate:matrix && npm run validate:deployed-route-manifest && npm run test:display-normalization && npm run validate:public-usability && npm run validate:env && npm run validate:no-secrets && npm run validate:no-theater && npm run validate:canonical-runtime && npm run build && npm run validate:browser-runtime-bundle && npm run test:domain && npm run validate:phase2 && npm run validate:phase3 && npm run validate:phase4 && npm run validate:phase5 && npm run validate:phase6 && npm run validate:phase7 && npm run validate:phase9a && npm run validate:master-gauntlet && npm run validate:e2e-data-trace && npm run smoke:routes && npm run test:profile-lead-contracts",
     "env:create-local": "node scripts/env/create-local-env.mjs",
     "env:create-local:force": "node scripts/env/create-local-env.mjs --force",
     "env:vault:create-placeholders": "node scripts/env/create-env-vault.mjs --force",
@@ -133,7 +133,8 @@
     "validate:release-environment": "node scripts/detect-release-environment.mjs",
     "validate:local-browser-proof": "node scripts/validate-local-browser-proof.mjs",
     "validate:runtime-proof-contract": "node scripts/validate-runtime-proof-contract.mjs",
-    "validate:browser-runtime-bundle": "node scripts/validate-browser-runtime-bundle.mjs"
+    "validate:browser-runtime-bundle": "node scripts/validate-browser-runtime-bundle.mjs",
+    "validate:release-env-contract": "node tests/domain/release-lifecycle-env-contracts.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.60.0"

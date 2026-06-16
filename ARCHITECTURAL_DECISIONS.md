@@ -408,3 +408,12 @@ If ElevenLabs cost/latency/API quality fails the gauntlet or account test, switc
 * **Risks Accepted:** The mobile launcher is slightly less persistent, but it no longer blocks task completion and remains directly below the active coaching workspace.
 * **Validation Impact:** Focused local browser proof must cover recorded-take consent enablement, selected-take deletion reset, the complete eight-prompt mobile journey, and the mobile Story Card sheet. The full 112-test gate remains required before push.
 * **Future Reversal Conditions:** Revisit a sticky mobile launcher only if it can reserve layout space and pass real-browser non-overlap proof across supported viewports.
+
+## 2026-06-16 — Local env ownership and lifecycle proof isolation
+
+- `.env.local` is locally owned and must never be deleted or overwritten by the lifecycle when it already exists.
+- Static and deterministic local-browser proof lanes temporarily hide `.env.local`; live provider lanes consume it.
+- The encrypted vault is a fallback restore source only when `.env.local` is absent.
+- Approved deploy URL aliases normalize to one deployment target.
+- Local proof lanes unset deployment and live opt-in variables.
+- Playwright defaults to four workers and supports an explicit system Chromium path.

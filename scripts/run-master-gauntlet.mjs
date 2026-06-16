@@ -7,7 +7,7 @@ const headed = process.argv.includes('--headed');
 const skipBrowserPreflight = process.argv.includes('--skip-browser-preflight') || process.env.PLAYWRIGHT_SKIP_BROWSER_PREFLIGHT === 'true';
 
 function assertBrowserInstalled() {
-  const executablePath = chromium.executablePath();
+  const executablePath = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH || chromium.executablePath();
   if (fs.existsSync(executablePath)) return;
 
   console.error('PLAYWRIGHT BROWSER PREFLIGHT FAILED');

@@ -28,7 +28,11 @@
     "scripts/validate-artifact-source-parity.mjs",
     "scripts/detect-release-environment.mjs",
     ".nvmrc",
-    "scripts/validate-browser-runtime-bundle.mjs"
+    "scripts/validate-browser-runtime-bundle.mjs",
+    "scripts/lib/release-env.mjs",
+    "scripts/prepare-local-live-env.mjs",
+    "tests/domain/release-lifecycle-env-contracts.mjs",
+    "PITCH_LAB_LIFECYCLE_ENV_REPAIR_2026-06-16.md"
   ],
   "forbidden_paths_or_globs": [
     ".git/",

@@ -54,7 +54,8 @@
     "validate:browser-suite-contract",
     "validate:artifact-source-parity",
     "validate:release-environment",
-    "validate:runtime-proof-contract"
+    "validate:runtime-proof-contract",
+    "validate:release-env-contract"
   ],
   "warningOnlyCommands": [
     "deep-validation",
@@ -1239,6 +1240,19 @@
       "ownerDecisionNeeded": false,
       "tier": "tier1",
       "blockerPolicy": "Blocks delivery, updater execution, commit, and push."
+    },
+    {
+      "script": "validate:release-env-contract",
+      "command": "node tests/domain/release-lifecycle-env-contracts.mjs",
+      "category": "release lifecycle environment ownership",
+      "severity": "HARD FAIL",
+      "productionRisk": "Lifecycle closure can delete locally managed secrets, run deterministic tests against the deployed site, or skip deployed proof because equivalent URL aliases are not normalized.",
+      "proves": "Existing .env.local ownership is preserved, vault restore is fallback-only, local and deployed proof lanes are isolated, deploy URL aliases normalize, and browser concurrency is bounded.",
+      "doesNotProve": "Real provider credentials are configured, provider APIs succeed, or deployed Cloudflare secrets match the local environment.",
+      "failureHandling": "Repair environment ownership, URL normalization, or browser isolation before lifecycle closure and artifact delivery.",
+      "ownerDecisionNeeded": false,
+      "tier": "tier1",
+      "blockerPolicy": "Blocks local validation because destructive or ambiguous release environment handling can invalidate every later proof."
     }
   ],
   "futureRequiredProofs": [

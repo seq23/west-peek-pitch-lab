@@ -1,82 +1,61 @@
 {
-  "schema_version": "2.5",
+  "schema_version": "2.6",
   "repo": "west-peek-pitch-lab",
   "profile": "container",
+  "version": "0.9.9-phase9e-lifecycle-env-repair",
+  "artifact_name": "west-peek-pitch-lab-main_BASELINE_06-16-26_49e93116.zip",
   "release_prepush_container": "PASS",
+  "release_env_contract": "PASS",
   "ui_test_parity": "PASS",
   "browser_suite_contract": "PASS",
   "runtime_proof_contract": "PASS",
-  "artifact_source_parity": "PASS_53_CRITICAL_FILES",
+  "artifact_source_parity": "PASS_63_CRITICAL_FILES",
   "reopened_container_validation": "PASS",
   "local_browser_validation": "NOT_EXECUTED_FOR_REPLACEMENT_ARTIFACT",
-  "container_visual_smoke": "INDEPENDENT_HOSTILE_BROWSER_REVIEW_PASS_8_STATES_CANONICAL_LOCAL_SUITE_NOT_REPLACED",
-  "required_local_command": "npm run release:prepush:local",
-  "status": "FIRST-COMMAND-READY \u2014 LOCAL BROWSER AND LIVE HANDOFF VALIDATION REQUIRED",
-  "source_tree_fingerprint": "ab6787a2ca4ea7ab9143d2bbbc4f07ddbca301e43e546acd5bdd94b68a0d6220",
+  "container_browser_attempt": "BLOCKED_BY_ADMINISTRATOR_FOR_LOCALHOST_AND_MANAGED_BROWSER_DOWNLOAD_DNS",
+  "required_local_command": "npm run release:close-lifecycle with local .env.local and deployed URL",
+  "status": "FIRST-COMMAND-READY \u2014 LOCAL LIVE PROVIDER AND DEPLOYED LIFECYCLE PROOF REQUIRED",
+  "source_tree_fingerprint": "49e931168a02345072cd1a9717d49717dd8e6397822c3d724608edc58c3f0f4d",
   "source_tree_fingerprint_excludes": [
+    "ARTIFACT_MANIFEST.md",
     "_artifact_validation_manifest.json",
     "generated/build/evidence directories"
   ],
   "artifact_sha256_binding": "DETACHED_SHA256_SIDECAR",
-  "generated_at": "2026-06-16T14:00:15.873792+00:00",
+  "generated_at": "2026-06-16T14:34:00Z",
   "browser_collection": {
     "total": 112,
     "desktop-chromium": 56,
     "mobile-chromium": 56,
-    "new_skips": 0
+    "new_skips": 0,
+    "default_workers": 4
   },
-  "browser_runtime_bundle": "PASS",
-  "critical_file_parity_count": 53,
+  "critical_file_parity_count": 63,
+  "baseline_required_file_count": 31,
+  "release_environment_repair": {
+    "existing_local_env_preserved": "PASS_BYTE_FOR_BYTE",
+    "vault_restore_policy": "FALLBACK_ONLY_WHEN_LOCAL_ENV_ABSENT",
+    "deploy_url_alias_normalization": "PASS",
+    "local_deployed_lane_isolation": "PASS",
+    "lifecycle_dry_run_with_postdeploy_alias": "PASS",
+    "provider_dry_proofs": {
+      "llm": "PASS_HONESTLY_GATED",
+      "voice": "PASS_HONESTLY_GATED",
+      "media": "PASS_HONESTLY_GATED"
+    },
+    "real_provider_calls": "NOT_EXECUTED_NO_LOCAL_SECRETS_IN_ARTIFACT_ENVIRONMENT",
+    "network_os_live_handoff": "NOT_EXECUTED"
+  },
   "evidence_references": [
-    "docs/PITCH_LAB_PERSISTENT_COACHING_ROOM_UI_CONTRACT.md",
-    "docs/PITCH_LAB_UX_UI_REDESIGN_IMPLEMENTATION_REPORT_2026-06-16.md",
-    "_browser_suite_contract.json",
-    "_runtime_proof_contract.json",
-    "_artifact_parity_contract.json",
-    "tests/e2e/founder-room-ux-proof.spec.mjs",
-    "ARCHITECTURAL_DECISIONS.md#ADM-2026-06-16-01",
-    "PITCH_LAB_NETWORK_OS_PROFILE_CAPTURE_REPAIR_2026-06-16.md",
-    "ARCHITECTURAL_DECISIONS.md#ADM-2026-06-16-02",
-    "tests/domain/profile-lead-contracts.mjs",
-    "PITCH_LAB_LOCAL_BROWSER_GATE_REPAIR_2026-06-16.md",
-    "ARTIFACT_MANIFEST.md#Phase-9E.1-local-browser-gate-repair",
-    "ARCHITECTURAL_DECISIONS.md#ADM-2026-06-16-03",
-    "tests/domain/phase3-contracts.mjs",
-    "tests/e2e/founder-context-and-accessibility-proof.spec.mjs",
-    "tests/e2e/media-provider-proof.spec.mjs",
-    "ARCHITECTURAL_DECISIONS.md#ADM-2026-06-16-04",
-    "tests/e2e/founder-camera-rehearsal-proof.spec.mjs"
+    "PITCH_LAB_LIFECYCLE_ENV_REPAIR_2026-06-16.md",
+    "tests/domain/release-lifecycle-env-contracts.mjs",
+    "scripts/lib/release-env.mjs",
+    "scripts/prepare-local-live-env.mjs",
+    "scripts/run-test-operations-orchestrator.mjs",
+    "scripts/release-close-lifecycle.mjs",
+    "ARCHITECTURAL_DECISIONS.md"
   ],
-  "network_os_profile_capture_repair": {
-    "source_repo_changed": "west-peek-pitch-lab",
-    "consumer_repo_changed": false,
-    "consumer_contract_tests": "PASS",
-    "profile_endpoint_derivation": "PASS",
-    "env_registry_parity": "PASS",
-    "live_google_sheets_readback": "NOT_EXECUTED"
-  },
-  "independent_hostile_browser_review": {
-    "result": "PASS",
-    "states": 8,
-    "viewports": [
-      "1280x720",
-      "393x851"
-    ],
-    "checks": [
-      "homepage CTA above fold",
-      "horizontal overflow",
-      "profile \u2192 deck \u2192 questions progressive disclosure",
-      "draft hidden before meaningful answer",
-      "desktop live draft",
-      "mobile draft sheet and focus return",
-      "text-first Story Card order",
-      "share consent and payload",
-      "selected rehearsal consent enabled",
-      "selected rehearsal deletion resets consent",
-      "complete mobile eight-question path without control overlap"
-    ],
-    "canonical_local_suite_replacement": false
-  },
   "reopened_dependency_install": "PASS_ZERO_REPORTED_VULNERABILITIES",
-  "reopened_independent_hostile_browser_review": "PASS_8_STATES"
+  "final_zip_integrity": "PASS",
+  "forbidden_path_scan": "PASS"
 }

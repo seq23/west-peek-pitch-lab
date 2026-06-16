@@ -213,3 +213,7 @@ Pitch Lab now derives the Network OS profile endpoint from the configured Networ
 ## Phase 9E.1 — Local browser gate repair
 
 The first v3.1 updater run correctly stopped before commit after local Chromium exposed a mixed product/test failure set. This repair fixes blank-optional-answer draft leakage, desktop first-viewport CTA geometry, rehearsal-consent readiness, trust and text-first guidance, and stale E2E selectors/copy. The browser suite remains 112 tests across desktop and mobile; the updater must rerun the full local browser gate before commit or push. See `PITCH_LAB_LOCAL_BROWSER_GATE_REPAIR_2026-06-16.md`.
+
+### Lifecycle environment repair (2026-06-16)
+
+`release:close-lifecycle` now preserves an existing local `.env.local`, uses the encrypted vault only as a fallback, isolates deterministic local browser tests from live/deployed variables, normalizes approved deployment URL aliases, and bounds browser concurrency. See `PITCH_LAB_LIFECYCLE_ENV_REPAIR_2026-06-16.md`.
