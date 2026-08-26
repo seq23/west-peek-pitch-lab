@@ -24,4 +24,13 @@ const skipped=allTests.filter(t=>t.status==='skipped').map(t=>({title:t.title,pr
 const summary={schema_version:'1.0',repo:pkg.name,run_id:runId,profile:'local',command:'npx playwright test --headed',projects:contract.projects,collected:allTests.length,passed:allTests.filter(t=>t.status==='passed').length,failed:failed.length,skipped:skipped.length,skipped_identities:skipped,per_project:perProject,exit_code:result.status??1,evidence_local:path.relative(root,localDir),evidence_external:externalDir,generated_at:new Date().toISOString(),verdict:(result.status===0&&failed.length===0)?'PASS':'FAIL'};
 fs.writeFileSync(path.join(localDir,'summary.json'),JSON.stringify(summary,null,2)+'\n');
 fs.writeFileSync(path.join(localDir,'local-proof-manifest.json'),JSON.stringify({...summary,source_fingerprint:crypto.createHash('sha256').update(fs.readFileSync(path.join(root,'package.json'))).digest('hex')},null,2)+'\n');
-fs.cpSync(localDir,externalDir,{recursive:true,force:true});console.log(`LOCAL BROWSER VISUAL PROOF: ${summary.verdict}`);console.log(`Evidence: ${externalDir}`);process.exit(summary.verdict==='PASS'?0:1);
+fs.cpSync(localDir,externalDir,{recursive:true,force:true});
+// Apply evidence retention now that this run is fully written and mirrored.
+// Every run lands in a fresh timestamped directory and nothing used to remove
+// the old ones, so eight runs over two days reached 2.1 GB - almost entirely
+// Playwright traces the proof validator never reads. The sweep always keeps the
+// newest run intact, which is the only one validate-local-browser-proof.mjs
+// opens. Never allowed to change this command's exit code: failing to reclaim
+// disk must not turn a passing browser proof into a failure.
+try{spawnSync(process.execPath,[path.join(root,'scripts','prune-browser-diagnostics.mjs')],{cwd:root,stdio:'inherit'})}catch{}
+console.log(`LOCAL BROWSER VISUAL PROOF: ${summary.verdict}`);console.log(`Evidence: ${externalDir}`);process.exit(summary.verdict==='PASS'?0:1);

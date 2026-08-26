@@ -134,7 +134,8 @@
     "validate:local-browser-proof": "node scripts/validate-local-browser-proof.mjs",
     "validate:runtime-proof-contract": "node scripts/validate-runtime-proof-contract.mjs",
     "validate:browser-runtime-bundle": "node scripts/validate-browser-runtime-bundle.mjs",
-    "validate:release-env-contract": "node tests/domain/release-lifecycle-env-contracts.mjs"
+    "validate:release-env-contract": "node tests/domain/release-lifecycle-env-contracts.mjs",
+    "diagnostics:prune": "node scripts/prune-browser-diagnostics.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.60.0"
