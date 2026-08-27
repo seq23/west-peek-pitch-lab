@@ -1,3 +1,4 @@
+import { canonicalUrl } from '../runtime/canonicalUrls.mjs';
 import { LOCKED_PITCH_LAB_COPY } from '../runtime/lockedCopy.mjs';
 import { DISCLOSURES } from '../runtime/disclosures.mjs';
 import { FOOTER_LINKS } from '../runtime/footerLinks.mjs';
@@ -104,6 +105,7 @@ export function renderPage(route) {
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>${page.title} — ${LOCKED_PITCH_LAB_COPY.productName}</title>
   <meta name="description" content="${LOCKED_PITCH_LAB_COPY.homepageSupport}" />
+  <link rel="canonical" href="${canonicalUrl(normalized)}" />
   <link rel="icon" href="/assets/brand/west-peek-mark.png" type="image/png" />
   <link rel="stylesheet" href="/assets/styles.css" />
 </head>

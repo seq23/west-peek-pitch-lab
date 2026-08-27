@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { renderPage } from '../src/ui/appShell.mjs';
 import { PHASE_2_ROUTES } from '../src/runtime/phase2Routes.mjs';
+import { canonicalUrl } from '../src/runtime/canonicalUrls.mjs';
 
 const root = process.cwd();
 const dist = path.join(root, 'dist');
@@ -77,4 +78,28 @@ for (const route of PHASE_2_ROUTES) {
 
 const redirectLines = PHASE_2_ROUTES.filter((route) => route !== '/').map((route) => `${route} ${route}/ 301`);
 fs.writeFileSync(path.join(dist, '_redirects'), redirectLines.join('\n') + '\n');
-console.log(`Built static app routes: ${PHASE_2_ROUTES.length}`);
+
+// robots.txt and sitemap.xml. Without these two files Pages answered /robots.txt
+// and /sitemap.xml with the SPA's index.html as text/html, so a crawler asking
+// for the crawl policy got a web page and there was no sitemap at all.
+//
+// robots.txt is authored at public/robots.txt rather than generated, because it
+// is the same portfolio-wide body on every West Peek property and a generator
+// here would let this one drift. copyPublicAssetDir only walks asset
+// subdirectories, so it is copied explicitly.
+const robotsSource = path.join(root, 'public', 'robots.txt');
+if (!fs.existsSync(robotsSource)) {
+  throw new Error('public/robots.txt is missing; the deployed site would serve the SPA shell at /robots.txt');
+}
+fs.copyFileSync(robotsSource, path.join(dist, 'robots.txt'));
+
+// Every public route is indexable, so the sitemap is the route list. canonicalUrl
+// gives the trailing-slash form, which is the address that answers 200 -- the
+// bare /<route> is a 301 to it.
+const sitemapEntries = PHASE_2_ROUTES.map((route) => `  <url><loc>${canonicalUrl(route)}</loc></url>`);
+fs.writeFileSync(
+  path.join(dist, 'sitemap.xml'),
+  `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${sitemapEntries.join('\n')}\n</urlset>\n`
+);
+
+console.log(`Built static app routes: ${PHASE_2_ROUTES.length}; robots.txt + sitemap.xml (${sitemapEntries.length} URLs)`);
