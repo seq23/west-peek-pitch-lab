@@ -164,6 +164,24 @@
       "owner": "Juniper / autonomous engineering department",
       "blockerPolicy": "Blocks release lifecycle closure.",
       "simplificationDisposition": "KEEP"
+    },
+    {
+      "script": "validate:self-heal-contract",
+      "command": "node scripts/validate-self-heal-contract.mjs",
+      "status": "ACTIVE",
+      "admission": "direct_matrix_row",
+      "category": "release lifecycle/self-heal honesty",
+      "severity": "HARD FAIL",
+      "productionRisk": "Self-heal loop misreports repairs or misclassifies failures, misdirecting post-deploy containment.",
+      "whatItProves": "Governs validate:self-heal-contract.",
+      "whatItDoesNotProve": "Does not prove unexecuted tiers or the repair capability of the autofix steps.",
+      "failureHandling": "Repair and rerun before delivery or push.",
+      "ownerDecisionNeeded": "NO unless owner-interruption budget applies.",
+      "removalConditions": "Only after equal or stronger replacement proof is admitted.",
+      "expectedFailureFrequency": "Low",
+      "owner": "Juniper / autonomous engineering department",
+      "blockerPolicy": "Blocks delivery or push.",
+      "simplificationDisposition": "KEEP"
     }
   ]
 }

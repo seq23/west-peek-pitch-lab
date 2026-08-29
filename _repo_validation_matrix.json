@@ -1253,6 +1253,19 @@
       "ownerDecisionNeeded": false,
       "tier": "tier1",
       "blockerPolicy": "Blocks local validation because destructive or ambiguous release environment handling can invalidate every later proof."
+    },
+    {
+      "script": "validate:self-heal-contract",
+      "command": "node scripts/validate-self-heal-contract.mjs",
+      "category": "release lifecycle/self-heal honesty",
+      "severity": "HARD FAIL",
+      "productionRisk": "The release self-heal loop misreports what it repaired, or misclassifies a benign schema failure as an authorization incident, which escalates post-deploy remediation to SEV-1 rollback and can block or misdirect a release.",
+      "proves": "classify() and the post-deploy severity planner match real authorization signals only (401/403/unauthorized/forbidden/permission denied) and never the substring 'auth' inside routine schema text such as authMode; the self-heal source hash covers git-tracked files only so a gitignored build cache cannot fake 'source changed'; treeHash hard-fails on zero files; a missing CLICK_AUDIT_SUMMARY is a named stop rather than a silent exit 0; every terminal state of the loop names its outcome.",
+      "doesNotProve": "Does not prove the autofix steps can repair any given defect class, nor that any workflow invokes the loop.",
+      "failureHandling": "Repair before release; the loop's reporting is the only evidence a self-heal pass produced work.",
+      "ownerDecisionNeeded": false,
+      "tier": "tier1",
+      "blockerPolicy": "Blocks local validation because validate:all explicitly includes this release-lifecycle honesty check."
     }
   ],
   "futureRequiredProofs": [
