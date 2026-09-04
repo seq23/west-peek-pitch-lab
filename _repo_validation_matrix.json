@@ -24,6 +24,7 @@
     "browserSuiteCountChangeReason": "Added four persistent coaching-room UX proofs executed in desktop and mobile projects; no new skips."
   },
   "validateAllHardFailCommands": [
+    "validate:ci-workflow-contract",
     "build",
     "validate:browser-runtime-bundle",
     "smoke:routes",
@@ -1266,6 +1267,19 @@
       "ownerDecisionNeeded": false,
       "tier": "tier1",
       "blockerPolicy": "Blocks local validation because validate:all explicitly includes this release-lifecycle honesty check."
+    },
+    {
+      "script": "validate:ci-workflow-contract",
+      "command": "node scripts/validate-ci-workflow-contract.mjs",
+      "category": "continuous integration/root CI existence",
+      "severity": "HARD FAIL",
+      "productionRisk": "This repository ran with NO GitHub Actions workflow at all from its first commit until 2026-09-04: gh workflow list was empty, no .github directory existed on any branch, and the entire run history was one orphaned artifact-packaging job. Every commit, including two merges to main, landed with zero automated validation. Nothing was ever red because nothing ever ran, so the absence was invisible.",
+      "proves": "A workflow directory exists and contains at least one workflow; examining ZERO workflow files is a hard failure rather than a pass; every workflow file parses as real YAML, so a malformed file cannot produce a zero-job run whose logs never explain themselves; every workflow declares at least one job and every job at least one step; at least one workflow triggers on BOTH push to main and pull_request to main AND invokes npm run validate:all, so main cannot be gated by CI that validates nothing; and no workflow issues a deploy command, holding CI to validation only.",
+      "doesNotProve": "Does not prove the workflow succeeds on the GitHub-hosted runner, that required status checks are enforced in branch protection, or that validate:all itself covers any particular behaviour.",
+      "failureHandling": "Restore or repair the workflow before push. An empty workflow list must never be read as nothing to do.",
+      "ownerDecisionNeeded": false,
+      "tier": "tier1",
+      "blockerPolicy": "Blocks local validation and blocks CI; it is the first step of validate:all."
     }
   ],
   "futureRequiredProofs": [

@@ -182,6 +182,24 @@
       "owner": "Juniper / autonomous engineering department",
       "blockerPolicy": "Blocks delivery or push.",
       "simplificationDisposition": "KEEP"
+    },
+    {
+      "script": "validate:ci-workflow-contract",
+      "command": "node scripts/validate-ci-workflow-contract.mjs",
+      "status": "ACTIVE",
+      "admission": "registered_ci_existence_gate",
+      "category": "continuous integration/root CI existence",
+      "severity": "HARD FAIL",
+      "productionRisk": "Silent absence of CI. The repo had no workflow at all until 2026-09-04 and nothing was red because nothing ran.",
+      "whatItProves": "CI exists, parses, declares real jobs and steps, is wired to push and pull_request on main, runs validate:all, and never deploys.",
+      "whatItDoesNotProve": "Does not prove branch protection requires the check, nor that the hosted run passes.",
+      "failureHandling": "Restore the workflow. Never satisfy this by weakening the assertion.",
+      "ownerDecisionNeeded": "NO",
+      "removalConditions": "Only if an equal or stronger CI-existence proof is admitted first.",
+      "expectedFailureFrequency": "Low",
+      "owner": "Juniper / autonomous engineering department",
+      "blockerPolicy": "Blocks delivery or push.",
+      "simplificationDisposition": "KEEP"
     }
   ]
 }
