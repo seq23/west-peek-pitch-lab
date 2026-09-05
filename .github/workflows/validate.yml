@@ -34,10 +34,10 @@ jobs:
     timeout-minutes: 30
     steps:
       - name: Check out the commit under test
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Node from .nvmrc
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version-file: .nvmrc
           cache: npm
