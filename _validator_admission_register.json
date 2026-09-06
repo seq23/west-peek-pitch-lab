@@ -200,6 +200,24 @@
       "owner": "Juniper / autonomous engineering department",
       "blockerPolicy": "Blocks delivery or push.",
       "simplificationDisposition": "KEEP"
+    },
+    {
+      "script": "validate:zero-item-guard",
+      "command": "node scripts/validate-zero-item-guard.mjs",
+      "status": "ACTIVE",
+      "admission": "registered_validator_integrity_gate",
+      "category": "validator integrity/empty input set",
+      "severity": "HARD FAIL",
+      "productionRisk": "Five admitted validators exited 0 while examining zero items, so emptying the source tree, env registry or route list would have made the suite more green, not less.",
+      "whatItProves": "Each of the five repaired validators still hard-fails on an empty input set, with its own named zero-item reason, proven by executing the empty state in a throwaway fixture on every run.",
+      "whatItDoesNotProve": "Does not prove those validators are correct on non-empty input, and does not cover validators added later.",
+      "failureHandling": "Restore the removed empty-input guard. Never satisfy this by deleting the case from the guard list.",
+      "ownerDecisionNeeded": "NO",
+      "removalConditions": "Only if every listed validator gains an equal or stronger empty-set proof elsewhere.",
+      "expectedFailureFrequency": "Low",
+      "owner": "Juniper / autonomous engineering department",
+      "blockerPolicy": "Blocks delivery or push.",
+      "simplificationDisposition": "KEEP"
     }
   ]
 }

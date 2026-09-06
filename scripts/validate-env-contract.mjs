@@ -14,10 +14,15 @@ function readJson(file) {
 
 const registry = readJson('config/env.registry.json');
 if (registry) {
-  const keys = registry.variables.map((variable) => variable.key);
+  // Rule 0: an empty registry made every loop below iterate zero times and the
+  // validator reported "Registered env vars: 0" as a pass.
+  if (!Array.isArray(registry.variables) || registry.variables.length === 0) {
+    failures.push('config/env.registry.json declares ZERO variables; an env contract over an empty registry proves nothing');
+  }
+  const keys = (registry.variables || []).map((variable) => variable.key);
   const unique = new Set(keys);
   if (unique.size !== keys.length) failures.push('Duplicate env keys in config/env.registry.json');
-  for (const variable of registry.variables) {
+  for (const variable of registry.variables || []) {
     if (!/^[A-Z0-9_]+$/.test(variable.key)) failures.push(`Invalid env key: ${variable.key}`);
     if (variable.scope.includes('secret') && variable.clientExposure !== 'forbidden') {
       failures.push(`Secret key must forbid client exposure: ${variable.key}`);
@@ -68,3 +73,4 @@ if (failures.length) {
 
 console.log('ENV CONTRACT VALIDATION PASSED');
 console.log(`Registered env vars: ${registry.variables.length}`);
+

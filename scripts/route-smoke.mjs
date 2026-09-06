@@ -34,6 +34,10 @@ const server = http.createServer((req, res) => {
 await new Promise((resolve) => server.listen(port, '127.0.0.1', resolve));
 try {
   const failures = [];
+  // Rule 0: an empty route list would have printed "Checked routes: 0" and passed.
+  if (!Array.isArray(PHASE_2_ROUTES) || PHASE_2_ROUTES.length === 0) {
+    failures.push('PHASE_2_ROUTES is empty; a route smoke that requested ZERO routes is not a pass');
+  }
   for (const route of PHASE_2_ROUTES) {
     const response = await fetch(`http://127.0.0.1:${port}${route}`);
     const text = await response.text();
