@@ -182,6 +182,42 @@
       "owner": "Juniper / autonomous engineering department",
       "blockerPolicy": "Blocks delivery or push.",
       "simplificationDisposition": "KEEP"
+    },
+    {
+      "script": "validate:ci-workflow-contract",
+      "command": "node scripts/validate-ci-workflow-contract.mjs",
+      "status": "ACTIVE",
+      "admission": "registered_ci_existence_gate",
+      "category": "continuous integration/root CI existence",
+      "severity": "HARD FAIL",
+      "productionRisk": "Silent absence of CI. The repo had no workflow at all until 2026-09-04 and nothing was red because nothing ran.",
+      "whatItProves": "CI exists, parses, declares real jobs and steps, is wired to push and pull_request on main, runs validate:all, and never deploys.",
+      "whatItDoesNotProve": "Does not prove branch protection requires the check, nor that the hosted run passes.",
+      "failureHandling": "Restore the workflow. Never satisfy this by weakening the assertion.",
+      "ownerDecisionNeeded": "NO",
+      "removalConditions": "Only if an equal or stronger CI-existence proof is admitted first.",
+      "expectedFailureFrequency": "Low",
+      "owner": "Juniper / autonomous engineering department",
+      "blockerPolicy": "Blocks delivery or push.",
+      "simplificationDisposition": "KEEP"
+    },
+    {
+      "script": "validate:zero-item-guard",
+      "command": "node scripts/validate-zero-item-guard.mjs",
+      "status": "ACTIVE",
+      "admission": "registered_validator_integrity_gate",
+      "category": "validator integrity/empty input set",
+      "severity": "HARD FAIL",
+      "productionRisk": "Five admitted validators exited 0 while examining zero items, so emptying the source tree, env registry or route list would have made the suite more green, not less.",
+      "whatItProves": "Each of the five repaired validators still hard-fails on an empty input set, with its own named zero-item reason, proven by executing the empty state in a throwaway fixture on every run.",
+      "whatItDoesNotProve": "Does not prove those validators are correct on non-empty input, and does not cover validators added later.",
+      "failureHandling": "Restore the removed empty-input guard. Never satisfy this by deleting the case from the guard list.",
+      "ownerDecisionNeeded": "NO",
+      "removalConditions": "Only if every listed validator gains an equal or stronger empty-set proof elsewhere.",
+      "expectedFailureFrequency": "Low",
+      "owner": "Juniper / autonomous engineering department",
+      "blockerPolicy": "Blocks delivery or push.",
+      "simplificationDisposition": "KEEP"
     }
   ]
 }

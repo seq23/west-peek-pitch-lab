@@ -1,0 +1,52 @@
+name: Validate
+
+# Root CI for west-peek-pitch-lab.
+#
+# This repository ran with NO CI at all from its first commit until 2026-09-04.
+# `gh workflow list` was empty and nothing was ever red, because nothing ever ran.
+# See scripts/validate-ci-workflow-contract.mjs, which fails the build if this
+# file is removed, unwired from main, or reduced to something that validates nothing.
+#
+# Scope is VALIDATION ONLY. Deployment stays manual and out of CI on purpose:
+# a production credential living in Actions is real blast radius, and the
+# sibling repo west-peek-os was damaged by exactly that pattern.
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: validate:all
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out the commit under test
+        uses: actions/checkout@v5
+
+      - name: Set up Node from .nvmrc
+        uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies from the lockfile
+        run: npm ci
+
+      - name: Prove CI itself is wired and non-inert
+        run: npm run validate:ci-workflow-contract
+
+      - name: Run the full validation suite
+        run: npm run validate:all

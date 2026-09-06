@@ -24,6 +24,7 @@
     "browserSuiteCountChangeReason": "Added four persistent coaching-room UX proofs executed in desktop and mobile projects; no new skips."
   },
   "validateAllHardFailCommands": [
+    "validate:ci-workflow-contract",
     "build",
     "validate:browser-runtime-bundle",
     "smoke:routes",
@@ -55,7 +56,8 @@
     "validate:artifact-source-parity",
     "validate:release-environment",
     "validate:runtime-proof-contract",
-    "validate:release-env-contract"
+    "validate:release-env-contract",
+    "validate:zero-item-guard"
   ],
   "warningOnlyCommands": [
     "deep-validation",
@@ -1266,6 +1268,32 @@
       "ownerDecisionNeeded": false,
       "tier": "tier1",
       "blockerPolicy": "Blocks local validation because validate:all explicitly includes this release-lifecycle honesty check."
+    },
+    {
+      "script": "validate:ci-workflow-contract",
+      "command": "node scripts/validate-ci-workflow-contract.mjs",
+      "category": "continuous integration/root CI existence",
+      "severity": "HARD FAIL",
+      "productionRisk": "This repository ran with NO GitHub Actions workflow at all from its first commit until 2026-09-04: gh workflow list was empty, no .github directory existed on any branch, and the entire run history was one orphaned artifact-packaging job. Every commit, including two merges to main, landed with zero automated validation. Nothing was ever red because nothing ever ran, so the absence was invisible.",
+      "proves": "A workflow directory exists and contains at least one workflow; examining ZERO workflow files is a hard failure rather than a pass; every workflow file parses as real YAML, so a malformed file cannot produce a zero-job run whose logs never explain themselves; every workflow declares at least one job and every job at least one step; at least one workflow triggers on BOTH push to main and pull_request to main AND invokes npm run validate:all, so main cannot be gated by CI that validates nothing; and no workflow issues a deploy command, holding CI to validation only.",
+      "doesNotProve": "Does not prove the workflow succeeds on the GitHub-hosted runner, that required status checks are enforced in branch protection, or that validate:all itself covers any particular behaviour.",
+      "failureHandling": "Restore or repair the workflow before push. An empty workflow list must never be read as nothing to do.",
+      "ownerDecisionNeeded": false,
+      "tier": "tier1",
+      "blockerPolicy": "Blocks local validation and blocks CI; it is the first step of validate:all."
+    },
+    {
+      "script": "validate:zero-item-guard",
+      "command": "node scripts/validate-zero-item-guard.mjs",
+      "category": "validator integrity/empty input set",
+      "productionRisk": "When this repository's CI ran for the first time on 2026-09-06, five admitted validators exited 0 while examining zero items: the plaintext-secret scan passed over 0 scanned files, validate:no-theater passed and printed 'Scanned files: 0', the baseline packaging contract passed with required_checked:0, the env contract passed printing 'Registered env vars: 0', and route smoke passed having requested 0 routes. Each reported a green result about an empty set, so deleting the source tree, emptying the env registry or emptying the route list would have made the suite MORE green, not less. That converts the validation suite into a signal that cannot detect the largest possible regression.",
+      "severity": "HARD FAIL",
+      "proves": "Each of the five previously-defective validators still hard-fails when handed an empty input set, and fails with its own named zero-item reason rather than incidentally. The negative proof is executed on every run in a throwaway fixture rather than recorded once in a PR body. The guard also hard-fails if it examines zero validators itself.",
+      "doesNotProve": "Does not prove those validators are correct on non-empty input, does not enumerate validators added later, and does not prove any other validator in the suite is free of the same defect.",
+      "failureHandling": "Restore the removed empty-input guard in the named validator. Never satisfy this by removing the case from the guard list.",
+      "ownerDecisionNeeded": false,
+      "tier": "tier1",
+      "blockerPolicy": "Blocks local validation and blocks CI; runs immediately after the CI workflow contract in validate:all."
     }
   ],
   "futureRequiredProofs": [

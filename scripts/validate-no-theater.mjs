@@ -25,6 +25,13 @@ function walk(dir) {
 }
 
 const files = scanDirs.flatMap(walk).filter((file) => /\.(ts|tsx|js|mjs|json|md)$/.test(file));
+// Rule 0: this validator previously printed "Scanned files: 0" and still exited 0.
+// An anti-theater scan that examined no implementation files is itself theater.
+if (files.length === 0) {
+  console.error('NO-THEATER VALIDATION FAILED');
+  console.error(`- examined ZERO source files across ${scanDirs.join(', ')}; nothing was scanned, so nothing was proven`);
+  process.exit(1);
+}
 for (const file of files) {
   const rel = path.relative(root, file);
   const text = fs.readFileSync(file, 'utf8');
