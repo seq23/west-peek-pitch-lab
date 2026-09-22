@@ -57,7 +57,8 @@
     "validate:release-environment",
     "validate:runtime-proof-contract",
     "validate:release-env-contract",
-    "validate:zero-item-guard"
+    "validate:zero-item-guard",
+    "validate:site-form-intake"
   ],
   "warningOnlyCommands": [
     "deep-validation",
@@ -1294,6 +1295,19 @@
       "ownerDecisionNeeded": false,
       "tier": "tier1",
       "blockerPolicy": "Blocks local validation and blocks CI; runs immediately after the CI workflow contract in validate:all."
+    },
+    {
+      "script": "validate:site-form-intake",
+      "command": "node tests/domain/site-form-intake-contracts.mjs",
+      "category": "integration contract",
+      "severity": "HARD FAIL",
+      "productionRisk": "Founders who come through Pitch Lab never reach the master network sheet, so the lead generation engine generates no leads; or a future reader finds the CONTACT_AUTO_CREATE_GUARD, concludes Pitch Lab must never create contacts, and reverses the owner decision of 22 Sep 2026.",
+      "proves": "Drives the real site-form intake client against a stubbed fetch: the door URL and shared-secret header, the lowercased email, the pitch_lab_profile / pitch_lab_share tagging, the submission id that makes a retry idempotent, and that every failure mode (door error, network error, unconfigured, invalid input) returns a status instead of throwing. Also pins that BOTH destinations still run and that the legacy pitch-lab queue guard is untouched.",
+      "doesNotProve": "Does not prove a deployed door, a live sheet write, or that the Pages env vars are set.",
+      "failureHandling": "Juniper investigates and normally repairs before release; local work may continue when proof is environment-bound.",
+      "ownerDecisionNeeded": false,
+      "tier": "tier1",
+      "blockerPolicy": "Blocks local validation because validate:all explicitly includes this runtime/product safety check."
     }
   ],
   "futureRequiredProofs": [
