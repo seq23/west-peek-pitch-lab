@@ -80,6 +80,8 @@ docs/COST_AND_PROVIDER_PLAN.md
 | `REQUIRE_SHARE_CONSENT` | phase7 | server_config | plain_var | forbidden | `true` |
 | `REQUIRE_EMAIL_CONSENT` | phase8_optional | server_config | plain_var | forbidden | `true` |
 | `AUTO_CREATE_NETWORK_CONTACTS` | phase7 | server_config | plain_var | forbidden | `false` |
+| `WP_NETWORK_OS_INTAKE_URL` | phase7 | server_config | plain_var | forbidden | `https://network.joinwestpeek.com/api/intake/site-form` |
+| `WP_NETWORK_OS_INTAKE_SECRET` | phase7 | server_secret | secret | forbidden | `REPLACE_WITH_LOCAL_WP_NETWORK_OS_INTAKE_SECRET` |
 | `HUMAN_REVIEW_REQUIRED` | phase7 | server_config | plain_var | forbidden | `true` |
 | `NETWORK_OS_BASE_URL` | phase7 | server_config | plain_var | forbidden | `https://network.joinwestpeek.com` |
 | `NETWORK_OS_PITCH_LAB_ENDPOINT` | phase7 | server_config | plain_var | forbidden | `https://network.joinwestpeek.com/api/in...` |
