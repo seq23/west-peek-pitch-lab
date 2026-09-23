@@ -58,7 +58,8 @@
     "validate:runtime-proof-contract",
     "validate:release-env-contract",
     "validate:zero-item-guard",
-    "validate:site-form-intake"
+    "validate:site-form-intake",
+    "validate:runbook"
   ],
   "warningOnlyCommands": [
     "deep-validation",
@@ -1308,6 +1309,19 @@
       "ownerDecisionNeeded": false,
       "tier": "tier1",
       "blockerPolicy": "Blocks local validation because validate:all explicitly includes this runtime/product safety check."
+    },
+    {
+      "script": "validate:runbook",
+      "command": "node scripts/validate-runbook.mjs",
+      "category": "operator documentation contract",
+      "severity": "HARD FAIL",
+      "productionRisk": "RUNBOOK.md is what Porter (West Peek OS) and Danielle (Boss OS) read at plan time to change this site safely, and West Peek OS's web-property-change lane blocks without it; a missing runbook, or one naming a path or npm script that no longer exists, sends the employee to the wrong file or command.",
+      "proves": "RUNBOOK.md exists at the repo root, names at least one repo path and one npm script, every backticked repo path it names exists, and every `npm run <x>` it names is defined in package.json.",
+      "doesNotProve": "Does not prove the prose is accurate beyond the paths and scripts it names, or that the hosts it lists answer.",
+      "failureHandling": "Juniper investigates and normally repairs before release; update RUNBOOK.md to the renamed path or script.",
+      "ownerDecisionNeeded": false,
+      "tier": "tier1",
+      "blockerPolicy": "Blocks local validation and blocks CI; runs in validate:all right after the zero-item guard."
     }
   ],
   "futureRequiredProofs": [

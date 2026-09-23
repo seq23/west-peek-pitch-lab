@@ -93,6 +93,7 @@ This index classifies documentation without deleting historical evidence. Only r
 - `REAL_RUNTIME_PROOF_MATRIX.md`
 - `REPO_VALIDATION_MATRIX.md`
 - `ROLLBACK_AND_CONTAINMENT_RUNBOOK.md`
+- `RUNBOOK.md` — ACTIVE plan-time operator page for AI employees (Porter, Danielle); paths and scripts it names are enforced by `npm run validate:runbook`
 - `RUNTIME_CONTEXT_TRACE_MATRIX.md`
 - `SECRETS_AND_VAULT_ARCHITECTURE.md`
 - `TERMINAL_RELEASE_RUNBOOK.md`
