@@ -18,7 +18,7 @@
     "env:local:from-vault:force": "node scripts/env/restore-local-env-from-vault.mjs --force",
     "validate:no-theater": "node scripts/validate-no-theater.mjs",
     "build": "node scripts/build-static-app.mjs && node scripts/validate-browser-runtime-bundle.mjs",
-    "test:domain": "node tests/domain/phase2-contracts.mjs && node tests/domain/phase3-contracts.mjs && node tests/domain/phase4-contracts.mjs && node tests/domain/phase5-contracts.mjs && node tests/domain/phase6-contracts.mjs && node tests/domain/phase7-contracts.mjs && node tests/domain/phase9a-contracts.mjs && node tests/domain/phase9b-contracts.mjs && node tests/domain/phase9b1-contracts.mjs",
+    "test:domain": "node tests/domain/phase2-contracts.mjs && node tests/domain/phase3-contracts.mjs && node tests/domain/phase4-contracts.mjs && node tests/domain/phase5-contracts.mjs && node tests/domain/phase6-contracts.mjs && node tests/domain/phase7-contracts.mjs && node tests/domain/phase9a-contracts.mjs && node tests/domain/phase9b-contracts.mjs && node tests/domain/phase9b1-contracts.mjs && node tests/domain/paid-endpoint-guard-contracts.mjs",
     "smoke:routes": "node scripts/route-smoke.mjs",
     "smoke:visual": "node scripts/visual-smoke.mjs",
     "validate:phase2": "node scripts/validate-phase2.mjs",

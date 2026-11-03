@@ -3,3 +3,9 @@ compatibility_date = "2026-06-10"
 compatibility_flags = ["nodejs_compat"]
 
 pages_build_output_dir = "dist"
+
+# Rate-limit counters, session scripts and render cache for paid endpoints
+# (src/server/security/paidEndpointGuard.mjs).
+[[kv_namespaces]]
+binding = "PITCH_LAB_LIMITS"
+id = "9dbade33bb9e4e3e9622b0192bad431e"

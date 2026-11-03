@@ -11,6 +11,7 @@ export function renderStoryReviewWorkspace() {
         <div class="workspace-heading"><p class="eyebrow">Scooter review</p><h2 id="ai-card-title">Sharpen the finished story.</h2><p>${DISCLOSURES.storyCard}</p><p class="media-order-note">Text appears first. Scooter’s talking summary follows when available, without blocking the written card.</p></div>
         <div class="next-action-card"><strong>Next step</strong><span>Generate the AI-enhanced Founder Story Card after all required practice answers are complete.</span></div>
         <div class="actions"><button type="button" class="button primary" data-generate-ai-card>Generate my Founder Story Card</button></div>
+        <div data-turnstile-slot></div>
         <div data-ai-story-card-root></div>
       </section>
       <section class="practice-out-loud-panel" aria-labelledby="practice-out-loud-title">

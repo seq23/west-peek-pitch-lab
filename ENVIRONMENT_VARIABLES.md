@@ -90,6 +90,11 @@ docs/COST_AND_PROVIDER_PLAN.md
 | `NETWORK_OS_PROFILE_CAPTURE_ENABLED` | phase7 | server_config | plain_var | forbidden | `false` |
 | `NETWORK_OS_HANDOFF_ENABLED` | phase7 | server_config | plain_var | forbidden | `false` |
 | `NETWORK_OS_SHARED_SECRET` | phase7 | server_secret | secret | forbidden | `REPLACE_WITH_LOCAL_NETWORK_OS_SHARED_SE...` |
+| `PITCH_LAB_ADMIN_TOKEN` | phase7 | server_secret | secret | forbidden | `REPLACE_WITH_LOCAL_PITCH_LAB_ADMIN_TOKEN` |
+| `PITCH_LAB_RENDER_SIGNING_SECRET` | phase7 | server_secret | secret | forbidden | `REPLACE_WITH_LOCAL_PITCH_LAB_RENDER_SIGN...` |
+| `TURNSTILE_SECRET_KEY` | phase7 | server_secret | secret | forbidden | `REPLACE_WITH_LOCAL_TURNSTILE_SECRET_KEY` |
+| `TURNSTILE_SITE_KEY` | phase7 | server_config | plain_var | forbidden | `REPLACE_WITH_TURNSTILE_SITE_KEY` |
+| `LLM_DAILY_MAX_CALLS` | phase7 | server_config | plain_var | forbidden | `300` |
 | `NETWORK_OS_TIMEOUT_MS` | phase7 | server_config | plain_var | forbidden | `15000` |
 | `PITCH_LAB_ALLOWED_ORIGIN` | phase7 | server_config | plain_var | forbidden | `http://localhost:5173` |
 | `RATE_LIMIT_ENABLED` | phase4 | server_config | plain_var | forbidden | `true` |
