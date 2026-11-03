@@ -53,29 +53,29 @@ test.describe('Post-deploy functions honesty gauntlet', () => {
   });
 
   test('malformed transaction endpoints reject or fail honestly', async ({ request }) => {
-    for (const path of ['/api/pitch/story-card', '/api/pitch/share', '/api/avatar/render', '/api/voice/render']) {
+    for (const path of ['/api/pitch/share']) {
       const { response, text } = await requestJson(request, path, { method: 'POST', data: { bad: true } });
       expect([400, 405, 422, 503]).toContain(response.status());
       expectSafeBody(text);
     }
+    // Paid endpoints refuse any caller without a server-signed session token (paidEndpointGuard.mjs).
+    for (const path of ['/api/pitch/story-card', '/api/pitch/analyze', '/api/avatar/render', '/api/voice/render']) {
+      const { response, text } = await requestJson(request, path, { method: 'POST', data: { bad: true } });
+      expect(response.status()).toBe(401);
+      expectSafeBody(text);
+    }
   });
 
-  test('story-card endpoint returns schema-backed AI output or honest provider-unavailable response', async ({ request }) => {
-    const { response, body, text } = await requestJson(request, '/api/pitch/story-card', {
-      method: 'POST',
-      data: { answers: completeAnswers }
-    });
-    expect([200, 400, 502, 503]).toContain(response.status());
-    expectSafeBody(text);
-    if (response.status() === 200) {
-      expect(body.aiEnhanced).toBe(true);
-      expect(body.shareEnabled).toBe(true);
-      expect(body.storyCard).toBeTruthy();
-      expect(String(body.disclosure || '')).toMatch(/AI-generated|pitch coaching/i);
-    } else {
-      expect(body.aiEnhanced).not.toBe(true);
-      expect(JSON.stringify(body)).toMatch(/unavailable|invalid|schema|provider|No fake/i);
-    }
+  test('story-card endpoint needs a session token and a passed challenge before any paid LLM call', async ({ request }) => {
+    const anon = await requestJson(request, '/api/pitch/story-card', { method: 'POST', data: { answers: completeAnswers } });
+    expect(anon.response.status()).toBe(401);
+    expect(anon.body.aiEnhanced).not.toBe(true);
+    const session = await requestJson(request, '/api/session');
+    expect(session.response.status()).toBe(200);
+    expect(String(session.body.sessionToken || '')).toMatch(/^s1\./);
+    const noChallenge = await requestJson(request, '/api/pitch/story-card', { method: 'POST', headers: { 'x-pitch-lab-session': session.body.sessionToken }, data: { answers: completeAnswers } });
+    expect(session.body.turnstileSiteKey ? [403] : [200, 400, 429, 502, 503]).toContain(noChallenge.response.status());
+    expectSafeBody(noChallenge.text);
   });
 
   test('share endpoint requires consented Founder Story Packet payload and never creates impossible success', async ({ request }) => {
@@ -119,33 +119,15 @@ test.describe('Post-deploy functions honesty gauntlet', () => {
     }
   });
 
-  test('avatar and voice render endpoints enforce moment/script controls without fake media success', async ({ request }) => {
-    const avatar = await requestJson(request, '/api/avatar/render', {
-      method: 'POST',
-      data: { moment: 'final_summary', text: 'Here is the concise AI Scooter final coaching summary for this founder story.' }
-    });
-    expect([202, 400, 429, 503]).toContain(avatar.response.status());
-    expectSafeBody(avatar.text);
-    if (avatar.response.status() === 202) {
-      expect(avatar.body.status).toMatch(/queued|avatar/i);
-      expect(avatar.body.avatarReady).not.toBe(true);
-    } else {
-      expect(avatar.body.avatarReady).not.toBe(true);
-      expect(JSON.stringify(avatar.body)).toMatch(/unavailable|disabled|not configured|cost guard|invalid/i);
-    }
-
-    const voice = await requestJson(request, '/api/voice/render', {
-      method: 'POST',
-      data: { moment: 'final_summary', text: 'Here is the concise AI Scooter final coaching summary for this founder story.' }
-    });
-    expect([200, 400, 503]).toContain(voice.response.status());
-    expectSafeBody(voice.text);
-    if (voice.response.status() === 200) {
-      expect(voice.body.voiceReady).toBe(true);
-      expect(String(voice.body.audioContentType || '')).toMatch(/audio/i);
-    } else {
-      expect(voice.body.voiceReady).not.toBe(true);
-      expect(JSON.stringify(voice.body)).toMatch(/unavailable|disabled|not configured|invalid/i);
+  test('avatar and voice render endpoints never render caller text', async ({ request }) => {
+    const text = 'Here is the concise AI Scooter final coaching summary for this founder story.';
+    const session = await requestJson(request, '/api/session');
+    for (const path of ['/api/avatar/render', '/api/voice/render']) {
+      const anon = await requestJson(request, path, { method: 'POST', data: { moment: 'final_summary', text } });
+      expect(anon.response.status()).toBe(401);
+      const withSession = await requestJson(request, path, { method: 'POST', headers: { 'x-pitch-lab-session': session.body.sessionToken || '' }, data: { moment: 'final_summary', text } });
+      expect(withSession.response.status()).toBe(403);
+      expectSafeBody(withSession.text);
     }
   });
 });

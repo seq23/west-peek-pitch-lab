@@ -1,34 +1,22 @@
 import { generatePitchStoryCard } from '../../../src/server/ai/aiService.mjs';
+import { guardPaidRequest, consumeLimits, storeSessionScript, jsonResponse } from '../../../src/server/security/paidEndpointGuard.mjs';
 
-async function readJson(request) {
-  try {
-    return await request.json();
-  } catch {
-    return null;
-  }
-}
-
-function json(body, status = 200) {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: {
-      'content-type': 'application/json; charset=utf-8',
-      'cache-control': 'no-store'
-    }
-  });
-}
-
+// Paid LLM call: session token + Turnstile + per-visitor and daily limits (paidEndpointGuard.mjs).
 export async function onRequestPost(context) {
-  const payload = await readJson(context.request);
-  if (!payload || typeof payload !== 'object') {
-    return json({ status: 'invalid_request', aiEnhanced: false, shareEnabled: false, errors: { body: 'Expected JSON body.' } }, 400);
+  const guard = await guardPaidRequest({ request: context.request, env: context.env, endpoint: 'story_card' });
+  if (!guard.ok) return guard.response;
+  const limited = await consumeLimits(context.env, guard);
+  if (limited) return limited;
+  const result = await generatePitchStoryCard({ env: context.env, answers: guard.body.answers, fetchImpl: fetch });
+  const script = result.body?.finalScooterSummary?.script;
+  if (result.ok && script) {
+    result.body.finalScooterSummary.scriptId = await storeSessionScript({ env: context.env, sid: guard.sid, moment: 'final_summary', text: script });
   }
-  const result = await generatePitchStoryCard({ env: context.env, answers: payload.answers, fetchImpl: fetch });
-  return json(result.body, result.httpStatus);
+  return jsonResponse(result.body, result.httpStatus);
 }
 
 export async function onRequestGet() {
-  return json({
+  return jsonResponse({
     status: 'method_not_allowed',
     aiEnhanced: false,
     shareEnabled: false,
