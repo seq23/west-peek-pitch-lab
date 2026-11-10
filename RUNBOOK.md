@@ -44,7 +44,7 @@ A sheet failure never reaches the founder; it is reported as `sheet` in the resp
 1. Worktree + branch `work/<slug>` off `origin/main`; `npm ci` (Node from `.nvmrc`).
 2. Edit under `src/`, `functions/` or `public/`.
 3. Run exactly what CI runs: `npm run validate:ci-workflow-contract` then `npm run validate:all`
-   (builds `dist/`, runs every hard-fail guard ).
+   (builds `dist/`, runs every hard-fail guard).
 4. Look at it: `npm run preview:static` serves `dist/` on http://localhost:4173; check desktop and
    390px.
 5. Commit, push, open a PR. CI (`.github/workflows/validate.yml`) runs on the PR, and the Cloudflare
