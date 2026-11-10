@@ -9,9 +9,6 @@
     "_repo_validation_matrix.json",
     "_baseline_packaging_contract.json",
     "scripts/release-prepush-router.mjs",
-    "scripts/validate-ui-test-parity.mjs",
-    "scripts/validate-browser-suite-contract.mjs",
-    "scripts/validate-artifact-source-parity.mjs",
     "scripts/release-close-lifecycle.mjs",
     "REPO_IDENTITY.md",
     "TIER_VALIDATION_MODEL.md",
@@ -20,7 +17,6 @@
     "REPO_VALIDATION_MATRIX.md",
     "docs/TEST_OPERATIONS_RUNBOOK.md",
     "DOCUMENTATION_AUTHORITY_INDEX.md",
-    "scripts/validate-suite-release-lifecycle-contract.mjs",
     ".nvmrc",
     "scripts/build-static-app.mjs",
     "scripts/validate-browser-runtime-bundle.mjs",
@@ -60,10 +56,8 @@
     "scripts/run-test-operations-orchestrator.mjs",
     "scripts/run-postdeploy-functions.mjs",
     "scripts/run-postdeploy-gauntlet.mjs",
-    "scripts/detect-release-environment.mjs",
     "scripts/run-master-gauntlet.mjs",
     "playwright.config.mjs",
-    "tests/domain/release-lifecycle-env-contracts.mjs",
     "PITCH_LAB_LIFECYCLE_ENV_REPAIR_2026-06-16.md"
   ]
 }

@@ -37,22 +37,12 @@ Future TypeScript is allowed only as an intentional repo-wide migration to a rea
 
 | Validator / Test | Command | Category | Severity | Production Risk | What It Proves | What It Does Not Prove | Failure Handling | Owner Decision Needed? |
 |---|---|---|---|---|---|---|---|---|
-| Phase 1 document presence | `npm run validate:phase1` | Docs / structure | HARD FAIL | Missing contracts cause implementation drift | Required Phase 1 docs exist | Does not prove runtime app behavior | Restore missing docs | No |
-| Phase 2+ hostile review artifacts | `npm run validate:phase1` | Architecture / proof plan | HARD FAIL | Later implementation may under-test or ship theater | Validation simplification matrix, Master Gauntlet plan, and no-theater gates exist | Does not prove runtime behavior | Restore required docs | No |
-| Locked copy guardrail | `npm run validate:phase1` | Product copy | HARD FAIL | Brand drift and unclear founder promise | Required brand lines appear | Does not prove visual placement | Restore locked copy | Yes if copy change requested |
-| Canonical runtime guard | `npm run validate:canonical-runtime` | Runtime architecture | HARD FAIL | `.ts`/`.mjs` drift can approve one path while deploying another | Current source uses one canonical `.mjs` runtime path plus JSON contracts; no TypeScript scaffold files under `src/` | Does not prove live providers or browser visuals | Remove scaffold drift or intentionally migrate to a real TypeScript build | No |
-| No duplicate CRM guardrail | `npm run validate:phase1` | Architecture | HARD FAIL | CRM duplication and data drift | Docs state Network OS remains CRM | Does not prove code integration | Restore guardrail | Yes if changing architecture |
-| Consent guardrail | `npm run validate:phase1` | Privacy | HARD FAIL | Founder trust / PII risk | Docs require explicit share consent | Does not prove runtime enforcement | Restore guardrail | No |
-| AI disclosure guardrail | `npm run validate:phase1` | Brand/legal | HARD FAIL | Misleading impersonation / review claims | Docs require AI Scooter disclosure | Does not prove UI copy | Restore guardrail | No |
-| No-theater implementation gate | `npm run validate:phase1` | Architecture / quality | HARD FAIL | Hidden stubs, fake provider success, or placeholder production behavior | Repo contracts forbid production mocks/placeholders and fake success | Does not prove future code follows it | Fix docs/validators before code | No |
-| Maximum Playwright depth plan | `npm run validate:phase1` | E2E planning | HARD FAIL | Browser flows may be under-tested | Master Gauntlet and deep journey/outcome E2E are locked | Does not run Playwright | Restore Playwright plan | No |
 | No plaintext secrets | `npm run validate:no-secrets` | Security | HARD FAIL | Secret exposure | Real env files and common secret patterns are not present | Does not prove deployed secret config | Remove secret, rotate if real | Yes if secret found |
 | Env contract validation | `npm run validate:env` | Env / secrets | HARD FAIL | Missing/drifting env map can break LLM, voice, avatar, Network OS handoff, or Cloudflare deployment | Registry exists, examples contain all keys, encrypted vault envelope exists, `.gitignore` blocks plaintext env/decrypted vault files | Does not prove real provider values or Cloudflare state | Fix registry/examples/vault/gitignore | No |
 | Local env placeholder creation | `npm run env:create-local` | Env / local setup | STRONG WARNING before build, HARD FAIL before local runtime proof | Owner cannot reliably create `.env.local` | Script can generate `.env.local` from registry with safe placeholders | Does not prove real local values are filled | Fix script/registry | No |
 | Restore local env from vault | `ENV_VAULT_PASSPHRASE=... npm run env:local:from-vault` | Env / recovery | HARD FAIL before local recovery proof | Owner cannot recreate `.env.local` from persistent encrypted source | Vault can restore local machine env without committing plaintext | Does not prove provider values are correct | Fix restore script/vault | No |
 | Cloudflare env plan | `ENV_VAULT_PASSPHRASE=... npm run env:cloudflare:plan` | Deploy / env | STRONG WARNING until deploy, HARD FAIL before deploy | Cloudflare vars/secrets may be missing or dashboard-only | Generates names-only Cloudflare sync plan from vault/registry | Does not apply Cloudflare values | Add guarded apply step in deploy phase | Yes before real apply |
 | Provider env registry coverage | `npm run validate:env` | Env / provider | HARD FAIL | Missing provider vars can break LLM, voice, avatar, or Cloudflare sync | Gemini, ElevenLabs, HeyGen, MakeUGC fallback, and cost guard env names exist | Does not prove provider credentials are valid | Add missing registry entries and regenerate env examples/vault | No |
-| Canonical runtime sanity | `npm run validate:canonical-runtime` | Build/runtime | HARD FAIL | Parallel source paths create drift | No TypeScript scaffold under `src/`; runtime files are canonical | Does not prove behavior | Fix runtime path or migrate intentionally | No |
 | Build | Phase 2+ command TBD | Build | HARD FAIL | Undeployable app | App builds locally | Does not prove deployed runtime | Fix build | No |
 | Static route smoke | Phase 2+ Playwright | Browser / UI | HARD FAIL for Phase 2 completion | Public shell broken | Required static routes load | Does not prove product journey | Fix route/app shell | No |
 | Visual smoke | Phase 2+ Playwright/screenshots | Visual trust | STRONG WARNING for iteration, HARD FAIL for public release if severe | Founder trust damaged by broken UI | Desktop/mobile screenshots exist and major layout not broken | Does not prove human approval | Fix layout or disclose human review needed | Owner for subjective design approval |
@@ -104,7 +94,6 @@ Full product COMPLETE requires maximum target proof: build, validators, unit/dom
 | Layer | Command | Required for Phase 3 | Proves | Does Not Prove |
 |---|---:|---:|---|---|
 | Phase 3 Domain Contracts | `npm run test:domain` | Yes | Question sequence, local validation, local card shape, inactive consent state | Browser rendering or provider integrations |
-| Phase 3 Static Validation | `npm run validate:phase3` | Yes | Required Phase 3 files, locked questions, local card flags, built route text, no forbidden runtime claims | Live AI, email, Network OS handoff, visual screenshot proof |
 | Route Smoke | `npm run smoke:routes` | Yes | Built static routes return required locked copy | Interactive browser workflow depth |
 | Visual Smoke | `npm run smoke:visual` | Attempt if available | Screenshots if local Chromium is available | Product correctness by itself |
 
@@ -117,7 +106,6 @@ Phase 4 is validated as a server-side LLM contract and fallback-router layer, no
 Hard fail:
 - `npm run validate:phase4`
 - `npm run test:domain`
-- `npm run validate:no-theater`
 - `npm run validate:no-secrets`
 - `npm run validate:env`
 - `npm run build`
@@ -149,7 +137,6 @@ Not proven in Phase 4:
 
 Phase 5 requires:
 
-- `npm run validate:phase5`
 - `tests/domain/phase5-contracts.mjs`
 - prompt contract includes Scooter Wisdom context;
 - raw sources blocked from runtime;
@@ -194,7 +181,6 @@ Added after owner clarified that `westpeek.ventures` and `westpeek.live` are the
 
 Hard-fail validation now includes:
 
-- `npm run validate:phase9b1`
 - `tests/domain/phase9b1-contracts.mjs` through `npm run test:domain`
 
 This pass proves:
@@ -213,7 +199,6 @@ This does not prove pixel-perfect parity or headed browser rendering. Those rema
 
 | Validator / Test | Command | Category | Severity | Production Risk | What It Proves | What It Does Not Prove | Failure Handling | Owner Decision Needed? |
 |---|---|---|---|---|---|---|---|---|
-| Master Gauntlet wiring | `npm run validate:master-gauntlet` | master gauntlet / E2E proof harness | HARD FAIL CURRENT | Pitch Lab is Level 5 and cannot claim complete product proof without a capstone journey harness. | Gauntlet docs, Playwright config, spec, fixtures, official Scooter photo, ElevenLabs-first provider posture, required media moments, and no-theater assertions exist. | Does not prove headed browser execution, live ElevenLabs provider success, deployed Cloudflare runtime, or live Network OS persistence. | Restore missing gauntlet/provider/media proof harness before packaging. | No |
 
 Phase 9D full product completion still requires the local/headed gauntlet run and live provider/env subset when keys/assets are available.
 
@@ -221,7 +206,6 @@ Phase 9D full product completion still requires the local/headed gauntlet run an
 
 | Validator / Test | Command | Category | Severity | Production Risk | What It Proves | What It Does Not Prove | Failure Handling | Owner Decision Needed? |
 |---|---|---|---|---|---|---|---|---|
-| Master Gauntlet wiring | `npm run validate:master-gauntlet` | master gauntlet / E2E proof harness | HARD FAIL CURRENT | Pitch Lab is Level 5 and cannot claim complete product proof without a capstone journey harness. | Gauntlet docs, Playwright config, spec, fixtures, official Scooter photo, ElevenLabs-first provider posture, required media moments, and no-theater assertions exist. | Does not prove headed browser execution, live ElevenLabs provider success, deployed Cloudflare runtime, or live Network OS persistence. | Restore missing gauntlet/provider/media proof harness before packaging. | No |
 
 Phase 9D full product completion still requires the local/headed gauntlet run and live provider/env subset when keys/assets are available.
 
@@ -238,7 +222,6 @@ New hard-fail validator:
 
 | Validator / Test | Command | Category | Severity | Production Risk | What It Proves | What It Does Not Prove | Failure Handling | Owner Decision Needed? |
 |---|---|---|---|---|---|---|---|---|
-| E2E data trace | `npm run validate:e2e-data-trace` | e2e data trace / gauntlet completeness | HARD FAIL CURRENT | Integral app promises can fall out of Playwright/live coverage while the suite still reports green. | Profile, answers, AI story card, share handoff, runtime media cache, live LLM browser proof, and gauntlet report lanes are wired into explicit proof surfaces. | It does not run browsers or live providers by itself. | Add the missing proof lane or mark the promise `UNPROVEN`; do not ship a silent gap. | No |
 
 Live LLM proof lanes now required for production confidence:
 

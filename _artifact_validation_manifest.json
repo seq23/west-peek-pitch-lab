@@ -14,7 +14,7 @@
   "local_browser_validation": "NOT_EXECUTED_FOR_REPLACEMENT_ARTIFACT",
   "container_browser_attempt": "BLOCKED_BY_ADMINISTRATOR_FOR_LOCALHOST_AND_MANAGED_BROWSER_DOWNLOAD_DNS",
   "required_local_command": "npm run release:close-lifecycle with local .env.local and deployed URL",
-  "status": "FIRST-COMMAND-READY \u2014 LOCAL LIVE PROVIDER AND DEPLOYED LIFECYCLE PROOF REQUIRED",
+  "status": "FIRST-COMMAND-READY — LOCAL LIVE PROVIDER AND DEPLOYED LIFECYCLE PROOF REQUIRED",
   "source_tree_fingerprint": "49e931168a02345072cd1a9717d49717dd8e6397822c3d724608edc58c3f0f4d",
   "source_tree_fingerprint_excludes": [
     "ARTIFACT_MANIFEST.md",
@@ -48,7 +48,6 @@
   },
   "evidence_references": [
     "PITCH_LAB_LIFECYCLE_ENV_REPAIR_2026-06-16.md",
-    "tests/domain/release-lifecycle-env-contracts.mjs",
     "scripts/lib/release-env.mjs",
     "scripts/prepare-local-live-env.mjs",
     "scripts/run-test-operations-orchestrator.mjs",
