@@ -34,18 +34,11 @@ These are the only checks allowed to hard-fail `npm run validate:all` in Phase 5
 
 | Script | Why it may hard fail now |
 |---|---|
-| `validate:matrix` | Prevents unclassified validation and petty/theatrical gates |
-| `validate:phase1` | Protects repo/product contracts from drift |
 | `validate:env` | Protects env registry, secret boundaries, and deploy-scope sanity |
 | `validate:no-secrets` | Prevents plaintext credential exposure |
-| `validate:no-theater` | Blocks fake provider success, production mocks, and hidden placeholders |
-| `validate:locked-copy` | Protects core product promise/disclosure anchors |
 | `build` | Proves current static app can build |
 | `test:domain` | Proves current domain contracts |
-| `validate:phase2` | Proves static shell/trust anchors and no fake claims |
-| `validate:phase3` | Proves local practice/card/share boundary |
 | `validate:phase4` | Proves server-side LLM contract/fallback/unavailable state |
-| `validate:phase5` | Proves mandatory approved-only Scooter Wisdom invariant |
 | `smoke:routes` | Proves built static routes respond locally |
 
 ## Current warning-only checks

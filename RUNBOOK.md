@@ -1,8 +1,7 @@
 # RUNBOOK — west-peek-pitch-lab
 
 Read this before changing anything. It is the file an AI employee (Porter in West Peek OS,
-Danielle in Boss OS) reads at plan time; `scripts/validate-runbook.mjs` fails the build if the
-paths and scripts named here stop existing.
+Danielle in Boss OS) reads at plan time; keep the paths and scripts named here current.
 
 ## What this repo is
 West Peek Pitch Lab: a public, founder-facing AI pitch-coaching app ("Pitch Practice with
@@ -29,28 +28,23 @@ A sheet failure never reaches the founder; it is reported as `sheet` in the resp
   `src/server/network/networkOsClient.mjs` guards the queue door and stays. Guard:
   `npm run validate:site-form-intake`.
 - **Locked decisions** — product/feature names, the two brand lines, tone, providers — are listed
-  in `README.md` under "Locked Decisions". Copy lives in `src/config/lockedCopy.json`
-  (`npm run validate:locked-copy`). Changing one is the owner's call: ask, don't decide.
+  in `README.md` under "Locked Decisions". Copy lives in `src/config/lockedCopy.json`. Changing one is the owner's call: ask, don't decide.
 - **Brand system is locked**: `WEST_PEEK_BRAND_SYSTEM.md` ("Orange is an accent, not the entire
-  interface"). Guard: `npm run validate:brand-system`.
+  interface").
 - **CI never deploys.** `.github/workflows/validate.yml` is validation-only;
   `scripts/validate-ci-workflow-contract.mjs` fails on any deploy command in a workflow.
 - **No secrets in the repo.** A new env var is registered in `config/env.registry.json`,
   `ENVIRONMENT_VARIABLES.md` and all four `.env*.example` files, and set on the Pages project by
   name (`docs/runbooks/PRODUCTION_ENV_SETUP.md`). Guards: `npm run validate:env`,
   `npm run validate:no-secrets`.
-- **Every proof script is admitted.** A new `validate:*`/`smoke:*` script needs an entry in
-  `_repo_validation_matrix.json` (and `validateAllHardFailCommands` if it hard-fails) and in
-  `_validator_admission_register.json`, or `npm run validate:matrix` fails.
 - **A new route** goes in `src/runtime/phase2Routes.mjs` and `config/deployed-route-manifest.json`
-  (`npm run validate:deployed-route-manifest`, `npm run smoke:routes`).
+  (`npm run smoke:routes`).
 
 ## How to make a change
 1. Worktree + branch `work/<slug>` off `origin/main`; `npm ci` (Node from `.nvmrc`).
 2. Edit under `src/`, `functions/` or `public/`.
 3. Run exactly what CI runs: `npm run validate:ci-workflow-contract` then `npm run validate:all`
-   (builds `dist/`, runs every hard-fail guard including `validate:runbook`). For copy or visual
-   changes also `npm run validate:quality`.
+   (builds `dist/`, runs every hard-fail guard ).
 4. Look at it: `npm run preview:static` serves `dist/` on http://localhost:4173; check desktop and
    390px.
 5. Commit, push, open a PR. CI (`.github/workflows/validate.yml`) runs on the PR, and the Cloudflare
@@ -74,11 +68,7 @@ none in GitHub Actions. Env/secret changes: `docs/runbooks/CLOUDFLARE_DEPLOYMENT
 | `scripts/validate-ci-workflow-contract.mjs` | CI exists, parses, runs `validate:all` on push + PR to main, never deploys |
 | `tests/domain/site-form-intake-contracts.mjs` | founders reach the sheet door with correct tagging; both paths run; failures never throw |
 | `tests/domain/profile-lead-contracts.mjs` | the profile-capture lead payload |
-| `scripts/validate-validation-matrix.mjs` | every proof script is admitted; `validate:all` carries every hard-fail command |
 | `scripts/validate-env-contract.mjs` / `scripts/check-no-plaintext-secrets.mjs` | env registry is complete; no plaintext secrets committed |
-| `scripts/validate-deployed-route-manifest.mjs` / `scripts/route-smoke.mjs` | route manifest shape (dual viewport, ids); every route in `src/runtime/phase2Routes.mjs` serves from `dist/` with the locked brand lines |
 | `scripts/validate-browser-runtime-bundle.mjs` | `dist/assets/` carries every browser entry script the pages load |
-| `scripts/validate-locked-copy.mjs` / `scripts/validate-west-peek-brand-system.mjs` | locked copy source; brand system (run via `npm run validate:quality`) |
-| `scripts/validate-runbook.mjs` | this file names real paths and scripts |
 
 Prove a new guard negatively before merging: plant the defect, watch it fail, remove it.

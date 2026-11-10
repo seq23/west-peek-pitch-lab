@@ -383,7 +383,6 @@ These require human review.
 | Script | Tier | Purpose |
 |---|---:|---|
 | `npm run validate:all` | 1 | Full structural/static/domain/build validation |
-| `npm run validate:e2e-data-trace` | 1 | Confirms required E2E promise coverage exists |
 | `npm run gauntlet` | 2 | Local full Playwright master gauntlet |
 | `npm run gauntlet:headed` | 2 | Local full Playwright master gauntlet in headed mode |
 | `npm run proof:journey` | 2 | Real local journey proof |
