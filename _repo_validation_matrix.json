@@ -34,6 +34,7 @@
     "validate:env",
     "validate:no-secrets",
     "validate:phase4",
+    "validate:phase9a",
     "release:local-visual-proof",
     "validate:site-form-intake"
   ],
@@ -62,6 +63,19 @@
     "validate:final-tier"
   ],
   "entries": [
+    {
+      "script": "validate:phase9a",
+      "command": "node scripts/validate-phase9a.mjs",
+      "category": "E2E journey/completeness",
+      "severity": "HARD FAIL",
+      "productionRisk": "Founder journey can feel incomplete, expose scoring risk, or claim unconfirmed submission success after email was removed.",
+      "proves": "Pitch Lab has copy-card path, qualitative Story Strength Signals, no numeric/fundability score, no email-me-card resurfacing, clear what-happens-next copy, and confirmed-submission-only thank-you behavior.",
+      "doesNotProve": "Live provider quality, browser Playwright execution, deployed Network OS handoff, or Phase 9B design overhaul.",
+      "failureHandling": "Juniper investigates and normally repairs before release; local work may continue when proof is environment-bound.",
+      "ownerDecisionNeeded": false,
+      "tier": "tier1",
+      "blockerPolicy": "Blocks local validation because validate:all explicitly includes this runtime/product safety check."
+    },
     {
       "script": "validate:phase4",
       "command": "node scripts/validate-phase4.mjs",

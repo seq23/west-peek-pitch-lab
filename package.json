@@ -6,7 +6,7 @@
   "scripts": {
     "validate:env": "node scripts/validate-env-contract.mjs",
     "validate:no-secrets": "node scripts/check-no-plaintext-secrets.mjs",
-    "validate:all": "npm run validate:ci-workflow-contract && npm run test:display-normalization && npm run validate:env && npm run validate:no-secrets && npm run build && npm run validate:browser-runtime-bundle && npm run test:domain && npm run validate:phase4 && npm run smoke:routes && npm run test:profile-lead-contracts && npm run validate:site-form-intake",
+    "validate:all": "npm run validate:ci-workflow-contract && npm run test:display-normalization && npm run validate:env && npm run validate:no-secrets && npm run build && npm run validate:browser-runtime-bundle && npm run test:domain && npm run validate:phase4 && npm run validate:phase9a && npm run smoke:routes && npm run test:profile-lead-contracts && npm run validate:site-form-intake",
     "env:create-local": "node scripts/env/create-local-env.mjs",
     "env:create-local:force": "node scripts/env/create-local-env.mjs --force",
     "env:vault:create-placeholders": "node scripts/env/create-env-vault.mjs --force",
@@ -20,6 +20,7 @@
     "smoke:routes": "node scripts/route-smoke.mjs",
     "smoke:visual": "node scripts/visual-smoke.mjs",
     "validate:phase4": "node scripts/validate-phase4.mjs",
+    "validate:phase9a": "node scripts/validate-phase9a.mjs",
     "preview:static": "npm run build && node scripts/preview-static.mjs",
     "gauntlet": "node scripts/run-master-gauntlet.mjs",
     "gauntlet:headed": "node scripts/run-master-gauntlet.mjs --headed",
